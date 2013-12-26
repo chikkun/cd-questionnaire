@@ -5,11 +5,13 @@ class SearchAndUpdateQuestionnaire
 
     function __construct()
     {
+        echo ">>>>>>>>>>>>>>>>>>";
         $this->db_version = get_option('cdq_db_version', 0);
     }
 
     function search_update_enquetes()
     {
+        echo "=======================";
         switch ($_GET['action']) {
             case 'update':
                 $this->update_enquete();
