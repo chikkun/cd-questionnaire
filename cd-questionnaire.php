@@ -13,8 +13,8 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDNewEnquete.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDEnquete.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."SearchAndUpdateQuestionnaire.php";
 
-$question = new CDNewEnquete();
-//$question = new CDQuestionnaire();
+$question = new CDQuestionnaire();
+//$question = new CDNewEnquete();
 //$search = new SearchAndUpdateQuestionnaire();
 // メニュー表示
 add_action ( 'admin_menu', 'cd_questionnaire_add_pages' );
@@ -27,7 +27,7 @@ function cd_questionnaire_add_pages() {
 	$hook_new = add_submenu_page('cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 8,'cd-questionnaire/CDNewEnquete.php?action=new', array('CDNewEnquete', 'questionnaire_option_page'));
 	//$hook = add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__, array($queation, 'questionnaire_option_page'));
 
-	add_action ( "admin_head-" . $hook_new, array (	$question, 'add_javascripts' ) );
+	//add_action ( "admin_head-" . $hook_new, array (	$question, 'add_javascripts' ) );
 	// 'level_8' .$hook
 }
 
