@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>SheepIt! Jquery Form Cloning Plugin - Example 3</title>
+<script type="text/javascript" src="jquery-1.4.min.js"></script>
+<script type="text/javascript" src="jquery.sheepItPlugin-1.1.1.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function() {
+     var addressesForm = $("#AAA_BBBs").sheepIt({
+        indexFormat: '#index#',
+        separator: '',
+        allowRemoveLast: true,
+        allowRemoveCurrent: true,
+        allowRemoveAll: true,
+        allowAdd: true,
+        allowAddN: true,
+        // Limits
+        maxFormsCount: 10,
+        minFormsCount: 0,
+        iniFormsCount: 1,
+        nestedForms: [
+            {
+                id: 'AAA_BBBs_#index#_CCCs',
+                options: {
+                     separator: '',
+                     indexFormat: '#index_cccs#',
+                     maxFormsCount: 10
+                }
+            }
+        ]
+    });
+});
+
+</script>
+</head>
+
+<body>
+  <!-- Main sheepIt Form -->
+  <ol>
+    <li>AAA:がオブジェクト(Postで送られるキー)</li>
+    <li>BBBsが増えていく第1次のフィールド名</li>
+    <li>BBBのキー</li>
+    <li>CCCsがサブで増えていくフィールド名</li>
+    <li>CCCのキー</li>
+  </ol>
+  <label>AAA test html</label>
+  <div id="AAA_BBBs">
+    <!-- Form template-->
+    <div id="AAA_BBBs_template">
+      <label for="AAA_BBBs_#index#_BBB">BBBs
+	<span id="AAA_BBBs_label"></span>
+      </label>
+
+      <input id="AAA_BBBs_#index#_BBB"
+	     name="AAA[BBBs][#index#][BBB]" type="text" size="50" maxlength="100" />
+      <a id="AAA_BBBs_remove_current">
+	<img src="images/cross.png" width="16" height="16" border="0" />
+      </a>
+
+        <!-- Embeded sheepIt Form -->
+	<label>CCCs</label>
+	<div id="AAA_BBBs_#index#_CCCs">
+
+	  <!-- Nested form template-->
+	  <div id="AAA_BBBs_#index#_CCCs_template">
+            <label for="AAA_BBBs_#index#_CCCs_#index_cccs#_CCC">CCC
+	      <span id="AAA_BBBs_#index#_CCCs_label"></span>
+	    </label>
+            <input id="AAA_BBBs_#index#_CCCs_#index_cccs#_CCC"
+                   name="AAA[BBBs][#index#][CCCs][#index_cccs#][CCC]" type="text" size="15" maxlength="10" />
+            <a id="AAA_BBBs_#index#_CCCs_remove_current">
+	      <img src="images/cross.png" width="16" height="16" border="0" />
+	    </a>
+	  </div>
+          <!-- /Nested form template-->
+
+          <!-- No forms template -->
+          <div id="AAA_BBBs_#index#_CCCs_noforms_template">No CCCs</div>
+          <!-- /No forms template-->
+
+          <!-- Controls -->
+          <div id="AAA_BBBs_#index#_CCCs_controls" class="controls">
+            <div id="AAA_BBBs_#index#_CCCs_add"><a><span>Add CCCs</span></a></div>
+            <div id="AAA_BBBs_#index#_CCCs_remove_last"><a><span>Remove</span></a></div>
+            <div id="AAA_BBBs_#index#_CCCs_remove_all"><a><span>Remove all</span></a></div>
+            <div id="AAA_BBBs_#index#_CCCs_add_n">
+              <input id="AAA_BBBs_#index#_CCCs_add_n_input" type="text" size="4" />
+              <div id="AAA_BBBs_#index#_CCCs_add_n_button"><a><span>Add</span></a></div>
+            </div>
+          </div>
+          <!-- /Controls -->
+
+	</div>
+        <!-- /Embeded sheepIt Form -->
+    </div>
+    <!-- /Form template -->
+
+    <!-- No forms template -->
+    <div id="AAA_BBBs_noforms_template">No BBBs</div>
+    <!-- /No forms template -->
+    <!-- Controls -->
+    <div id="AAA_BBBs_controls" class="controls">
+      <div id="AAA_BBBs_add"><a><span>Add BBB</span></a></div>
+      <div id="AAA_BBBs_remove_last"><a><span>Remove</span></a></div>
+      <div id="AAA_BBBs_remove_all"><a><span>Remove all</span></a></div>
+      <div id="AAA_BBBs_add_n">
+        <input id="AAA_BBBs_add_n_input" type="text" size="4" />
+        <div id="AAA_BBBs_add_n_button"><a><span>Add</span></a></div>
+      </div>
+    </div>
+    <!-- /Controls -->
+  </div>
+  <!-- /Main sheepIt Form -->
+
+
+</body>
+</html>

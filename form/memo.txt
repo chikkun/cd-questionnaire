@@ -1,0 +1,296 @@
+	function cloneTemplate()
+		 cloneWithAttribut(true)
+
+        function clickOnAdd(event)
+		 addForm();
+
+        function clickOnAddN(event)
+                addNForms(addNInput.attr('value'));
+
+        function clickOnRemoveCurrent(event)
+                options.beforeRemoveCurrent(source);
+
+        function clickOnRemoveLast(event)
+                removeLastForm();
+
+        function clickOnRemoveAll(event)
+                removeAllForms();
+
+        function getOrSetTemplate(element, attrname){
+          var template=element.attr(attrname+"template");
+          if(template) {
+            return unescape(template);
+          }
+
+        function normalizeFieldsForForm(form, index)*
+		var ree = new RegExp(options.indexFormat, 'g');
+                newNameAttr = nameTemplateAttr.replace(ree, index);
+                that.attr("name", newNameAttr);
+
+        function normalizeLabelsForForm(form, index)
+            setLabelForForm(form, index+1);
+
+        function getLabelForForm(form)
+            return form.find(options.labelSelector).html();
+
+        function normalizeControls()
+            // Remove buttons
+            if (hasForms()) {
+
+        function normalizeForms()*
+            noFormsTemplate.hide();
+              do{
+                normalizeForm(form, index);
+                index++;
+                form = getNextForm(form);
+              }while (form!=false)
+
+        function normalizeForm(form, index)
+            var idTemplate=getOrSetTemplate(form, "id");
+            // Normalize form id
+            if (form.attr("id")) {
+                form.attr("id", idTemplate + index);
+            }
+
+        function normalizeAll()
+            normalizeForms();
+            normalizeControls();
+
+        function addForm(normalizeAllafterAdd, form)*
+                if (normalizeAllafterAdd || options.continuousIndex) {
+                    normalizeAll();
+                }
+        function addNForms(n, normalize)
+                for(x=1; x<=n; x++) {
+                    addForm(normalize);
+                }
+
+        function removeLastForm(normalize)
+            if (canRemoveForm()) {
+                removeForm();
+
+        function removeAllForms(normalize)
+            if (canRemoveAllForms()) {
+                var x = [];
+                for (x in forms) {
+                    if (forms[x]) {
+                        removeForm(forms[x]);
+                    }
+                }
+
+        function removeCurrentForm(formToRemove, normalize)
+            if (canRemoveForm()) {
+                removeForm(formToRemove);
+
+        function removeForm(formToRemove)
+            formToRemove.remove();
+        /*---------------- ITERATOR METHODS ----------------*/
+
+        function current()
+
+        function next()
+                    for (i=init; i<forms.length; i++) {
+                        if (forms[i]) {
+                            ip = i;
+                            return true;
+                        }
+
+        function previous()
+
+        function first()
+
+        function last()
+
+        function count()
+
+        function setPointerTo(position)
+
+        function getIndexForPosition(position)
+
+        function getPositionForIndex(index)
+
+        function getPositionForIndex(index)
+
+        function getIndex()
+
+        /*---------------- /ITERATOR METHODS ----------------*/
+        function getFormsCount()
+            return count();
+
+        function getFirstForm()
+            if (first() !== false) {
+                return getCurrentForm();
+
+        function getLastForm()
+        {
+            if (last() !== false) {
+                return getCurrentForm();
+
+        function getNextForm(form)
+        {
+            if (form) {
+                return form.data('nextForm');
+
+        function getPreviousForm(form)
+        {
+            if (form) {
+                return form.data('previousForm');
+
+        function getCurrentForm()
+        {
+            if ( current() !== false) {
+                return forms[current()];
+
+        function getForm(position)
+        {
+            if (hasForms()) {
+                if (typeof(position) != 'undefined') {
+                    setPointerTo(position);
+                    return getCurrentForm();
+                }
+
+        function getForms()
+        {
+            if (hasForms()) {
+               first();
+
+        function hasForms()
+        {
+            return (getFormsCount() > 0) ? true : false;
+
+        function canAddForm()
+        {
+            if (options.maxFormsCount == 0) {
+                return true;
+            } else {
+                return (getFormsCount() < options.maxFormsCount) ? true : false;
+            }
+        }
+
+        function canRemoveForm()
+        {
+            return (getFormsCount() > options.minFormsCount) ? true : false;
+
+        function canRemoveAllForms()
+        {
+           return (options.minFormsCount == 0) ? true : false;
+        }
+
+        function isInDom(object)
+        {
+            if ( $("#" + object.attr('id')).length > 0 ) {
+                 return true;
+            } else {
+                return false;
+            }
+        }
+
+        function fillData(index, values)
+
+        function fillForm(form, data)
+
+
+### normalizeAllafterAddがundefinedならtrueを代入
+### formがundefinedならfalseを代入
+### options.beforeAddが関数だったら、sourceを引数にその関数を実行→sourceは最初のIDで検索された物
+### sourceは「var enquete = $('#enquete_questions').sheepIt({」の「$('#enquete_questions')」で検索されたオブジェクト
+### formがすでに定義されていたら、
+###   かつ「文字列だったら」そのIDを検索してnewFormに代入
+###   もしオブジェクトだったら、それをnewFormに代入
+###   それ以外だったらfalseを返す
+### 定義されていなかったら、cloneTemplateでフォームを作成し、それをnewFormに代入
+###    clone = template.cloneWithAttribut(true);
+###    cloneWithAttribute→if ( jQuery.support.noCloneEvent ){でIE9以下でもクローンするようにしたもの(？)
+### フォームを追加できるならnormalizeForm(新フォーム)→normalizeFieldsForForm(form, index);→normalizeLabelsForForm(form, index);
+### getOrSetTemplate(element, attrname)→template=element.attr(attrname+"template");→attrはid
+	    //console.log(options.parentFlag);
+	    newForm.data('parentFlag', options.parentFlag);
+              if (canAddForm() && newForm) {
+
+                newForm = normalizeForm(newForm);
+                
+
+                // Remove current control
+                var removeCurrentBtn = newForm.find(options.removeCurrentSelector).first();
+
+                removeCurrentBtn.click(clickOnRemoveCurrent);
+                removeCurrentBtn.data('removableClone', newForm);
+                
+                
+                // Index
+                newForm.data('formIndex', getIndex());
+                
+                // Linked references (separators and forms)
+                newForm.data('previousSeparator',false);
+                newForm.data('nextSeparator',false);
+                newForm.data('previousForm',false);
+                newForm.data('nextForm',false);
+
+                // Link references?
+                if (hasForms()) {
+
+                    var lastForm = getLastForm();
+
+                    // Form references
+                    lastForm.data('nextForm',newForm);
+                    newForm.data('previousForm',lastForm);
+
+                    // Separator references
+                    if (options.separator) {
+                        var separator = getSeparator();
+                        separator.insertAfter(lastForm);
+                        lastForm.data('nextSeparator',separator);
+                        newForm.data('previousSeparator',separator);
+                    }
+
+                }
+
+                (options.insertNewForms == 'after') ? newForm.insertBefore(noFormsTemplate) : newForm.insertAfter(noFormsTemplate);
+
+                // Nested forms
+                if (options.nestedForms.length > 0) {
+
+                    var x = 0;
+                    var nestedForms = [];
+                    
+                    for(x in options.nestedForms) {
+
+                        if (typeof(options.nestedForms[x].id) != 'undefined' && typeof(options.nestedForms[x].options) != 'undefined') {
+                            options.nestedForms[x].isNestedForm = true;
+                            options.nestedForms[x].parentForm = source;
+                            var id = options.nestedForms[x].id.replace(options.indexFormat,newForm.data('formIndex'));
+                            var nestedForm = $('#' + id).sheepIt(options.nestedForms[x].options);
+			    optionss.push(options.nestedForms[x].options);
+                            //console.log(optionss.length+"|||||||");
+                            nestedForms.push(nestedForm);
+                        }
+                    }
+                    newForm.data('nestedForms',nestedForms);
+                            //console.log("<<<<<<<<<");
+                }
+
+                extendForm(newForm);
+                
+                forms.push(newForm);
+
+                /**
+                 * If index has to be continuous,
+                 * all items are reindexed/renumbered using 
+                 * normalizeAll() after add a new form clone
+                 */
+                if (normalizeAllafterAdd || options.continuousIndex) {
+                    normalizeAll();
+                }
+                // After add callBack function
+                if (typeof options.afterAdd === "function") {
+                    options.afterAdd(source, newForm);
+                }
+
+                return true;
+                
+            } else {
+                return false;
+            }
+
+        }
+

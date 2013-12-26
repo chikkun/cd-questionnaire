@@ -1,0 +1,23 @@
+@CHARSET "UTF-8";
+
+.form-horizontal .colabel {
+                            float: left;
+                            padding-top: 5px;
+                            text-align: right;
+                            }
+label.valid {
+              width: 16px;
+              height: 16px;
+              background: url(images/valid.png) center center no-repeat;
+              display: inline-block;
+              padding: 0px;
+              margin-top: 0px;
+              text-indent: -9999px;
+              }
+label.error {
+              font-weight: bold;
+              color: red;
+              padding: 2px 8px;
+              margin-top: 2px;
+              display: inline-block;
+              }
