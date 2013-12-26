@@ -1,10 +1,10 @@
 <?php
 /**
- * FILE: CDQuestionnaire.php
+ * FILE: CDNewEnquete.php
  * Author: C & D, Inc.;
- * アンケート作成を伴う管理者の作業
+ * アンケート作成を行う管理者の作業
  */
-class CDQuestionnaire {
+class CDNewEnquete {
 	/**
 	 * プラグインのバージョン
 	 *
@@ -97,94 +97,21 @@ class CDQuestionnaire {
 	function add_javascripts() {
 		wp_enqueue_style ( 'bootstrap', plugin_dir_url ( __FILE__ ) . 'css/bootstrap.min.css' );
 		wp_enqueue_style ( 'jquery', plugin_dir_url ( __FILE__ ) . 'css/jquery.ui.all.css' );
-		// wp_enqueue_style ( 'jquery.base', plugin_dir_url ( __FILE__ ) . 'css/jquery.ui.base.css' );
-		// wp_enqueue_style ( 'jquery.theme', plugin_dir_url ( __FILE__ ) . 'css/jquery.ui.theme.css' );
 		wp_enqueue_style ( 'cdq', plugin_dir_url ( __FILE__ ) . 'css/style.css' );
 
 		wp_enqueue_script ( 'jquery' );
-
-		// wp_enqueue_script( 'jquery.ui.core', plugin_dir_url( __FILE__ ) . 'js/jquery.ui.core.min.js', array( 'jquery' ) );
-		// wp_enqueue_script( 'jquery.ui.datepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.ui.datepicker.min.js', array( 'jquery' ) );
-		// wp_enqueue_script( 'jquery.sheepItPlugin', plugin_dir_url( __FILE__ ) . 'js/jquery.sheepItPlugin.min.js', array( 'jquery' ) );
-		// wp_enqueue_script( 'jquery.validate', plugin_dir_url( __FILE__ ) . 'js/jquery.validate.min.js', array( 'jquery' ) );
-		// wp_enqueue_script( 'additional', plugin_dir_url( __FILE__ ) . 'js/additional-methods.min.js', array( 'jquery' ) );
-		// wp_enqueue_script( 'query.dump', plugin_dir_url( __FILE__ ) . 'js/jquery.dump.min.js', array( 'jquery' ) );
-		// wp_enqueue_script( 'messages', plugin_dir_url( __FILE__ ) . 'js/messages_ja.min.js', array( 'jquery' ) );
-
-
-		wp_enqueue_script ( 'jquery.ui.core', plugin_dir_url ( __FILE__ ) . 'js/jquery.ui.core.min.js' );
-		wp_enqueue_script ( 'jquery.ui.datepicker', plugin_dir_url ( __FILE__ ) . 'js/jquery.ui.datepicker.min.js' );
-		wp_enqueue_script ( 'jquery.sheepItPlugin', plugin_dir_url ( __FILE__ ) . 'js/jquery.sheepItPlugin.min.js' );
-		wp_enqueue_script ( 'jquery.validate', plugin_dir_url ( __FILE__ ) . 'js/jquery.validate.min.js' );
-		wp_enqueue_script ( 'additional', plugin_dir_url ( __FILE__ ) . 'js/additional-methods.min.js' );
-		wp_enqueue_script ( 'query.dump', plugin_dir_url ( __FILE__ ) . 'js/jquery.dump.min.js' );
-		wp_enqueue_script ( 'messages', plugin_dir_url ( __FILE__ ) . 'js/messages_ja.min.js' );
+		wp_enqueue_script( 'jquery.ui.core', plugin_dir_url( __FILE__ ) . 'js/jquery.ui.core.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'jquery.ui.datepicker', plugin_dir_url( __FILE__ ) . 'js/jquery.ui.datepicker.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'jquery.sheepItPlugin', plugin_dir_url( __FILE__ ) . 'js/jquery.sheepItPlugin.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'jquery.validate', plugin_dir_url( __FILE__ ) . 'js/jquery.validate.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'additional', plugin_dir_url( __FILE__ ) . 'js/additional-methods.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'query.dump', plugin_dir_url( __FILE__ ) . 'js/jquery.dump.min.js', array( 'jquery' ) );
+		wp_enqueue_script( 'messages', plugin_dir_url( __FILE__ ) . 'js/messages_ja.min.js', array( 'jquery' ) );
 	}
 
-	/**
-	 * アンケートの一覧を表示
-	 * [編集]ボタンで戻ってきたら、	function questionnaire_option_page() へ
-	 * [削除]ボタンで戻ってきたら、　削除作業をして、一覧を再表示
-	 */
-	function enquetes_table_page() {
-
-		// $_POST['enquete_options'])があったら保存
-		if (isset ( $_POST ['enquete_options'] )) {
-			// check_admin_referer ( 'enqoptions' );
-			$opt = $_POST ['enquete_options'];
-
-			if (isset ( $opt ['enquete_select_edit'] ) || isset ( $opt ['enquete_new_edit'] )) {
-				// form 文によってページ遷移
-				$this->questionnaire_option_page ();
-				return;
-			} else if (isset ( $opt ['enquete_select_delete'] )) {
-				// 削除作業
-				echo denn;
-				echo $this->deleteMessage ( $opt ['enquete_select_id'] );
-			}
-		}
-		// データベースから「enquete_id」「enquete_name」を取得する
-		$this->setEnquetesResult ();
-
-		?>
-<div class="wrap">
-	<div id="icon-options-general" class="icon32">
-		<br />
-	</div>
-	<h2>アンケート一覧</h2>
-
-
-
-
-	<?php
-	$column = '<table class="cdq_enquetes_table">';
-	$column .= "<tr><th>アンケートID</th><th>アンケート名</th><th>アクション</th></tr>";
-	for($id = 1; $id <= $this->max_id; $id ++) {
-			$input_id = '<input style="width: auto; text-align: right;" class="cdq_input_id" type="text" readonly name="enquete_options[enquete_select_id]" value=' . $id . ' />';
-			$edit = '<input class="button-primary cdq_edit_button" type="submit" name="enquete_options[enquete_select_edit]" value="編集" />';
-			$delete = '<input class="button-primary cdq_delete_button" type="submit" name="enquete_options[enquete_select_delete]" value="削除" />';
-			$column .= '<form action="" method="post">';
-			// $column .= wp_nonce_field ( 'enqoptions' );
-			$column .= '<tr><td>' . $input_id . '</td><td>' . $this->result [$id] . '</td><td>' . $edit . ' &nbsp; ' . $delete . '</td></tr>';
-			$column .= '</form>';
-		}
-		$column .= "</table>";
-		echo $column;
-		?>
-</div>
-<form action="" method="POST">
-	<input type="submit" name="enquete_options[enquete_new_edit]"
-		value="新規作成" />
-</form>
-
-
-<?php
-	}
 
 	/**
-	 * アンケートの新規作成/再編集
-	 * 　　　　　$_POST ['enquete_options']['enquete_select_edit']　の時、再編集
-	 * 　　　　　それ以外なら、新規作成
+	 * アンケートの新規作成
 	 */
 	function questionnaire_option_page() {
 		global $cd_smarty_instance;
@@ -324,11 +251,6 @@ EOF;
 	 *
 	 * @return string
 	 */
-	function getShortCode() {
-		// 実際には、id を受け取るか、送られてこなかったら データベースから最大値を取得する？
-		// 現在は、id　の記述がなかったら「id=0」となり「アンケートがない」旨を表示させている。
-		return '[CDQ-enquete id=' . $this->enquete_id . ']';
-	}
 
 	/**
 	 * 以下テーブル作成のSQL文
@@ -456,4 +378,11 @@ EOF;
 
 EOF;
 	}
+
+	function getShortCode() {
+		// 実際には、id を受け取るか、送られてこなかったら データベースから最大値を取得する？
+		// 現在は、id　の記述がなかったら「id=0」となり「アンケートがない」旨を表示させている。
+		return '[CDQ-enquete id=' . $this->enquete_id . ']';
+	}
+	
 }
