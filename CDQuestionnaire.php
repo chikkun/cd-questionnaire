@@ -90,34 +90,10 @@ class CDQuestionnaire {
 		// データベース用 テーブル名を決める
 		$this->setTableName ();
 
-		// メニュー表示
-		add_action ( 'admin_menu', array (
-		$this,
-		'add_pages'
-				) );
 				// プラグイン読み込み完了後にフックを登録
 				// add_action('plugins_loaded', array($this, 'activate'));
 	}
 
-	/**
-	 * 管理者メニューへ表示
-	 */
-	function add_pages() {
-// 		$hook = add_options_page ( 'アンケート　ページ', 'アンケート一覧', 'level_8', __FILE__, array (
-// 				$this,
-// 				'enquetes_table_page'
-// 		), '', 26 );
-// 		$hook_new = add_options_page ( '新規アンケート作成', '新規アンケート作成', 8, __FILE__ . '?option=new', array (
-// 				$this,
-// 				'questionnaire_option_page'
-// 		) );
-		$hook = add_menu_page( 'CDEnquete', 'アンケート', 8, __FILE__, array ($this, 'enquetes_table_page'),'',26 );
-		$hook_new = add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__. '?option=new', array($this, 'questionnaire_option_page'));
-		//$hook = add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__, array($this, 'questionnaire_option_page'));
-		add_action ( "admin_head-" . $hook, array (	$this, 'add_javascripts' ) );
-		add_action ( "admin_head-" . $hook_new, array (	$this, 'add_javascripts' ) );
-		// 'level_8' .$hook
-	}
 	function add_javascripts() {
 		wp_enqueue_style ( 'bootstrap', plugin_dir_url ( __FILE__ ) . 'css/bootstrap.min.css' );
 		wp_enqueue_style ( 'jquery', plugin_dir_url ( __FILE__ ) . 'css/jquery.ui.all.css' );

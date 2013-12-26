@@ -11,28 +11,36 @@
 
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDQuestionnaire.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDEnquete.php";
-//require_once dirname(__FILE__).DIRECTORY_SEPARATOR."functions.php";
-
-//  spl_autoload_register(function($classname){
-//  	include $classname . ".php";
-//  });
-//Load required files
 
 
-//global $question;
 $question = new CDQuestionnaire();
+
+// メニュー表示
+add_action ( 'admin_menu', 'add_pages' );
+/**
+ * 管理者メニューへ表示
+ */
+function add_pages() {
+	$hook = add_menu_page( 'CDEnquete', 'アンケート', 8, __FILE__, array ($queation, 'enquetes_table_page'),'',50 );
+	$hook_new = add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__. '?option=new', array($queation, 'questionnaire_option_page'));
+	//$hook = add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__, array($queation, 'questionnaire_option_page'));
+	add_action ( "admin_head-" . $hook, array (	$queation, 'add_javascripts' ) );
+	add_action ( "admin_head-" . $hook_new, array (	$queation, 'add_javascripts' ) );
+	// 'level_8' .$hook
+}
+
+
+
 
 // 有効化の時に実行する
 register_activation_hook(__FILE__, array($question, "activate"));
 // ショートコード有効化
 $cde = new CDEnquete();
-//add_shortcode('CDQ-enquete', array($cde, 'getEnquete'));
-
 
 //smarty設定
 $cd_smarty_version = "3.1.16";
 $cd_smarty_dir = plugin_dir_path( __FILE__ ) . "Smarty-" . $cd_smarty_version . "/libs/";
-//var_dump($cd_smarty_dir);
+
 require_once($cd_smarty_dir . "Smarty.class.php");
 $cd_smarty_instance = new Smarty();
 $cd_smarty_instance->template_dir = plugin_dir_path( __FILE__ ) . 'templates/';
