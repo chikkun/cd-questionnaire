@@ -22,7 +22,7 @@ add_action ( 'admin_menu', 'cd_questionnaire_add_pages' );
  * 管理者メニューへ表示
  */
 function cd_questionnaire_add_pages() {
-	$hook = add_menu_page( 'CDEnquete', 'アンケート', 8, __FILE__. '?action=search', array ($search, 'search_update_enquetes'),'',50 );
+	$hook = add_menu_page( 'CDEnquete', 'アンケート', 8, __FILE__, array ($search, 'search_update_enquetes'),'',50 );
 	$hook_new = add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__. '?action=new', array($question, 'questionnaire_option_page'));
 	//$hook = add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__, array($queation, 'questionnaire_option_page'));
 	add_action ( "admin_head-" . $hook, array (	$question, 'add_javascripts' ) );

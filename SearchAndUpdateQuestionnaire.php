@@ -6,11 +6,20 @@ class SearchAndUpdateQuestionnaire
     function __construct()
     {
         $this->db_version = get_option('cdq_db_version', 0);
-        add_action('admin_menu', array($this,
-            'add_pages'));
-        if ($_GET['func'] && $_GET['func'] == 'update') {
-            add_action('muplugins_loaded', array($this,
-                'update_enquete'));
+    }
+
+    function search_update_enquetes()
+    {
+        switch ($_GET['action']) {
+            case 'update':
+                $this->update_enquete();
+                break;
+            case 'search':
+                $this->search();
+                break;
+            default:
+                echo "why me called?";
+                $this->search();
         }
     }
 
@@ -112,20 +121,6 @@ EOF;
         $cd_smarty_instance->display("update.tpl");
     }
 
-    function search_update_enquetes()
-    {
-        switch ($_GET['action']) {
-            case 'update':
-                $this->update_enquete();
-                break;
-            case 'search':
-                $this->search();
-                break;
-            default:
-                echo "why me called?";
-                $this->search();
-        }
-    }
 
     function search()
     {
