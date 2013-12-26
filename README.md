@@ -1,4 +1,6 @@
 cd-questionnaire
 ================
 
-Questionnaire plugin for wordpress
+アンケートプラグイン
+
+Questionnaire plugin for WordPress
