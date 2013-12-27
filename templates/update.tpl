@@ -179,56 +179,16 @@ label.error {
               indexFormat: '#index_selections#',
               maxFormsCount: 20,
               iniFormsCount: 2,
-              allowRemoveAll: true,
-              afterFill: function (source, newForm) {
-                var sorders = $('.selectionorders');
-                var f;
-                var ssize = sorders.size();
-		if(ssize == 0) {
-		    return;
-		}
-                var num = 0;
-                var beforeNum = 0;
-                $(sorders).each(function () {
-                  num++;
-                  var id = this.id;
-                  if (/(\d+)_order/.test(id)) {
-                    f = RegExp.$1;
-                  } else {
-                    f = "1";
-                  }
-                  if (f == "0") {
-                    beforeNum = 0;
-                  }
-                  if ($(this).val() != undefined && $(this).val() !=  null && $(this).val() !== "") {
-                    beforeNum = $(this).val();
-                  } else {
-		    if(isFinite(beforeNum)) {
-			this.value = parseInt(beforeNum) + 1;
-			beforeNum = parseInt(beforeNum) + 1;
-		    }
-                  }
-                });
-              }
+              allowRemoveAll: true
+              
+		{{$afterAdd_selectionorders}}              
+              
             },
           }
-        ],
-        afterFill: function (source, newForm) {
-            var orders = $('.questionorders');
-            var size = orders.size();
-	    if(size == 0) {
-		return;
-	    }
-            var num = 0;
-            if (size == 1) {
-		num = 1;
-		orders[0].value = 1;
-            } else {
-                if (orders[size - 2].value !== undefined && orders[size - 2].value !==  null && orders[size - 2].value !== "" && isFinite(orders[size - 2].value) ) {
-		    orders[size - 1].value = parseInt(orders[size - 2].value) + 1;;
-                }
-            }
-        }
+        ]
+        
+	{{$afterAdd_questionorder}}        
+        
       });
     });
   </script>

@@ -125,6 +125,9 @@ class CDNewEnquete {
 			$opt = $_POST ['enquete_options'];
 			
 		}
+
+		$cd_smarty_instance->assign ( "afterAdd_selectionorders", file_get_contents('templates/selectionorders.tpl') );
+		$cd_smarty_instance->assign ( "afterAdd_questionorder", file_get_contents('templates/questionorders.tpl') );
 		
 		$cd_smarty_instance->assign ( "data", '' );
 		$cd_smarty_instance->assign ( "form_title", '新規登録' );
