@@ -1,0 +1,65 @@
+-- 1問目は答えが全て選択肢1
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 1, 1, 'sakai', now(), now());
+-- 1問目は答えが全て選択肢2(7)
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 2, 7, 'chiku', now(), now());
+-- 3問目は答えは「1,2,3,4」
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 11, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 12, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 12, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 13, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 13, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 13, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 14, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 14, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 14, 'kazukun', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 3, 14, 'kazukun', now(), now());
+-- 4問目は答えが「1,2,1,2,4」
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 16, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 17, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 17, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 18, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 19, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 19, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 20, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 20, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 20, 'tomoko', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 4, 20, 'tomoko', now(), now());
+-- 5問目は答えが「2,3,4,5,6」
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 21, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 21, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 22, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 22, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 22, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 23, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 23, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 23, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 23, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 24, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 24, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 24, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 24, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 24, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 25, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 25, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 25, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 25, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 25, 'nakata', now(), now());
+insert into wp_answers (enquete_id, question_id, selection_id, identifier, created, modified) values (1, 5, 25, 'nakata', now(), now());
