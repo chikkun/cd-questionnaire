@@ -39,14 +39,14 @@ label.error {
           <label for="start_date" class="span2 colabel">開始日</label>
 
           <div class="span6">
-            <input type="text" name="start_date" class="jqueryCalendar input-medium" value="{{$end_date}}" placeholder="開始日(必須)" data-rule-required="true"/>
+            <input type="text" name="start_date" class="jqueryCalendar input-medium" value="{{$start_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}" placeholder="開始日(必須)" data-rule-required="true"/>
           </div>
         </div>
         <div class="control-group row">
           <label for="end_date" class="span2 colabel">終了日</label>
 
           <div class="span6">
-            <input type="text" name="end_date" class="jqueryCalendar input-medium" value="{{$end_date}}" placeholder="終了日"/>
+            <input type="text" name="end_date" class="jqueryCalendar input-medium" value="{{$end_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}" placeholder="終了日"/>
           </div>
         </div>
 
@@ -129,8 +129,11 @@ label.error {
           <div class='row'>　</div>
         </div>
         <div class="row span3 offset5">
-          <button type="submit" name="enquete_action" value="{{$enqueteAction}}" class="btn btn-primary btn-large">　{{$enquete_button}} </button>
-        </div>
+          <button type="submit" name="action" value="{{$enqueteAction}}" class="btn btn-primary btn-large"> {{$enquete_button}} </button>
+		{{if $enqueteAction == "update"}}
+					<button type="submit" name="action" value="delete" class="btn btn-warning btn-large"> 削除 </button>
+		{{/if}}
+				</div>
       </fieldset>
     </form>
   </div>

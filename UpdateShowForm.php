@@ -75,7 +75,7 @@ EOF;
 			}
 			$select = new \stdClass ();
 			$sikibetu = "enquete_questions_" . $qnum . "_selections_index_selections_selection";
-			$sikibetu2 = "enquete_questions_" . $qnum . "_selections_index_selections_selection_order";
+			$sikibetu2 = "enquete_questions_" . $qnum . "_selections_index_selections_order";
 			$select->$sikibetu = $val->selection_display;
 			$select->$sikibetu2 = $val->s_sort_id;
 			array_push($each_results->enquete_questions_index_selections, $select);
@@ -96,6 +96,9 @@ EOF;
 		$cd_smarty_instance->assign("enquete_title", $enquete_title);
 		$cd_smarty_instance->assign("start_date", $start_date);
 		$cd_smarty_instance->assign("end_date", $end_date);
+		$cd_smarty_instance->assign("form_title", "修正/削除");
+		$cd_smarty_instance->assign("enqueteAction", "update");
+		$cd_smarty_instance->assign("enquete_button", "修正");
 		$cd_smarty_instance->display("update.tpl");
 	}
 }

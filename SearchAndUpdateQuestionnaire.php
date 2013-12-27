@@ -18,13 +18,20 @@ class SearchAndUpdateQuestionnaire {
 	}
 
 	function search_update_questionnaire() {
-		switch ($_GET ['action']) {
+		$action = $_GET ['action'];
+		if($_POST ['action']){
+			$action =$_POST ['action'];
+		}
+		switch ($action) {
 			case 'update_form' :
 				require_once("UpdateShowForm.php");
 				$update_show_form = new \cd\UpdateShowForm();
 				$update_show_form->update_show_form();
 				break;
 			case 'update' :
+				require_once("UpdateQuestionnaire.php");
+				$update_questionnaire = new \cd\UpdateQuestionnaire();
+				$update_questionnaire->update();
 				break;
 			case 'search' :
 				require_once("SearchQuestionnaire.php");
