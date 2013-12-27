@@ -129,7 +129,7 @@ label.error {
           <div class='row'>　</div>
         </div>
         <div class="row span3 offset5">
-          <button type="submit" class="btn btn-primary btn-large">　保　存　</button>
+          <button type="submit" name="enquete_action" value="{{$enqueteAction}}" class="btn btn-primary btn-large">　{{$enquete_button}} </button>
         </div>
       </fieldset>
     </form>

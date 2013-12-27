@@ -31,15 +31,16 @@ class CDEnquete {
 	 * @return string
 	 */
 	function getEnquete($atts) {
+
 		wp_enqueue_script( 'jquery' );
 		wp_enqueue_script( 'cdq_json_cookie', plugin_dir_url( __FILE__ ) . 'js/cdq_json_cookie.js', array( 'jquery' ), false, true );
-		wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . 'css/bootst\
-				rap.min.css', false, false, true );
+		wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css', false, false, true );
 
 		extract(shortcode_atts(array(
 		'id' => 0
 		), $atts));
 		$this->id = $id;
+
 		if(isset($_POST['enquete_options'])) {
 			// answers テーブルに登録
 			$opt = $_POST ['enquete_options'];

@@ -15,8 +15,7 @@ class CDQuestionnaire {
 			"enquetes",
 			"questions",
 			"selections",
-			"answers",
-			"identifiers" 
+			"answers"
 	);
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
@@ -94,7 +93,7 @@ CREATE TABLE {$this->tableName['enquetes']} (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(128) NOT NULL COMMENT 'アンケート名',
   `start_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '開始日',
-  `end_date` timestamp NOT NULL DEFAULT '2034-12-31 23:59:50' COMMENT '終了日',
+  `end_date` timestamp NOT NULL DEFAULT '2034-12-31 00:00:00' COMMENT '終了日',
   `poll_or_question` int(1) unsigned NOT NULL DEFAULT '0' COMMENT 'アンケートor問題',
   `delete_flag` int(1) unsigned NOT NULL DEFAULT '1' COMMENT '削除フラグ',
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
@@ -147,17 +146,6 @@ CREATE TABLE {$this->tableName['answers']} (
   PRIMARY KEY (`id`),
   INDEX (`enquete_id`, `question_id`, `selection_id`, `identifier`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET='$this->char' COMMENT='回答結果テーブル';
-EOS;
-	}
-	function identifiersSql() {
-		return <<<EOS
-CREATE TABLE {$this->tableName['identifiers']} (
-  id bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
-  enquete_id bigint NOT NULL COMMENT 'enquete_id',
-  identifier varchar(512) NOT NULL COMMENT 'identifier',
-  PRIMARY KEY  (id)
-  ) CHARACTER SET '$this->char',
-  COMMENT = '識別子テーブル';
 EOS;
 	}
 }

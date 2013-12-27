@@ -9,15 +9,16 @@
 */
 
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDQuestionnaire.php";
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDNewEnquete.php";
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR."NewQuestionnaire.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDEnquete.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."SearchAndUpdateQuestionnaire.php";
 
 use \cd\SearchAndUpdateQuestionnaire;
+use \cd\NewQuestionnaire;
 
 $question = new CDQuestionnaire();
 $search = new SearchAndUpdateQuestionnaire();
-$new = new CDNewEnquete();
+$new = new NewQuestionnaire();
 
 // 有効化の時に実行する
 register_activation_hook(__FILE__, array($question, "activate"));

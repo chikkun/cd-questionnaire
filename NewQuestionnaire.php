@@ -1,11 +1,13 @@
 <?php
+namespace cd;
 /**
- * FILE: CDNewEnquete.php
+ * FILE: NewQuestionnaire.php
  * Author: C & D, Inc.;
  * アンケート作成を行う管理者の作業
+ * @property mixed getShortCode
  */
-class CDNewEnquete {
-	
+class NewQuestionnaire {
+
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 *
@@ -52,13 +54,9 @@ class CDNewEnquete {
 	
 	/**
 	 * コンストラクタ
-	 * クラスのバージョン管理
-	 * テーブル名管理(新規作成/削除時にも実行される)
-	 * テーブルの作成管理(プラグインが有効化されてときに実行)
 	 * メニュー表示
 	 */
 	function __construct() {
-		// メニュー表示
 		add_action ( 'admin_menu', array (
 				$this,
 				'cd_questionnaire_add_pages' 
@@ -102,11 +100,24 @@ class CDNewEnquete {
 				'jquery' 
 		) );
 	}
+
+	function divideAction() {
+		if ( isset($_POST['enquete_action']) ) {
+			$this->questionnaire_confirm_page();
+		} else {
+			$this->questionnaire_new_page();
+		}
+	}
+
+	function questionnaire_confirm_page() {
+		echo "questionnaire_confirm_page";
+	}
 	
 	/**
 	 * アンケートの新規作成
 	 */
 	function questionnaire_new_page() {
+		var_dump($_POST);
 		$this->setTableName ();
 		$this->add_javascripts ();
 		global $cd_smarty_instance;
@@ -128,7 +139,10 @@ class CDNewEnquete {
 
 		$cd_smarty_instance->assign ( "afterAdd_selectionorders", file_get_contents('templates/selectionorders.tpl') );
 		$cd_smarty_instance->assign ( "afterAdd_questionorder", file_get_contents('templates/questionorders.tpl') );
-		
+
+		$cd_smarty_instance->assign ( "enqueteAction", 'newEnquete' );
+		$cd_smarty_instance->assign ( "enquete_button", 'new Enquete' );
+
 		$cd_smarty_instance->assign ( "data", '' );
 		$cd_smarty_instance->assign ( "form_title", '新規登録' );
 		$cd_smarty_instance->display ( "update.tpl" );
@@ -160,7 +174,7 @@ class CDNewEnquete {
 			);
 EOF;
 		
-		$result = mysql_query ( $query );
+		//$result = mysql_query ( $query );
 		
 		global $wpdb;
 		$sql = $wpdb->prepare ( $sql, $this->enquete_name, $this->start_date, $this->end_date );
@@ -212,7 +226,7 @@ EOF;
 	}
 	function setTableName() {
 		if (! isset ( $this->tableName )) {
-			$cdq = new CDQuestionnaire ();
+			$cdq = new \CDQuestionnaire ();
 			$this->tableName = $cdq->getTableName ();
 		}
 	}
