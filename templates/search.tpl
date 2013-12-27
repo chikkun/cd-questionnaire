@@ -89,7 +89,7 @@
                 <tbody>
                 {{foreach from=$e_list item=var}}
                 <tr>
-                    <td><a href="admin.php?page={{$page}}&id={{$var->id}}&func=update">{{$var->id}}</a></td>
+                    <td><a href="admin.php?page={{$page}}&id={{$var->id}}&action=update_form">{{$var->id}}</a></td>
                     <td>{{$var->name}}</td>
                     <td>{{$var->start_date}}</td>
                     <td>{{$var->end_date}}</td>

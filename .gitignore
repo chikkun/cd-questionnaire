@@ -5,3 +5,5 @@
 .project
 .buildpath
 .editorconfig
+templates_c/*.php
+cache/*.php
