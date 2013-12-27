@@ -13,6 +13,7 @@ require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDNewEnquete.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDEnquete.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."SearchAndUpdateQuestionnaire.php";
 
+use \cd\SearchAndUpdateQuestionnaire;
 
 $question = new CDQuestionnaire();
 $search = new SearchAndUpdateQuestionnaire();
