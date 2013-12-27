@@ -1,4 +1,5 @@
 <?php
+
 namespace cd;
 
 class QuestionnaireDAO {
@@ -44,9 +45,8 @@ class QuestionnaireDAO {
 		! isset ( $this->tableNames ) ? $this->setTableNames () : NULL;
 		return $this->tableNames;
 	}
-	
 	function getEnqueteData($id) {
-		$sql =<<<EOF
+		$sql = <<<EOF
 			SELECT e.id AS e_id,
 			e.name AS e_name,
 			e.start_date,
@@ -75,10 +75,9 @@ class QuestionnaireDAO {
 EOF;
 		
 		global $wpdb;
-		$results = $wpdb->get_results($wpdb->prepare($sql, $id));
+		$results = $wpdb->get_results ( $wpdb->prepare ( $sql, $id ) );
 		return $results;
 	}
-	
 	
 	function insertEnquete($enquete_name, $start_date, $end_date) {
 		$sql = <<<EOF
@@ -112,11 +111,11 @@ EOF;
 			$sql = $wpdb->prepare ( $sql, $enquete_name, $start_date, $end_date );
 		}
 		$wpdb->query ( $sql );
-		$this->setEnquetesResult ();
 		$query = 'select last_insert_id();';
 		$enquete_id = $wpdb->get_var ( $query );
 		return $enquete_id;
 	}
+
 	function insertQuestion($question) {
 		$sql = <<<EOF
 			INSERT INTO {$this->tableNames['questions']}
@@ -153,29 +152,22 @@ EOF;
 			$wpdb->query ( $sql );
 		}
 	}
-	
 	function insertAnswer() {
-		!isset($this->tableNames) ? $this->getTableNames() : NULL;
-	
+		! isset ( $this->tableNames ) ? $this->getTableNames () : NULL;
+		
 		$sql = "
-				INSERT INTO ".$this->tableNames['answers']."
+				INSERT INTO " . $this->tableNames ['answers'] . "
 						(enquete_id,question_id,selection_id,identifier)
 						VALUES
 						(%d,%d,%d,%s);
 						";
 		global $wpdb;
-		$sql = $wpdb->prepare($sql,
-				$this->answerData['eid'],
-				$this->answerData['qid'],
-				$this->answerData['sid'],
-				$this->answerData['identifier']
-		);
-	
-		$wpdb->query($sql);
-	
-		$this->answerData = array();
+		$sql = $wpdb->prepare ( $sql, $this->answerData ['eid'], $this->answerData ['qid'], $this->answerData ['sid'], $this->answerData ['identifier'] );
+		
+		$wpdb->query ( $sql );
+		
+		$this->answerData = array ();
 	}
-	
 	
 	
 	/**
@@ -210,69 +202,11 @@ CREATE TABLE {$this->tableNames['questions']} (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
-  INDEX (`enquete_id`, `sort_id`)	function insertEnquete() {
-		$sql = <<<EOF
-			INSERT INTO {$this->tableNames['enquetes']}
-			(name,start_date,end_date,poll_or_question)
-			VALUES
-			(
-	 			%s,
-  				%s,
-  				%s,
-  				'1'
-			);
-EOF;
-		
-		// $result = mysql_query ( $query );
-		
-		global $wpdb;
-		$sql = $wpdb->prepare ( $sql, $this->enquete_name, $this->start_date, $this->end_date );
-		$wpdb->query ( $sql );
-		$this->setEnquetesResult ();
-		$query = 'select last_insert_id();';
-		$this->enquete_id = $wpdb->get_var ( $query );
-		return $sql;
-	}
-	function insertQuestion($question) {
-		$sql = <<<EOF
-			INSERT INTO {$this->tableNames['questions']}
-			(enquete_id,sort_id,question_text,multiple_answer)
-			VALUES
-			(
-				%d,
-  				%d,
-  				%s,
-  				%d
-			);
-EOF;
-		
-		global $wpdb;
-		// TODO multiple_answer に対応させる
-		$sql = $wpdb->prepare ( $sql, $this->enquete_id, $question ['order'], $question ['question'], 1 );
-		$wpdb->query ( $sql );
-		$query = 'select last_insert_id(); '; // from ' .$this->tableNames['questions'];
-		$q_id = $wpdb->get_var ( $query );
-		
-		$sqln = <<<EOF
-			INSERT INTO {$this->tableNames['selections']}
-			(question_id,sort_id,selection_display)
-			VALUES
-			(
-  				%d,
-  				%d,
-  				%s
-			);
-EOF;
-		
-		foreach ( $question ['selections'] as $sel ) {
-			$sql = $wpdb->prepare ( $sqln, $q_id, $sel ['order'], $sel ['selection'] );
-			$wpdb->query ( $sql );
-		}
-	}
-  
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET='$this->char' COMMENT='質問テーブル';
+  INDEX (`enquete_id`, `sort_id`)
+ ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET='$this->char' COMMENT='質問テーブル';
 EOS;
 	}
+
 	function selectionsSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['selections']} (
