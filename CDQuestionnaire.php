@@ -24,7 +24,7 @@ class CDQuestionnaire {
 	 * @var unknown
 	 *
 	 */
-	var $tableName = array ();
+	var $tableName = NULL;
 	/**
 	 * データベースで使われる言語
 	 * UTF8
@@ -34,16 +34,16 @@ class CDQuestionnaire {
 	 */
 	var $char = NULL;
 	function __construct() {
-// 		$this->db_version = get_option ( 'cdq_db_version', 0 );
-
-// 		// wp-config.phpに書いてある文字コードを使用する
-// 		$this->char = defined ( "DB_CHARSET" ) ? DB_CHARSET : "utf8";
-
-// 		// データベース用 テーブル名を決める
-// 		$this->setTableName ();
-
-// 				// プラグイン読み込み完了後にフックを登録
-// 				// add_action('plugins_loaded', array($this, 'activate'));
+		$this->db_version = get_option ( 'cdq_db_version', 0 );
+		
+		// wp-config.phpに書いてある文字コードを使用する
+		$this->char = defined ( "DB_CHARSET" ) ? DB_CHARSET : "utf8";
+		
+		// データベース用 テーブル名を決める
+		$this->setTableName ();
+		
+		// プラグイン読み込み完了後にフックを登録
+		// add_action('plugins_loaded', array($this, 'activate'));
 	}
 	
 	/**
@@ -71,6 +71,16 @@ class CDQuestionnaire {
 			dbDelta ( $this->$sqlfunc () );
 		}
 		update_option ( "cdq_db_version", $this->version );
+	}
+	function setTableName() {
+		global $wpdb;
+		foreach ( $this->table as $name ) {
+			$this->tableName [$name] = $wpdb->prefix . $name;
+		}
+	}
+	function getTableName() {
+		!isset ( $this->tableName ) ? $this->setTableName () : NULL;
+		return $this->tableName;
 	}
 	
 	/**

@@ -5,39 +5,16 @@
  * アンケート作成を行う管理者の作業
  */
 class CDNewEnquete {
-	/**
-	 * プラグインのバージョン
-	 *
-	 * @var unknown
-	 */
-	var $version = 0.123;
-	/**
-	 * データベースのテーブルの識別
-	 *
-	 * @var unknown
-	 */
-	var $table = array (
-			"enquetes",
-			"questions",
-			"selections",
-			"answers",
-			"identifiers" 
-	);
+	
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 *
 	 * @var unknown
 	 */
-	var $tableName = array ();
+	var $tableName = NULL;
 	/**
 	 * データベースで使われる言語
 	 * UTF8
-	 *
-	 * @var unknown
-	 */
-	var $char = NULL;
-	/**
-	 * アンケートid
 	 *
 	 * @var unknown
 	 */
@@ -82,18 +59,20 @@ class CDNewEnquete {
 	 */
 	function __construct() {
 		// メニュー表示
-		add_action ( 'admin_menu', array ( $this, 'cd_questionnaire_add_pages' ) );
+		add_action ( 'admin_menu', array (
+				$this,
+				'cd_questionnaire_add_pages' 
+		) );
 	}
 	
 	/**
 	 * 管理者メニューへ表示
 	 */
 	function cd_questionnaire_add_pages() {
-		$hook_new = add_submenu_page ( 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 8, 'cd-questionnaire/CDNewEnquete.php?action=new', array (
+		$hook_new = add_submenu_page ( 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 8, __FILE__ . '?action=new', array (
 				$this,
-				'questionnaire_option_page' 
+				'questionnaire_new_page' 
 		) );
-
 	}
 	function add_javascripts() {
 		wp_enqueue_style ( 'bootstrap', plugin_dir_url ( __FILE__ ) . 'css/bootstrap.min.css' );
@@ -127,7 +106,9 @@ class CDNewEnquete {
 	/**
 	 * アンケートの新規作成
 	 */
-	function questionnaire_option_page() {
+	function questionnaire_new_page() {
+		$this->setTableName ();
+		$this->add_javascripts ();
 		global $cd_smarty_instance;
 		
 		if (isset ( $_POST ['enquete_name'] )) {
@@ -135,7 +116,6 @@ class CDNewEnquete {
 			$this->printShortCode ();
 		}
 		$this->setEnquetesResult ();
-		// $this->add_javascripts ();
 		
 		$phase = "new";
 		$statement = $this->new_enquete_phase;
@@ -144,9 +124,6 @@ class CDNewEnquete {
 			// check_admin_referer ( 'enqoptions' );
 			$opt = $_POST ['enquete_options'];
 			
-			wp_enqueue_style ( 'bootstrap', plugin_dir_url ( __FILE__ ) . 'css/bootstrap.min.css', false, false, true );
-			wp_enqueue_style ( 'jquery', plugin_dir_url ( __FILE__ ) . 'css/jquery.ui.all.css', false, false, true );
-			wp_enqueue_style ( 'cdq', plugin_dir_url ( __FILE__ ) . 'css/style.css', false, false, true );
 		}
 		
 		$cd_smarty_instance->assign ( "data", '' );
@@ -226,24 +203,18 @@ EOF;
 			$wpdb->query ( $sql );
 		}
 	}
-	
-	/**
-	 * どうでも良い小間物
-	 *
-	 * @return string
-	 */
 	function getMaxId($table) {
 		global $wpdb;
 		return $wpdb->get_var ( 'SELECT MAX(id) FROM ' . $table . ';' );
 	}
 	function setTableName() {
-		global $wpdb;
-		foreach ( $this->table as $name ) {
-			$this->tableName [$name] = $wpdb->prefix . $name;
+		if (! isset ( $this->tableName )) {
+			$cdq = new CDQuestionnaire ();
+			$this->tableName = $cdq->getTableName ();
 		}
 	}
 	function setEnquetesResult() {
-		! isset ( $this->tableName ) ? $this->setTableName () : NULL;
+		$this->setTableName ();
 		global $wpdb;
 		$enqrows = $wpdb->get_results ( "SELECT id, name FROM " . $this->tableName ['enquetes'] );
 		$id = 0;
