@@ -48,7 +48,7 @@ class CDQuestionnaire {
 	
 	/**
 	 * Pluginが有効化された時に実行される
-	 * テーブルが最新で無い/存在しない時に、一つづつ　create　する。
+	 * テーブルが最新で無い/存在しない時に、一つずつ　create　する。
 	 */
 	function activate() {
 		global $wpdb;
