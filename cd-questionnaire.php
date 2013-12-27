@@ -9,12 +9,15 @@
 */
 
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDQuestionnaire.php";
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR."QuestionnaireDAO.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."NewQuestionnaire.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDEnquete.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."SearchAndUpdateQuestionnaire.php";
 
 use \cd\SearchAndUpdateQuestionnaire;
 use \cd\NewQuestionnaire;
+use \cd\QuestionnaireDAO;
+use \cd\CDEnquete;
 
 $question = new CDQuestionnaire();
 $search = new SearchAndUpdateQuestionnaire();

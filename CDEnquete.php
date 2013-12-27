@@ -1,4 +1,7 @@
 <?php
+namespace cd;
+
+//use \cd\QuestionnaireDAO;
 /**
  * FILE: CDEnquete.php
  * Author: C & D, Inc.;
@@ -48,6 +51,9 @@ class CDEnquete {
 
 			$identifier = $_COOKIE['CDQ_enquete'];
 
+			//TODO 
+			//   identifier ---> $_COOKIE['CDQ_enquete'][] = $e_id
+			//
 			$results = $this->getIdentifier();
 			foreach ($results as $ident) {
 				if ($ident->identifier == $identifier) {
@@ -66,8 +72,9 @@ class CDEnquete {
 					} else {
 						preg_match("/^(\d+)?:/", $sel, $sid);
 						$this->answerData['sid'] = $sid[1];
-
-						$this->insertAnswer();
+	
+						$dao = new QuestionnaireDAO();
+						$dao->insertAnswer();
 					}
 				}
 			}
@@ -75,8 +82,8 @@ class CDEnquete {
 			return $this->getThanks() ;
 		} else {
 			// データベースから必要な情報を取得する
-			global $wpdb;
-			$results = $wpdb->get_results($wpdb->prepare($this->resultSql(), $id));
+			$dao = new QuestionnaireDAO();
+			$results= $dao->getEnqueteData($id);
 			if( NULL === $results || !isset($results[0]->q_id)) {
 				return "<p>id= 『 $id 』 のアンケートが取得できませんでした。別の「id」番号でやり直して下さい。<p>";
 			}
@@ -129,8 +136,8 @@ class CDEnquete {
 	 * アンケートの答えを登録するテーブル名を取得する。
 	 */
 	function getTableName() {
-		$cdq = new CDQuestionnaire();
-		$this->tableName = $cdq->tableName['answers'];
+		$dao = new QuestionnaireDAO();
+		$this->tableName = $dao->tableNames['answers'];
 	}
 
 	/**
@@ -148,66 +155,6 @@ class CDEnquete {
 		return $wpdb->get_results($sql);
 
 	}
-
-	/**
-	 * データベースに登録
-	 */
-	function insertAnswer() {
-		!isset($this->tableName) ? $this->getTableName() : NULL;
-
-		$sql = "
-				INSERT INTO ".$this->tableName."
-						(enquete_id,question_id,selection_id,identifier)
-						VALUES
-						(%d,%d,%d,%s);
-						";
-		global $wpdb;
-		$sql = $wpdb->prepare($sql,
-				$this->answerData['eid'],
-				$this->answerData['qid'],
-				$this->answerData['sid'],
-				$this->answerData['identifier']
-		);
-
-		$wpdb->query($sql);
-
-		$this->answerData = array();
-	}
-
-	/**
-	 * アンケートの答えを登録するSQL
-	 * @return string
-	 */
-	function resultSql() {
-		return <<<EOF
-			SELECT e.id AS e_id,
-			e.name AS e_name,
-			e.start_date,
-			e.end_date,
-			e.poll_or_question,
-			q.id AS q_id,
-			q.enquete_id,
-			q.sort_id AS q_sort_id,
-			q.question_text,
-			q.multiple_answer,
-			s.id AS s_id,
-			s.question_id,
-			s.sort_id AS s_sort_id,
-			s.selection_display,
-			s.to_select_flag
-			FROM   wp_enquetes AS e
-			INNER JOIN
-			wp_questions AS q
-			ON e.id = q.enquete_id
-			INNER JOIN
-			wp_selections AS s
-			ON q.id = s.question_id
-			WHERE  e.id = %s
-			ORDER BY
-			q_sort_id, q_id, s_sort_id, s_id;
-EOF;
-	}
-
 
 
 	/**

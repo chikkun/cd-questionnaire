@@ -190,7 +190,7 @@ label.error {
           }
         ]
         
-	{{$afterAdd_questionorder}}        
+	{{$afterAdd_questionorders}}        
         
       });
     });

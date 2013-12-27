@@ -1,13 +1,15 @@
 <?php
 namespace cd;
+
 /**
  * FILE: NewQuestionnaire.php
  * Author: C & D, Inc.;
  * アンケート作成を行う管理者の作業
+ * 
  * @property mixed getShortCode
  */
 class NewQuestionnaire {
-
+	
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 *
@@ -69,7 +71,7 @@ class NewQuestionnaire {
 	function cd_questionnaire_add_pages() {
 		$hook_new = add_submenu_page ( 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 8, __FILE__ . '?action=new', array (
 				$this,
-				'questionnaire_new_page' 
+				'divideAction' 
 		) );
 	}
 	function add_javascripts() {
@@ -100,49 +102,38 @@ class NewQuestionnaire {
 				'jquery' 
 		) );
 	}
-
 	function divideAction() {
-		if ( isset($_POST['enquete_action']) ) {
-			$this->questionnaire_confirm_page();
+		if (isset ( $_POST ['enquete_action'] )) {
+			$this->questionnaire_confirm_page ();
 		} else {
-			$this->questionnaire_new_page();
+			$this->questionnaire_new_page ();
 		}
 	}
-
 	function questionnaire_confirm_page() {
 		echo "questionnaire_confirm_page";
+		$this->registEnquete ();
+		echo $this->printShortCode ();
 	}
 	
 	/**
 	 * アンケートの新規作成
 	 */
 	function questionnaire_new_page() {
-		var_dump($_POST);
+		var_dump ( $_POST );
 		$this->setTableName ();
 		$this->add_javascripts ();
 		global $cd_smarty_instance;
 		
-		if (isset ( $_POST ['enquete_name'] )) {
-			$this->registEnquete ();
-			$this->printShortCode ();
-		}
 		$this->setEnquetesResult ();
 		
-		$phase = "new";
 		$statement = $this->new_enquete_phase;
-		// $_POST['enquete_options'])があったら保存
-		if (isset ( $_POST ['enquete_options'] )) {
-			// check_admin_referer ( 'enqoptions' );
-			$opt = $_POST ['enquete_options'];
-			
-		}
-
-		$cd_smarty_instance->assign ( "afterAdd_selectionorders", file_get_contents('templates/selectionorders.tpl') );
-		$cd_smarty_instance->assign ( "afterAdd_questionorder", file_get_contents('templates/questionorders.tpl') );
-
-		$cd_smarty_instance->assign ( "enqueteAction", 'newEnquete' );
-		$cd_smarty_instance->assign ( "enquete_button", 'new Enquete' );
-
+		
+		$cd_smarty_instance->assign ( "afterAdd_selectionorders", file_get_contents ( plugin_dir_path(__FILE__).'templates/selectionorders.tpl' ) );
+		$cd_smarty_instance->assign ( "afterAdd_questionorders", file_get_contents ( plugin_dir_path(__FILE__).'templates/questionorders.tpl' ) );
+		
+		$cd_smarty_instance->assign ( "enqueteAction", 'new' );
+		$cd_smarty_instance->assign ( "enquete_button", '新規登録' );
+		
 		$cd_smarty_instance->assign ( "data", '' );
 		$cd_smarty_instance->assign ( "form_title", '新規登録' );
 		$cd_smarty_instance->display ( "update.tpl" );
@@ -154,13 +145,16 @@ class NewQuestionnaire {
 		$this->enquete_name = $_POST ['enquete_name'];
 		$this->start_date = $_POST ['start_date'];
 		$this->end_date = $_POST ['end_date'];
-		$this->insertEnquete ();
+		$dao = new QuestionnaireDAO();
+		$dao->insertEnquete ($this->enquete_name, $this->start_date, $this->end_date);
 		
 		$enquete = $_POST ['enquete'] ['questions'];
 		foreach ( $enquete as $question ) {
-			$this->insertQuestion ( $question );
+			$dao->insertQuestion ( $question );
 		}
 	}
+	
+	/*
 	function insertEnquete() {
 		$sql = <<<EOF
 			INSERT INTO {$this->tableName['enquetes']}
@@ -174,13 +168,13 @@ class NewQuestionnaire {
 			);
 EOF;
 		
-		//$result = mysql_query ( $query );
+		// $result = mysql_query ( $query );
 		
 		global $wpdb;
 		$sql = $wpdb->prepare ( $sql, $this->enquete_name, $this->start_date, $this->end_date );
 		$wpdb->query ( $sql );
 		$this->setEnquetesResult ();
-		$query = 'select last_insert_id();'; // from ' .$this->tableName['enquetes'];
+		$query = 'select last_insert_id();';
 		$this->enquete_id = $wpdb->get_var ( $query );
 		return $sql;
 	}
@@ -220,14 +214,16 @@ EOF;
 			$wpdb->query ( $sql );
 		}
 	}
+*/
+	
 	function getMaxId($table) {
 		global $wpdb;
 		return $wpdb->get_var ( 'SELECT MAX(id) FROM ' . $table . ';' );
 	}
 	function setTableName() {
 		if (! isset ( $this->tableName )) {
-			$cdq = new \CDQuestionnaire ();
-			$this->tableName = $cdq->getTableName ();
+			$dao = new QuestionnaireDAO ();
+			$this->tableName = $dao->getTableNames ();
 		}
 	}
 	function setEnquetesResult() {
@@ -264,19 +260,15 @@ EOF;
 	}
 	function printShortCode() {
 		return <<<EOF
+		<div class="updated fade">
 			<p>現在のアンケートを発行するには、下のショートコードを、アンケートを表示したい固定ページや投稿ページ内に書き込んでください。ここでの作業はそれで終了です。</p>
 			<p>
 				ショートコード：<input style="width: auto;"
 					name="enquete_options[enquete_short_code]" type="text"
 					id="inputshortcode" readonly
-					value=" $this->getShortCode() " class="regular-text" />
+					value="[CDQ-enquete id={$this->enquete_id}]" class="regular-text" />
 			</p>
-
+		</div>
 EOF;
-	}
-	function getShortCode() {
-		// 実際には、id を受け取るか、送られてこなかったら データベースから最大値を取得する？
-		// 現在は、id　の記述がなかったら「id=0」となり「アンケートがない」旨を表示させている。
-		return '[CDQ-enquete id=' . $this->enquete_id . ']';
 	}
 }
