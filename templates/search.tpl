@@ -35,7 +35,7 @@
                     <label for="where[start_date_after]" class="span3 colabel">アンケート開始日(以降)</label>
 
                     <div class="span6">
-                        <input type="text" name="where[start_date_after]" class="input-large jqueryCalendar"
+                        <input data-rule-cdate="true" type="text" name="where[start_date_after]" class="input-large jqueryCalendar"
                                value="{{$start_date_after}}" placeholder="開始日以降(この日を含む)" data-rule-date="true"/>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                     <label for="where[start_date_before]" class="span3 colabel">アンケート開始日(以前)</label>
 
                     <div class="span6">
-                        <input type="text" name="where[start_date_before]" class="input-large jqueryCalendar"
+                        <input data-rule-cdate="true" type="text" name="where[start_date_before]" class="input-large jqueryCalendar"
                                value="{{$start_date_before}}" placeholder="開始日以前(この日を含む)" data-rule-date="true"/>
                     </div>
                 </div>
@@ -91,8 +91,8 @@
                 <tr>
                     <td><a href="admin.php?page={{$page}}&id={{$var->id}}&action=update_form">{{$var->id}}</a></td>
                     <td>{{$var->name}}</td>
-                    <td>{{$var->start_date}}</td>
-                    <td>{{$var->end_date}}</td>
+									<td>{{$var->start_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}</td>
+                    <td>{{$var->end_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}</td>
                 </tr>
                 {{/foreach}}
                 </tbody>
@@ -108,11 +108,27 @@
 </div>
 <script>
     jQuery(document).ready(function ($) {
+		jQuery.validator.addMethod("cdate", function(value, element) {
+			if(!value){
+				return true;
+			}
+			r = value.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})$/);
+				if(!r){
+					return false;
+				}
+				if (r[2] < 1 || r[2] > 12 || r[3] < 1) {
+					return false;
+				}
+				if (r[2] == 2) {
+					return r[3] <= (r[1] % 4 == 0 && r[1] % 100 != 0 || r[1] % 400 == 0 ? 29 : 28);
+				}
+				return r[3] <= (r[2] == 4 || r[2] == 6 || r[2] == 9 || r[2] == 11 ? 30 : 31);
+			}, "YYYY/MM/DD形式で入力して下さい。");
         $('#enquete input[type="reset"]').click(function () {
             $('#enquete input[type="text"]').each(function () {
-                $(this).attr("value", "");
-            });
+              $(this).attr("value", "");
         });
+     });
         var $form = $("#enquete");
         $form.validate();
 
