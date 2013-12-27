@@ -105,14 +105,13 @@ EOF;
 		}
 		array_push ( $each_results->enquete_questions_index_selections, $select );
 		array_push ( $alldata->data, $each_results );
-		
-		$json = json_encode ( $alldata, JSON_PRETTY_PRINT );
+		$json = json_encode ( $alldata);
 		$json = preg_replace ( '/questions_index_order/', 'questions_#index#_order', $json );
 		$json = preg_replace ( '/questions_index_question/', 'questions_#index#_question', $json );
 		$json = preg_replace ( '/questions_index_selections/', 'questions_#index#_selections', $json );
 		$json = preg_replace ( '/selections_index_selections_selection/', 'selections_#index_selections#_selection', $json );
 		$json = preg_replace ( '/selections_index_selections_order/', 'selections_#index_selections#_order', $json );
-		$json = preg_replace ( '/^\{\n\s*/', '', $json );
+		$json = preg_replace ( '/^\{/', '', $json );
 		$json = preg_replace ( '/\}$/', '', $json );
 		$json .= ",";
 		$cd_smarty_instance->assign ( "data", $json );
@@ -122,8 +121,7 @@ EOF;
 		$cd_smarty_instance->display ( "update.tpl" );
 	}
 	function search() {
-		echo ">>>>>>>>>>>>>>>>>>>>>>>>>";
-		
+
 		// smartyオブジェクト
 		global $cd_smarty_instance;
 		global $wpdb;
