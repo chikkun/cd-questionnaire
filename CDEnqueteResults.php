@@ -7,10 +7,12 @@
 namespace cd;
 class CDEnqueteResults {
 	function __construct() {
-		add_shortcode('CDQ-results', array($this, 'getResults'));
+		add_shortcode('CDQ-results', array($this,
+			'getResults'));
 	}
 
 	function getResults($atts) {
+		global $cd_smarty_instance;
 		$id = 0;
 		extract(shortcode_atts(array(
 			'id' => 1
@@ -50,37 +52,16 @@ class CDEnqueteResults {
 		}
 		$each_results["question_text"] = $before;
 		$count[$qnum - 1] = $each_results;
-
-		$div_template = "<div class='offset1' id='chart#q_num#' style='width:400px; height:300px;'></div>";
-		$jscript_template = <<< EOF
-jQuery(document).ready(function ($) {
-    var data =  #ans_array#;
-    plot3 = $.jqplot('chart#q_num#', [data], {
-        title: "アンケート1",
-        series: [
-            {renderer: $.jqplot.BarRenderer}
-        ],
-        axes: {
-            xaxis: {
-                renderer: $.jqplot.CategoryAxisRenderer,
-                tickRenderer: $.jqplot.CanvasAxisTickRenderer,
-                tickOptions: {
-                    angle: -30,
-                    fontSize: '10pt'
-                }
-            }
-        }
-    });
-});
-EOF;
-
-		$body_text = "<h2>$enquete_title</h2>\n<ol>";
-		$js_text = "";
+		$cd_smarty_instance->assign("enquete_title", $enquete_title);
+		$graph_list = array();
+		$js_list = array();
 		for ($i = 1; $i <= $question_number; $i++) {
+			$graph = new \stdClass();
+			$js = new \stdClass();
 			$q = $count[$i - 1];
-			$body_text = $body_text . "<li>" . $q["question_text"] . "\n";
-			$body_text = $body_text . str_replace("#q_num#", "$i", $div_template);
-			$j_text = str_replace("#q_num#", "$i", $jscript_template);
+			$graph->question_text = $q["question_text"];
+			$graph->q_num = $i;
+			$js->q_num = $i;
 			$hairetu = "[";
 			$len = count($q["data"]);
 			$j = 0;
@@ -93,14 +74,13 @@ EOF;
 				}
 			}
 			$hairetu .= "]";
-			$j_text = str_replace("#ans_array#", $hairetu, $j_text);
-			$js_text .= $j_text . "\n";
+			$js->ans_array = $hairetu;
+			$graph_list[] = $graph;
+			$js_list[] = $js;
 		}
-
-		$body_text .= "</ol>";
-		echo $body_text;
-
-		echo "<script>\n" . $js_text . "\n</script>\n";
+		$cd_smarty_instance->assign("js_list", $js_list);
+		$cd_smarty_instance->assign("graph_list", $graph_list);
+		$cd_smarty_instance->display("jqplot.tpl");
 
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jqplot', plugin_dir_url(__FILE__) . 'js/jquery.jqplot.min.js', array('jquery'), false, true);
