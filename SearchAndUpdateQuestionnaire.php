@@ -26,7 +26,12 @@ class SearchAndUpdateQuestionnaire {
 			case 'update_form' :
 				require_once("UpdateShowForm.php");
 				$update_show_form = new \cd\UpdateShowForm();
-				$update_show_form->update_show_form();
+				$flag = $update_show_form->update_show_form();
+				if(!$flag){
+					require_once("SearchQuestionnaire.php");
+					$search_questionnaire = new \cd\SearchQuestionnaire();
+					$search_questionnaire->search();
+				}
 				break;
 			case 'update' :
 				require_once("UpdateQuestionnaire.php");

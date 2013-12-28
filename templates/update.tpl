@@ -129,10 +129,12 @@ label.error {
           <div class='row'>　</div>
         </div>
         <div class="row span3 offset5">
+					{{if $enable != "ng"}}
           <button type="submit" name="action" value="{{$enqueteAction}}" class="btn btn-primary btn-large"> {{$enquete_button}} </button>
-		{{if $enqueteAction == "update"}}
+					{{/if}}
+					{{if $enqueteAction == "update"}}
 					<button type="submit" name="action" value="delete" class="btn btn-warning btn-large"> 削除 </button>
-		{{/if}}
+					{{/if}}
 				</div>
       </fieldset>
     </form>

@@ -4,6 +4,9 @@ namespace cd;
 
 class UpdateShowForm {
 	function update_show_form() {
+		if(!isset($_GET ['id']) || !preg_match("/\d+/", $_GET ['id'])){
+			return false;
+		}
 		// smartyオブジェクト
 		global $cd_smarty_instance;
 		global $wpdb;
@@ -17,6 +20,14 @@ class UpdateShowForm {
 		wp_enqueue_script('messages', plugin_dir_url(__FILE__) . 'js/messages_ja.min.js');
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('jquery.ui.all', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
+
+		$sql = <<< EOF
+SELECT COUNT(a.id)
+FROM   wp_answers AS a
+WHERE  a.enquete_id = %s;
+EOF;
+		$sql = $wpdb->prepare($sql, $_GET ['id']);
+		$answer_number = $wpdb->get_var($sql);
 
 		$sql = <<< EOF
 SELECT   e.id AS e_id,
@@ -93,6 +104,9 @@ EOF;
 		$json = preg_replace('/\}$/', '', $json);
 		$json .= ",";
 		$cd_smarty_instance->assign("data", $json);
+		if($answer_number > 0 ){
+			$cd_smarty_instance->assign("enable", "ng");
+		}
 		$cd_smarty_instance->assign("enquete_title", $enquete_title);
 		$cd_smarty_instance->assign("start_date", $start_date);
 		$cd_smarty_instance->assign("end_date", $end_date);
@@ -100,5 +114,6 @@ EOF;
 		$cd_smarty_instance->assign("enqueteAction", "update");
 		$cd_smarty_instance->assign("enquete_button", "修正");
 		$cd_smarty_instance->display("update.tpl");
+		return true;
 	}
 }
