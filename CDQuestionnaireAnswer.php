@@ -12,8 +12,6 @@ class CDQuestionnaireAnswer {
 
 	/* アンケートid */
 	var $id = NULL;
-	/* 登録するアンケートの答えを格納する配列になる */
-	var $answerData = NULL;
 	/* 登録するアンケートの答えを登録するテーブル名 */
 	var $tableName = NULL;
 
@@ -61,20 +59,23 @@ class CDQuestionnaireAnswer {
 				}
 			}
 
+			/* 登録するアンケートの答えを格納する配列になる */
+			$answerData = array();
 			// 登録実行
 			foreach($opt as $qid => $value) {
 				foreach($value as $cid => $sel) {
-					$this->answerData['eid'] = $id;
-					$this->answerData['qid'] = $qid;
-					$this->answerData['identifier'] = $identifier;
+					$answerData['eid'] = $id;
+					$answerData['qid'] = $qid;
+					$answerData['identifier'] = $identifier;
 					if('question' === $cid) {
-						$this->answerData['question'] = $sel;
+						$answerData['question'] = $sel;
 					} else {
 						preg_match("/^(\d+)?:/", $sel, $sid);
-						$this->answerData['sid'] = $sid[1];
-	
+						$answerData['sid'] = $sid[1];
+
 						$dao = new QuestionnaireDAO();
-						$dao->insertAnswer();
+						$dao->insertAnswer($answerData);
+						$answerData = array();
 					}
 				}
 			}
@@ -89,6 +90,12 @@ class CDQuestionnaireAnswer {
 			}
 			$enquete_name = $results[0]->e_name;
 
+			global $cd_smarty_instance;
+			$cd_smarty_instance->assign("enquete_name", $enquete_name);
+			$cd_smarty_instance->assign("enquete_id", $id);
+			$cd_smarty_instance->assign("start_date", $this->enquete ['start_date']);
+			$cd_smarty_instance->assign("end_date", $this->enquete ['end_date']);
+
 			$questions = "";
 			$selections = "";
 			$question_text = "";
@@ -102,7 +109,10 @@ class CDQuestionnaireAnswer {
 				$cur_question = $data->question_text;
 				if( $pre_id != $data->q_id ) {
 					if( "" != $selections ) {
-						$questions .= $this->getQestionTempl($question_text, $selections);
+						$cd_smarty_instance->assign("question_text", $question_text);
+						$cd_smarty_instance->assign("selections", $selections);
+						$questions .= $cd_smarty_instance->fetch("show_question.tpl");
+
 						$selections = "";
 					}
 					if("" === $selections) {
@@ -122,13 +132,17 @@ class CDQuestionnaireAnswer {
 				$sel['type'] = $type;
 				$sel['selectionID'] = $data->s_id;
 				$sel['checkboxID'] = $checkbox;
-				$selections .= $this->getSelectionTempl( $sel );
+
+				$cd_smarty_instance->assign("sel", $sel);
+				$selections .= $cd_smarty_instance->fetch("show_selection.tpl");
 				"checkbox" === $type ? $checkbox++ : 0;
 			}
-			$questions .= $this->getQestionTempl($question_text, $selections);
+			$cd_smarty_instance->assign("question_text", $question_text);
+			$cd_smarty_instance->assign("selections", $selections);
+			$questions .= $cd_smarty_instance->fetch("show_question.tpl");
 
-			return $this->getEnqueteTempl($id, $enquete_name, $questions);
-
+			$cd_smarty_instance->assign("questions", $questions);
+			return $cd_smarty_instance->display("show_enquete.tpl");
 		}
 	}
 
@@ -156,63 +170,15 @@ class CDQuestionnaireAnswer {
 
 	}
 
-
 	/**
-	 * アンケートテンプレート
-	 * @param unknown $enquete_id
-	 * @param unknown $enquete_name
-	 * @param unknown $questions
-	 * @return string
-	 */
-	function getEnqueteTempl($enquete_id, $enquete_name, $questions) {
-		return <<<EOF
-
-			<h2>$enquete_name</h2>
-			<form action="" method="post">
-
-			<ol class="cdq_enquete">
-			$questions
-			</ol>
-
-			<input type="submit" name="enquete_options[enquete_answer][submit]" value="アンケートに答える">
-			<input type="hidden" name="enquete_options[enquete_answer][enquete_id]" value="$enquete_id">
-			</form>
-EOF;
-	}
-
-	/**
-	 * 質問事項テンプレート
-	 * @param unknown $question
-	 * @param unknown $selection
-	 * @return string
-	 */
-	function getQestionTempl($question, $selection) {
-		return <<<EOF
-			<li class="cdq_question">$question</li>
-			$selection
-EOF;
-	}
-
-	/**
-	 * 選択項目テンプレート
-	 * @param unknown $sel
-	 * @return string
-	 */
-	function getSelectionTempl($sel) {
-		return <<<EOF
-			<label class="{$sel['type']}-inline">
-			<input class="cdq_selection" type="{$sel['type']}" id="{$sel['questionID']}_{$sel['checkboxID']}"
-			name="enquete_options[enquete_answer][{$sel['questionID']}][{$sel['checkboxID']}] "value="{$sel['selectionID']}:{$sel['value']}"> {$sel['value']}
-			</label>
-EOF;
-	}
-
-	/**
-	 * 返礼の文章
+	 *
 	 * @return string
 	 */
 	function getThanks() {
-		return "<p>アンケートにお答えいただきありがとうございました。</p>";
+		return <<<EOF
+<p>アンケートにお答えいただきありがとうございました。</p>";
+
+EOF;
 	}
 
 }

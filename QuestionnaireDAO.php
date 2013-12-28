@@ -294,7 +294,8 @@ EOF;
 			$wpdb->query ( $sql );
 		}
 	}
-	function insertAnswer() {
+
+	function insertAnswer($answerData) {
 		! isset ( $this->tableNames ) ? $this->getTableNames () : NULL;
 		
 		$sql = "
@@ -303,12 +304,11 @@ EOF;
 						VALUES
 						(%d,%d,%d,%s);
 						";
-		global $wpdb;
-		$sql = $wpdb->prepare ( $sql, $this->answerData ['eid'], $this->answerData ['qid'], $this->answerData ['sid'], $this->answerData ['identifier'] );
-		
-		$wpdb->query ( $sql );
-		
-		$this->answerData = array ();
+		//global $wpdb;
+		$sql = $this->db->prepare($sql, $answerData ['eid'], $answerData ['qid'], $answerData ['sid'], $answerData ['identifier']);
+
+		$this->db->query($sql);
+
 	}
 	
 	

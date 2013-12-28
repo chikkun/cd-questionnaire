@@ -57,7 +57,7 @@ class NewQuestionnaire {
 	 * メニュー表示
 	 */
 	function __construct() {
-		add_action('admin_menu', array(	$this, 'cd_questionnaire_add_pages'	));
+		add_action('admin_menu', array($this, 'cd_questionnaire_add_pages'));
 		$this->add_javascripts();
 	}
 
@@ -91,7 +91,6 @@ class NewQuestionnaire {
 	 * アンケートの新規作成
 	 */
 	function questionnaire_new_page() {
-		var_dump($_POST);
 		$this->setTableName();
 		global $cd_smarty_instance;
 
