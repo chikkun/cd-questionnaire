@@ -12,25 +12,34 @@ class NewQuestionnaire {
 
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
-	 *
 	 * @var unknown
 	 */
 	var $tableName = NULL;
 	/**
-	 *
-	 *
+	 * アンケート id
 	 * @var unknown
 	 */
 	var $enquete_id = NULL;
 	/**
 	 * アンケート名(タイトル)
-	 *
 	 * @var unknown
 	 */
 	var $enquete_name = NULL;
-
+	/**
+	 * 開始日
+	 * @var null
+	 */
 	var $start_date = NULL;
+	/**
+	 * 終了日
+	 * @var null
+	 */
 	var $end_date = NULL;
+	/**
+	 * アンケートデータ
+	 * @var null
+	 */
+	var $enquete = NULL;
 
 	// 表示文
 	var $new_enquete_phase = array(
@@ -71,12 +80,14 @@ class NewQuestionnaire {
 		}
 	}
 
+	/**
+	 * 新規アンケートの登録/表示
+	 */
 	function questionnaire_confirm_page() {
 		$this->registEnquete();
 		echo $this->printShortCode();
-
-		echo "<p>questionnaire_confirm_page</p>enquete_id = ".$this->enquete_id;
-
+		var_dump($this->enquete);
+		$this->showEnquete();
 	}
 
 	/**
@@ -111,15 +122,11 @@ class NewQuestionnaire {
 		$this->start_date = $_POST ['start_date'];
 		$this->end_date = $_POST ['end_date'];
 
-		echo "<br />end_date = $this->end_date". $this->end_date;
-		echo "<br />start_date = $this->start_date". $this->start_date;
-		echo "<br />enquete_name = $this->enquete_name". $this->enquete_name;
-
 		$dao = new QuestionnaireDAO();
 		$this->enquete_id = $dao->insertEnquete($this->enquete_name, $this->start_date, $this->end_date);
 
-		$enquete = $_POST ['enquete'] ['questions'];
-		foreach ($enquete as $question) {
+		$this->enquete = $_POST ['enquete'] ['questions'];
+		foreach ($this->enquete as $question) {
 			$dao->insertQuestion($question);
 		}
 
