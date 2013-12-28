@@ -15,6 +15,7 @@ class NewQuestionnaire {
 	 * @var unknown
 	 */
 	var $tableName = NULL;
+
 	/**
 	 * アンケート id
 	 * @var unknown
@@ -56,10 +57,8 @@ class NewQuestionnaire {
 	 * メニュー表示
 	 */
 	function __construct() {
-		add_action('admin_menu', array(
-				$this,
-				'cd_questionnaire_add_pages'
-		));
+		add_action('admin_menu', array(	$this, 'cd_questionnaire_add_pages'	));
+		$this->add_javascripts();
 	}
 
 	/**
@@ -74,20 +73,18 @@ class NewQuestionnaire {
 
 	function divideAction() {
 		if (isset ($_POST ['action'])) {
-			$this->questionnaire_confirm_page();
+			$this->enquete['enquete_name'] = $_POST ['enquete_name'];
+			$this->enquete['start_date'] = $_POST ['start_date'];
+			$this->enquete['end_date = $_POST'] ['end_date'];
+
+			$this->enquete['data'] = $_POST ['enquete'] ['questions'];
+
+			require_once("QuestionnaireRegist.php");
+			$qre = new QuestionnaireRegist();
+			$qre->questionnaire_regist_page($this->enquete);
 		} else {
 			$this->questionnaire_new_page();
 		}
-	}
-
-	/**
-	 * 新規アンケートの登録/表示
-	 */
-	function questionnaire_confirm_page() {
-		$this->registEnquete();
-		echo $this->printShortCode();
-		var_dump($this->enquete);
-		$this->showEnquete();
 	}
 
 	/**
@@ -96,7 +93,6 @@ class NewQuestionnaire {
 	function questionnaire_new_page() {
 		var_dump($_POST);
 		$this->setTableName();
-		$this->add_javascripts();
 		global $cd_smarty_instance;
 
 		//$this->setEnquetesResult();
@@ -114,24 +110,6 @@ class NewQuestionnaire {
 		$cd_smarty_instance->display("update.tpl");
 	}
 
-	function registEnquete() {
-		$question = array();
-		$selection = array();
-
-		$this->enquete_name = $_POST ['enquete_name'];
-		$this->start_date = $_POST ['start_date'];
-		$this->end_date = $_POST ['end_date'];
-
-		$dao = new QuestionnaireDAO();
-		$this->enquete_id = $dao->insertEnquete($this->enquete_name, $this->start_date, $this->end_date);
-
-		$this->enquete = $_POST ['enquete'] ['questions'];
-		foreach ($this->enquete as $question) {
-			$dao->insertQuestion($question);
-		}
-
-	}
-
 	function setTableName() {
 		if (!isset ($this->tableName)) {
 			$dao = new QuestionnaireDAO ();
@@ -139,41 +117,6 @@ class NewQuestionnaire {
 		}
 	}
 
-	function deleteMessage($id) {
-		return <<<EOF
-		<div class="updated fade">
-			<p>
-				<strong>
-					アンケートID： $id のアンケートを削除しました。
-				</strong>
-			</p>
-		</div>
-EOF;
-	}
-
-	function saveMessage() {
-		return <<<EOF
-		<div class="updated fade">
-			<p>
-				<strong><?php _e('Options saved.'); ?> </strong>
-			</p>
-		</div>
-EOF;
-	}
-
-	function printShortCode() {
-		return <<<EOF
-		<div class="updated fade">
-			<p>現在のアンケートを発行するには、下のショートコードを、アンケートを表示したい固定ページや投稿ページ内に書き込んでください。ここでの作業はそれで終了です。</p>
-			<p>
-				ショートコード：<input style="width: auto;"
-					name="enquete_options[enquete_short_code]" type="text"
-					id="inputshortcode" readonly
-					value="[CDQ-enquete id={$this->enquete_id}]" class="regular-text" />
-			</p>
-		</div>
-EOF;
-	}
 
 	function add_javascripts() {
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');

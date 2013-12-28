@@ -1,11 +1,12 @@
 <?php
+namespace cd;
 class CDQuestionnaire {
 	/**
 	 * プラグインのバージョン
 	 *
 	 * @var unknown
 	 */
-	var $version = 0.126;
+	var $version = 0.127;
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 *
