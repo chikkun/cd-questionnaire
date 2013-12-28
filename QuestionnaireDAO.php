@@ -248,7 +248,7 @@ EOF;
 		return $enquete_id;
 	}
 
-	function insertQuestion($question) {
+	function insertQuestion($e_id, $question) {
 		$sql = <<<EOF
 			INSERT INTO {$this->tableNames['questions']}
 			(enquete_id,sort_id,question_text,multiple_answer)
@@ -263,7 +263,7 @@ EOF;
 		
 		global $wpdb;
 		// TODO multiple_answer に対応させる
-		$sql = $wpdb->prepare ( $sql, $this->enquete_id, $question ['order'], $question ['question'], 1 );
+		$sql = $wpdb->prepare ( $sql, $e_id, $question ['order'], $question ['question'], 1 );
 		$wpdb->query ( $sql );
 		$query = 'select last_insert_id(); ';
 		$q_id = $wpdb->get_var ( $query );
@@ -315,7 +315,7 @@ CREATE TABLE {$this->tableNames['enquetes']} (
   `start_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '開始日',
   `end_date` timestamp NOT NULL DEFAULT '2034-12-31 00:00:00' COMMENT '終了日',
   `poll_or_question` int(1) unsigned NOT NULL DEFAULT '0' COMMENT 'アンケートor問題',
-  `delete_flag` int(1) unsigned NOT NULL DEFAULT '1' COMMENT '削除フラグ',
+  `delete_flag` int(1) unsigned NOT NULL DEFAULT '0' COMMENT '削除フラグ',
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
