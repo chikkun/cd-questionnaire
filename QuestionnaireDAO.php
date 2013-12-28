@@ -60,29 +60,39 @@ EOF;
 		$sql = $this->db->prepare($sql, $id);
 		$question_number = $this->db->get_var($sql);
 		$sql = <<< EOF
-	  SELECT   e.name,
-	  q.sort_id AS question_order,
-	  q.id AS question_id,
-	  q.question_text,
-	  s.selection_display,
-	  s.sort_id AS selection_order,
-	  s.id AS selection_id,
-	  count(a.selection_id) AS counts
-FROM     {$this->tableNames['enquetes']} AS e
-         LEFT OUTER JOIN
-         {$this->tableNames['questions']} AS q
-         ON e.id = q.enquete_id
-         LEFT OUTER JOIN
-         {$this->tableNames['selections']} AS s
-         ON q.id = s.question_id
-         LEFT OUTER JOIN
-         wp_answers AS a
-	  ON (e.id = a.enquete_id
-             AND q.id = a.question_id
-	      AND s.id = a.selection_id)
-WHERE    q.enquete_id = %s
-	  GROUP BY e.name, a.question_id, s.selection_display
-	  ORDER BY q.sort_id, q.id, s.sort_id, s.id;
+SELECT   name,
+         question_order,
+         question_id,
+         question_text,
+         selection_display,
+         selection_order,
+         selection_id,
+         SUM(answer_s_id) AS counts
+FROM     (SELECT e.name,
+                 q.sort_id AS question_order,
+                 q.id AS question_id,
+                 q.question_text,
+                 s.selection_display,
+                 s.sort_id AS selection_order,
+                 s.id AS selection_id,
+                 (CASE
+WHEN a.selection_id IS NULL THEN 0 ELSE 1
+END) AS answer_s_id
+          FROM   wp_enquetes AS e
+                 LEFT OUTER JOIN
+                 wp_questions AS q
+                 ON e.id = q.enquete_id
+                 LEFT OUTER JOIN
+                 wp_selections AS s
+                 ON q.id = s.question_id
+                 LEFT OUTER JOIN
+                 wp_answers AS a
+                 ON (e.id = a.enquete_id
+                     AND q.id = a.question_id
+                     AND s.id = a.selection_id)
+          WHERE  q.enquete_id = %s) AS sub
+GROUP BY name, question_id, selection_id
+ORDER BY question_order, question_id, selection_order, selection_id;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
 		return array($this->db->get_results($sql), $question_number);

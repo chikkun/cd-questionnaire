@@ -24,24 +24,28 @@ class CDEnqueteResults {
 		$qnum = 0;
 		$cddb = new \cd\QuestionnaireDAO();
 		list($results, $question_number) = $cddb->getResultsFromId($id);
+		$snum = 0;
 		foreach ($results as $val) {
 			$num++;
+			$snum++;
 			if ($num === 1) {
 				$enquete_title = $val->name;
 				$qnum++;
 			}
-			if ($val->question_text !== $before && $num !== 1) {
+			$now = $val->question_text;
+			if ($now !== $before && $num !== 1) {
 				$each_results["question_text"] = $before;
 				$count[$qnum - 1] = $each_results;
 				$each_results = array();
 				$qnum++;
 				$num = 1;
+				$snum = 1;
 			}
 			if (!is_array($each_results["data"])) {
 				$each_results["data"] = array();
 			}
 			array_push($each_results["data"], array("count" => $val->counts,
-				"display" => $val->selection_display));
+				"display" => $snum . "." . $val->selection_display));
 			$before = $val->question_text;
 		}
 		$each_results["question_text"] = $before;
