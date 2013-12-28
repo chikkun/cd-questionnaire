@@ -54,7 +54,6 @@ class QuestionnaireRegist {
 		$selection = array();
 
 		$dao = new QuestionnaireDAO();
-echo $dao->identifiersSql();
 		$this->enquete_id = $dao->insertEnquete($this->enquete['enquete_name'], $this->enquete['start_date'], $this->enquete['end_date']);
 
 		$data = $this->enquete ['data'];
