@@ -12,7 +12,8 @@ class QuestionnaireDAO {
 			"enquetes",
 			"questions",
 			"selections",
-			"answers" 
+			"answers",
+		  "identifier"
 	);
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
@@ -50,12 +51,127 @@ class QuestionnaireDAO {
 		return $this->tableNames;
 	}
 
-	function getQuestionnaireTotalCount($id) {
-		global $wpdb;
+	function getResultsFromId($id) {
+		$sql = <<< EOF
+	  SELECT count(*) question_number
+	  FROM wp_questions q WHERE q.enquete_id = %s;
+EOF;
+
+		$sql = $this->db->prepare($sql, $id);
+		$question_number = $this->db->get_var($sql);
+		$sql = <<< EOF
+	  SELECT   e.name,
+	  q.sort_id AS question_order,
+	  q.id AS question_id,
+	  q.question_text,
+	  s.selection_display,
+	  s.sort_id AS selection_order,
+	  s.id AS selection_id,
+	  count(a.selection_id) AS counts
+FROM     {$this->tableNames['enquetes']} AS e
+         LEFT OUTER JOIN
+         {$this->tableNames['questions']} AS q
+         ON e.id = q.enquete_id
+         LEFT OUTER JOIN
+         {$this->tableNames['selections']} AS s
+         ON q.id = s.question_id
+         LEFT OUTER JOIN
+         wp_answers AS a
+	  ON (e.id = a.enquete_id
+             AND q.id = a.question_id
+	      AND s.id = a.selection_id)
+WHERE    q.enquete_id = %s
+	  GROUP BY e.name, a.question_id, s.selection_display
+	  ORDER BY q.sort_id, q.id, s.sort_id, s.id;
+EOF;
+		$sql = $this->db->prepare($sql, $id);
+		return array($this->db->get_results($sql), $question_number);
+
+	}
+	/**
+	 * 検索ページのデータを取得し、返す。
+	 * @param $fields 検索フィールドの値
+	 * @param $perPage 1ページ当たりの数
+	 * @param $offset 何ページ目か(0始まり)
+	 * @return array (data, total)
+	 */
+	function getQuestionnairesListPerPage($fields, $perPage, $offset){
+		// where文作成用
+		$where = "";
+		$j = 0;
+		// where文作成、ついでにフォームのinputのvalueにアサイン
+
+		foreach ($fields as $key => $value) {
+			// valueは未記入だと空文字なので、空文字じゃないとき
+			if (isset ($value) && mb_strlen($value) != 0) {
+				$j++;
+				if ($j === 1) {
+					$where = 'WHERE ';
+				} else {
+					$where .= 'AND ';
+				}
+				$val = mysql_real_escape_string($value); // SQL Escape
+				switch ($key) {
+					case 'start_date_before' :
+						$where .= "start_date <= '$val' ";
+						break;
+					case 'start_date_after' :
+						$where .= "start_date >= '$val' ";
+						break;
+					case 'name' :
+						$where .= "name LIKE '%$val%' ";
+						break;
+					case 'id' :
+						$where .= "e.id = '$val' ";
+						break;
+					default :
+						$where .= "$key = '$val' ";
+				}
+			}
+		}
+		if($where) {
+			$where .= "AND e.delete_flag = 0";
+		} else {
+			$where .= "WHERE e.delete_flag = 0";
+		}
+		$sql = <<< EOF
+SELECT   count(*)
+FROM    {$this->tableNames['enquetes']} e $where;
+EOF;
+
+		$total = $this->db->get_var($sql);
+
+		$sql = <<< EOF
+SELECT   e.id,
+	       e.name,
+         e.start_date,
+         e.end_date,
+         e.poll_or_question
+FROM     {$this->tableNames['enquetes']} AS e $where
+ORDER BY e.id DESC LIMIT $perPage OFFSET $offset;
+EOF;
+
+		return array($this->db->get_results($sql), $total);
+	}
+
+	function getAlreadyAnsweredNumber($id){
 		$sql = <<< EOF
 SELECT COUNT(a.id)
-FROM   wp_answers AS a
-WHERE  a.enquete_id = %s AND e.delete_flag = 0;
+FROM   {$this->tableNames['answers']} AS a
+WHERE  a.enquete_id = %s;
+EOF;
+		$sql = $this->db->prepare($sql, $id);
+		return $this->db->get_var($sql);
+	}
+	/**
+	 * delete_flagが立っていないアンケート総数を返す。
+	 * @return mixed
+	 */
+	function getQuestionnaireTotalCount() {
+		$sql = <<< EOF
+SELECT COUNT(e.id)
+FROM   {$this->tableNames['enquetes']} AS e
+WHERE  e.enquete_id = %s AND e.delete_flag = 0;
 EOF;
 
 
@@ -81,12 +197,12 @@ EOF;
 			s.sort_id AS s_sort_id,
 			s.selection_display,
 			s.to_select_flag
-			FROM   wp_enquetes AS e
+			FROM   {$this->tableNames['enquetes']} AS e
 			INNER JOIN
-			wp_questions AS q
+			{$this->tableNames['questions']} AS q
 			ON e.id = q.enquete_id
 			INNER JOIN
-			wp_selections AS s
+			{$this->tableNames['selections']} AS s
 			ON q.id = s.question_id
 			WHERE  e.id = %s AND e.delete_flag = 0
 			ORDER BY

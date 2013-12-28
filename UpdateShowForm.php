@@ -9,7 +9,6 @@ class UpdateShowForm {
 		}
 		// smartyオブジェクト
 		global $cd_smarty_instance;
-		global $wpdb;
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js');
 		wp_enqueue_script('jquery.ui.datepicker', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker.min.js');
@@ -22,7 +21,7 @@ class UpdateShowForm {
 		wp_enqueue_style('jquery.ui.all', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
 
 		$cddb = new \cd\QuestionnaireDAO();
-		$answer_number = $cddb->getQuestionnaireTotalCount($_GET['id']);
+		$answer_number = $cddb->getAlreadyAnsweredNumber($_GET['id']);
 		$results = $cddb->getEnqueteData($_GET['id']);
 		$num = 0;
 		$before = "";
@@ -61,7 +60,7 @@ class UpdateShowForm {
 		}
 		array_push($each_results->enquete_questions_index_selections, $select);
 		array_push($alldata->data, $each_results);
-		var_dump($alldata);
+
 		$json = json_encode($alldata);
 		$json = preg_replace('/questions_index_order/', 'questions_#index#_order', $json);
 		$json = preg_replace('/questions_index_question/', 'questions_#index#_question', $json);

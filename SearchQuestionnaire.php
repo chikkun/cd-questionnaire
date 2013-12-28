@@ -12,7 +12,6 @@ class SearchQuestionnaire {
 	function search() {
 		// smartyオブジェクト
 		global $cd_smarty_instance;
-		global $wpdb;
 		// Pagerの1ページ当たりの表示数
 		$perPage = 10;
 		// http://wordpress.chikkun.com/wp-admin/admin.php?page=cd-questionnaire/CDQuestionnaire2.php
@@ -31,60 +30,13 @@ class SearchQuestionnaire {
 
 		// Pager読み込み
 		require_once('Pager/Pager.php');
-
-		// where文作成用
-		$where = "";
-		$j = 0;
-		// where文作成、ついでにフォームのinputのvalueにアサイン
-		foreach ($_GET ['where'] as $key => $value) {
-			// inputのvalueへ
+		$cddb = new \cd\QuestionnaireDAO();
+		list($results, $total)= $cddb->getQuestionnairesListPerPage($_GET['where'], $perPage, $offset);
+		// 検索fieldに値をセット
+		foreach ($_GET['where'] as $key => $value) {
 			$cd_smarty_instance->assign($key, $value);
-			// valueは未記入だと空文字なので、空文字じゃないとき
-			if (isset ($value) && mb_strlen($value) != 0) {
-				$j++;
-				if ($j === 1) {
-					$where = 'WHERE ';
-				} else {
-					$where .= 'AND ';
-				}
-				$val = mysql_real_escape_string($value); // SQL Escape
-				switch ($key) {
-					case 'start_date_before' :
-						$where .= "start_date <= '$val' ";
-						break;
-					case 'start_date_after' :
-						$where .= "start_date >= '$val' ";
-						break;
-					case 'name' :
-						$where .= "name LIKE '%$val%' ";
-						break;
-					case 'id' :
-						$where .= "e.id = '$val' ";
-						break;
-					default :
-						$where .= "$key = '$val' ";
-				}
-			}
 		}
-		$sql = <<< EOF
-SELECT   count(*)
-FROM    wp_enquetes e $where
-EOF;
-
-		$total = $wpdb->get_var($sql);
-
-		$sql = <<< EOF
-SELECT   e.id,
-	       e.name,
-         e.start_date,
-         e.end_date,
-         e.poll_or_question
-FROM     wp_enquetes AS e $where
-ORDER BY e.id DESC LIMIT $perPage OFFSET $offset;
-EOF;
-
-		$results = $wpdb->get_results($sql);
-		$cd_smarty_instance->assign("e_list", $results);
+			$cd_smarty_instance->assign("e_list", $results);
 		$pager_array = array(
 			'mode' => 'Sliding',
 			// 表示タイプ(Jumping/Sliding)
@@ -96,14 +48,14 @@ EOF;
 			// ページング対象データの総数
 			'separator' => ' | ',
 			// ページリンクのセパレータ文字列
-			'prevImg' => '≪戻る',
+			'prevImg' => '≪戻る　',
 			// 戻るリンクのテキスト(imgタグ使用可)
 			'nextImg' => '次へ≫',
 			// 次へリンクのテキスト(imgタグ使用可),
-			'lastPageText' => " 最後へ ",
-			'firstPageText' => " 最初へ ",
+			'lastPageText' => "最後へ",
+			'firstPageText' => "最初へ",
 			'firstPagePre' => '',
-			'lastPagePre' => '',
+			'lastPagePre' => '　　',
 			'firstPagePost' => '',
 			'lastPagePost' => ''
 		);
@@ -112,9 +64,9 @@ EOF;
 		// linkタグをもらう
 		$pager_links = $pager->getLinks();
 		$pager_html = <<< EOD
-	      {$pager_links['first']} {$pager_links['back']}
-	      {$pager_links['pages']} {$pager_links['next']}
-          {$pager_links['last']}
+{$pager_links['first']}{$pager_links['back']}
+{$pager_links['pages']}
+{$pager_links['next']}{$pager_links['last']}
 EOD;
 		$cd_smarty_instance->assign("paging", $pager_html);
 		$cd_smarty_instance->assign("page", $page);

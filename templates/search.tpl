@@ -27,7 +27,7 @@
                     <label for="where[id]" class="span3 colabel">アンケートID</label>
 
                     <div class="span6">
-                        <input type="text" name="where[id]" class="input-mini" value="{{$id}}" placeholder="完全一致"
+                        <input type="text" name="where[id]" class="input-medium" value="{{$id}}" placeholder="完全一致"
                                data-rule-digits="true"/>
                     </div>
                 </div>
@@ -70,7 +70,7 @@
 </div>
 
 <div class="row">
-    <div class="span10 offset3">
+    <div class="span10 offset2">
         {{$paging}}
     </div>
 
@@ -101,7 +101,7 @@
     </div>
     {{/if}}
     <div class="row">
-        <div class="span10 offset3">
+        <div class="span10 offset2">
             {{$paging}}
         </div>
     </div>
