@@ -21,42 +21,9 @@ class UpdateShowForm {
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('jquery.ui.all', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
 
-		$sql = <<< EOF
-SELECT COUNT(a.id)
-FROM   wp_answers AS a
-WHERE  a.enquete_id = %s;
-EOF;
-		$sql = $wpdb->prepare($sql, $_GET ['id']);
-		$answer_number = $wpdb->get_var($sql);
-
-		$sql = <<< EOF
-SELECT   e.id AS e_id,
-         e.name AS e_name,
-         e.start_date,
-         e.end_date,
-         e.poll_or_question,
-         q.id AS q_id,
-         q.enquete_id,
-         q.sort_id AS q_sort_id,
-         q.question_text,
-         q.multiple_answer,
-         s.id AS s_id,
-         s.question_id,
-         s.sort_id AS s_sort_id,
-         s.selection_display,
-         s.to_select_flag
-FROM     wp_enquetes AS e
-         INNER JOIN
-         wp_questions AS q
-         ON e.id = q.enquete_id
-         INNER JOIN
-         wp_selections AS s
-         ON q.id = s.question_id
-WHERE    e.id = %s
-ORDER BY q_sort_id, q_id, s_sort_id, s_id
-EOF;
-		$sql = $wpdb->prepare($sql, $_GET ['id']);
-		$results = $wpdb->get_results($sql);
+		$cddb = new \cd\QuestionnaireDAO();
+		$answer_number = $cddb->getQuestionnaireTotalCount($_GET['id']);
+		$results = $cddb->getEnqueteData($_GET['id']);
 		$num = 0;
 		$before = "";
 		$alldata = new \stdClass ();
@@ -94,6 +61,7 @@ EOF;
 		}
 		array_push($each_results->enquete_questions_index_selections, $select);
 		array_push($alldata->data, $each_results);
+		var_dump($alldata);
 		$json = json_encode($alldata);
 		$json = preg_replace('/questions_index_order/', 'questions_#index#_order', $json);
 		$json = preg_replace('/questions_index_question/', 'questions_#index#_question', $json);

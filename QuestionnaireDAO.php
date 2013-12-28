@@ -30,7 +30,10 @@ class QuestionnaireDAO {
 	 */
 	var $char = NULL;
 
+	var $db;
 	function __construct() {
+		global $wpdb;
+		$this->db = $wpdb;
 		// wp-config.phpに書いてある文字コードを使用する
 		$this->char = defined ( "DB_CHARSET" ) ? DB_CHARSET : "utf8";
 		// データベース用 テーブル名を決める
@@ -46,7 +49,22 @@ class QuestionnaireDAO {
 		! isset ( $this->tableNames ) ? $this->setTableNames () : NULL;
 		return $this->tableNames;
 	}
+
+	function getQuestionnaireTotalCount($id) {
+		global $wpdb;
+		$sql = <<< EOF
+SELECT COUNT(a.id)
+FROM   wp_answers AS a
+WHERE  a.enquete_id = %s AND e.delete_flag = 0;
+EOF;
+
+
+		$sql = $this->db->prepare($sql, $id);
+		return $this->db->get_var($sql);
+	}
+
 	function getEnqueteData($id) {
+		global $wpdb;
 		$sql = <<<EOF
 			SELECT e.id AS e_id,
 			e.name AS e_name,
@@ -70,13 +88,12 @@ class QuestionnaireDAO {
 			INNER JOIN
 			wp_selections AS s
 			ON q.id = s.question_id
-			WHERE  e.id = %s
+			WHERE  e.id = %s AND e.delete_flag = 0
 			ORDER BY
 			q_sort_id, q_id, s_sort_id, s_id;
 EOF;
 		
-		global $wpdb;
-		$results = $wpdb->get_results ( $wpdb->prepare ( $sql, $id ) );
+		$results = $this->db->get_results ( $this->db->prepare ( $sql, $id ) );
 		return $results;
 	}
 	
