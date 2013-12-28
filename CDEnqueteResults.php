@@ -8,8 +8,7 @@ namespace cd;
 class CDEnqueteResults {
 
 	function __contruct() {
-		add_shortcode('CDQ-results', array($this,
-			'getResults'));
+		add_shortcode('CDQ-results', array($this, 'getResults'));
 	}
 
 	function getResults($atts) {

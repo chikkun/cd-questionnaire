@@ -9,6 +9,7 @@
 */
 
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDQuestionnaire.php";
+require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDEnqueteResults.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."QuestionnaireDAO.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."NewQuestionnaire.php";
 require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDEnquete.php";
@@ -19,15 +20,16 @@ use \cd\NewQuestionnaire;
 use \cd\QuestionnaireDAO;
 use \cd\CDEnquete;
 use \cd\CDQuestionnaire;
+use \cd\CDEnqueteResults;
 
 $question = new CDQuestionnaire();
 $search = new SearchAndUpdateQuestionnaire();
 $new = new NewQuestionnaire();
-
 // 有効化の時に実行する
 register_activation_hook(__FILE__, array($question, "activate"));
 // ショートコード有効化
 $cde = new CDEnquete();
+$result = new CDEnqueteResults();
 
 //smarty設定
 $cd_smarty_version = "3.1.16";
