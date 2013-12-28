@@ -12,7 +12,8 @@ class QuestionnaireDAO {
 			"enquetes",
 			"questions",
 			"selections",
-			"answers" 
+			"answers",
+			"identifiers" 
 	);
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
@@ -251,6 +252,20 @@ CREATE TABLE {$this->tableNames['answers']} (
   PRIMARY KEY (`id`),
   INDEX (`enquete_id`, `question_id`, `selection_id`, `identifier`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET='$this->char' COMMENT='回答結果テーブル';
+EOS;
+	}
+	function identifiersSql() {
+		return <<<EOS
+CREATE TABLE {$this->tableNames['answers']} (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  `enquete_id` bigint(20) NOT NULL COMMENT 'enquete_id',
+  `identifier` varchar(512) NOT NULL COMMENT '識別子',
+  `ip_address` varchar(64) DEFAULT NULL COMMENT 'ipアドレス',
+  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
+  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
+  PRIMARY KEY  (id),
+  INDEX (`enquete_id`, `identifier`, `ip_address`)
+)  ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET='$this->char' COMMENT = '識別子テーブル';
 EOS;
 	}
 }

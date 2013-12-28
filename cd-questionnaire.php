@@ -18,6 +18,7 @@ use \cd\SearchAndUpdateQuestionnaire;
 use \cd\NewQuestionnaire;
 use \cd\QuestionnaireDAO;
 use \cd\CDEnquete;
+use \cd\CDQuestionnaire;
 
 $question = new CDQuestionnaire();
 $search = new SearchAndUpdateQuestionnaire();
