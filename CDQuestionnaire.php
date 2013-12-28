@@ -6,7 +6,7 @@ class CDQuestionnaire {
 	 *
 	 * @var unknown
 	 */
-	var $version = 0.127;
+	var $version = 0.128;
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 *

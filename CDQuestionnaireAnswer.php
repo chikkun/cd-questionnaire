@@ -3,12 +3,12 @@ namespace cd;
 
 //use \cd\QuestionnaireDAO;
 /**
- * FILE: CDEnquete.php
+ * FILE: CDQuestionnaireAnswer.php
  * Author: C & D, Inc.;
  * アンケート質問事項の表示を行う。
  * 扱うテーブルは、アンケートの答えを登録する/してあるテーブル一つのみ。
  */
-class CDEnquete {
+class CDQuestionnaireAnswer {
 
 	/* アンケートid */
 	var $id = NULL;
