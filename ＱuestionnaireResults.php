@@ -5,7 +5,7 @@
  * アンケートの集計結果の表示を行う
  */
 namespace cd;
-class CDEnqueteResults {
+class ＱuestionnaireResults {
 	function __construct() {
 		add_shortcode('CDQ-results', array($this,
 			'getResults'));
