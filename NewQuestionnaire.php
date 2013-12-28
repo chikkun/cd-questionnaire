@@ -17,8 +17,7 @@ class NewQuestionnaire {
 	 */
 	var $tableName = NULL;
 	/**
-	 * データベースで使われる言語
-	 * UTF8
+	 *
 	 *
 	 * @var unknown
 	 */
@@ -73,10 +72,11 @@ class NewQuestionnaire {
 	}
 
 	function questionnaire_confirm_page() {
-		echo $this->printShortCode();
-		echo "<p>questionnaire_confirm_page</p>";
 		$this->registEnquete();
-		
+		echo $this->printShortCode();
+
+		echo "<p>questionnaire_confirm_page</p>enquete_id = ".$this->enquete_id;
+
 	}
 
 	/**
@@ -110,6 +110,11 @@ class NewQuestionnaire {
 		$this->enquete_name = $_POST ['enquete_name'];
 		$this->start_date = $_POST ['start_date'];
 		$this->end_date = $_POST ['end_date'];
+
+		echo "<br />end_date = $this->end_date". $this->end_date;
+		echo "<br />start_date = $this->start_date". $this->start_date;
+		echo "<br />enquete_name = $this->enquete_name". $this->enquete_name;
+
 		$dao = new QuestionnaireDAO();
 		$this->enquete_id = $dao->insertEnquete($this->enquete_name, $this->start_date, $this->end_date);
 
@@ -117,7 +122,7 @@ class NewQuestionnaire {
 		foreach ($enquete as $question) {
 			$dao->insertQuestion($question);
 		}
-//		return;
+
 	}
 
 	function setTableName() {

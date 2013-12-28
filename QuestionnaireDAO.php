@@ -29,6 +29,7 @@ class QuestionnaireDAO {
 	 *
 	 */
 	var $char = NULL;
+
 	function __construct() {
 		// wp-config.phpに書いてある文字コードを使用する
 		$this->char = defined ( "DB_CHARSET" ) ? DB_CHARSET : "utf8";
@@ -93,7 +94,7 @@ EOF;
 EOF;
 		$sql2 = <<<EOF
 			INSERT INTO {$this->tableNames['enquetes']}
-			(name,start_date,end_date,poll_or_question)
+			(name,start_date,poll_or_question)
 			VALUES
 			(
 	 			%s,
@@ -102,11 +103,9 @@ EOF;
 			);
 EOF;
 		
-		// $result = mysql_query ( $query );
 		global $wpdb;
-		if ("" === $end_id) {
-			$sql = $sql2;
-			$sql = $wpdb->prepare ( $sql, $enquete_name, $start_date );
+		if ("" === $end_date || NULL ===$end_date) {
+			$sql = $wpdb->prepare ( $sql2, $enquete_name, $start_date );
 		} else {
 			$sql = $wpdb->prepare ( $sql, $enquete_name, $start_date, $end_date );
 		}
