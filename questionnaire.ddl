@@ -9,7 +9,7 @@ CREATE TABLE `wp_enquetes` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
-  INDEX (`name`, `start_date`, `end_date`)
+  INDEX idx_name(`name`), INDEX idx_start_date(`start_date`), INDEX idx_end_date(`end_date`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='アンケートテーブル';
 
 DROP TABLE IF EXISTS wp_questions;
@@ -23,8 +23,8 @@ CREATE TABLE `wp_questions` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
-  INDEX (`enquete_id`, `sort_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='質問テーブル';    
+  INDEX idx_enquete_id_questions(`enquete_id`),INDEX idx_sort_id_questions(`sort_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='質問テーブル';
 
 DROP TABLE IF EXISTS wp_selections;
 
@@ -37,7 +37,7 @@ CREATE TABLE `wp_selections` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
-  INDEX (`question_id`, `sort_id`)
+  INDEX idx_question_id_selections(`question_id`), INDEX idx_sort_id_selections(`sort_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='選択肢テーブル';
 
 DROP TABLE IF EXISTS wp_answers;
@@ -51,7 +51,8 @@ CREATE TABLE `wp_answers` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
-  INDEX (`enquete_id`, `question_id`, `selection_id`, `identifier`)
+  INDEX idx_enquete_id_answers(`enquete_id`), INDEX idx_question_id_answers(`question_id`),
+  INDEX idx_selection_id_answers(`selection_id`), INDEX idx_identifier_answers(`identifier`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='回答結果テーブル';
 
 DROP TABLE IF EXISTS wp_identifiers;
@@ -63,5 +64,6 @@ CREATE TABLE `wp_identifiers` (
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
   `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY  (id),
-  INDEX (`enquete_id`, `identifier`, `ip_address`)
+  INDEX idx_enquete_id_identifiers(`enquete_id`), INDEX idx_identifier_identifiers(`identifier`),
+  INDEX idx_ip_address_identifiers(`ip_address`)
 )  ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT = '識別子テーブル';

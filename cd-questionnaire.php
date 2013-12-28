@@ -30,6 +30,7 @@ register_activation_hook(__FILE__, array($question, "activate"));
 // ショートコード有効化
 $cde = new CDEnquete();
 $result = new CDEnqueteResults();
+add_shortcode('CDQ-results', array($results, 'getResults'));
 
 //smarty設定
 $cd_smarty_version = "3.1.16";

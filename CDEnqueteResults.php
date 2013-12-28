@@ -6,9 +6,10 @@
  */
 namespace cd;
 class CDEnqueteResults {
-
 	function __contruct() {
 		add_shortcode('CDQ-results', array($this, 'getResults'));
+		echo ">>>>>>>>>>>>>>>>>>>>>>";
+		var_dump($this);
 	}
 
 	function getResults($atts) {
