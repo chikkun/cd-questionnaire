@@ -51,26 +51,21 @@ class QuestionnaireRegist {
 		$this->showEnquete();
 	}
 	function registEnquete() {
-		$question = array();
-		$selection = array();
-
 		$dao = new QuestionnaireDAO ();
-		$this->enquete_id = $dao->insertEnquete($this->enquete ['enquete_name'], $this->enquete ['start_date'], $this->enquete ['end_date']);
-
-		$data = $this->enquete ['data'];
-		foreach ($data as $question) {
-			$dao->insertQuestion($question);
-		}
+		$this->enquete_id = $dao->insertEnquete($this->enquete);
 	}
 	function showEnquete() {
 		var_dump($this->enquete);
 		global $cd_smarty_instance;
 
-		$cd_smarty_instance->assign("enquete_name", $this->enquete ['enquete_name']);
-		$cd_smarty_instance->assign("start_date", $this->enquete ['start_date']);
-		$cd_smarty_instance->assign("end_date", $this->enquete ['end_date']);
+		// TODO テンプレート化
 
-		$cd_smarty_instance->display("show.tpl");
+//		$cd_smarty_instance->assign("enquete_name", $this->enquete ['enquete_name']);
+//		$cd_smarty_instance->assign("start_date", $this->enquete ['start_date']);
+//		$cd_smarty_instance->assign("end_date", $this->enquete ['end_date']);
+
+		//$cd_smarty_instance->display("show.tpl");
+		echo "登録終了";
 	}
 	function printShortCode() {
 		return <<<EOF

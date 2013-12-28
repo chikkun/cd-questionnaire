@@ -41,9 +41,8 @@ class QuestionnaireDAO {
 		$this->setTableNames ();
 	}
 	function setTableNames() {
-		global $wpdb;
 		foreach ( $this->tables as $name ) {
-			$this->tableNames [$name] = $wpdb->prefix . $name;
+			$this->tableNames [$name] = $this->db->prefix . $name;
 		}
 	}
 	function getTableNames() {
@@ -190,7 +189,6 @@ EOF;
 	}
 
 	function getEnqueteData($id) {
-		global $wpdb;
 		$sql = <<<EOF
 			SELECT e.id AS e_id,
 			e.name AS e_name,
@@ -222,8 +220,8 @@ EOF;
 		$results = $this->db->get_results ( $this->db->prepare ( $sql, $id ) );
 		return $results;
 	}
-	
-	function insertEnquete($enquete_name, $start_date, $end_date) {
+
+	function insertEnquete($enquete) {
 		$sql = <<<EOF
 			INSERT INTO {$this->tableNames['enquetes']}
 			(name,start_date,end_date,poll_or_question)
@@ -245,16 +243,20 @@ EOF;
   				'1'
 			);
 EOF;
-		
-		global $wpdb;
-		if ("" === $end_date || NULL ===$end_date) {
-			$sql = $wpdb->prepare ( $sql2, $enquete_name, $start_date );
+
+		if ("" === $enquete ['end_date'] || NULL === $enquete ['end_date']) {
+			$sql = $this->db->prepare($sql2, $enquete ['enquete_name'], $enquete ['start_date']);
 		} else {
-			$sql = $wpdb->prepare ( $sql, $enquete_name, $start_date, $end_date );
+			$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete ['end_date']);
 		}
-		$wpdb->query ( $sql );
+		$this->db->query($sql);
 		$query = 'select last_insert_id();';
-		$enquete_id = $wpdb->get_var ( $query );
+		$enquete_id = $this->db->get_var($query);
+		$data = $enquete ['data'];
+		foreach ($data as $question) {
+			$this->insertQuestion($enquete_id, $question);
+		}
+
 		return $enquete_id;
 	}
 
@@ -271,13 +273,12 @@ EOF;
 			);
 EOF;
 		
-		global $wpdb;
 		// TODO multiple_answer に対応させる
-		$sql = $wpdb->prepare ( $sql, $e_id, $question ['order'], $question ['question'], 1 );
-		$wpdb->query ( $sql );
+		$sql = $this->db->prepare($sql, $e_id, $question ['order'], $question ['question'], 1);
+		$this->db->query($sql);
 		$query = 'select last_insert_id(); ';
-		$q_id = $wpdb->get_var ( $query );
-		
+		$q_id = $this->db->get_var($query);
+
 		$sqln = <<<EOF
 			INSERT INTO {$this->tableNames['selections']}
 			(question_id,sort_id,selection_display)
@@ -290,8 +291,8 @@ EOF;
 EOF;
 		
 		foreach ( $question ['selections'] as $sel ) {
-			$sql = $wpdb->prepare ( $sqln, $q_id, $sel ['order'], $sel ['selection'] );
-			$wpdb->query ( $sql );
+			$sql = $this->db->prepare($sqln, $q_id, $sel ['order'], $sel ['selection']);
+			$this->db->query($sql);
 		}
 	}
 
@@ -304,7 +305,7 @@ EOF;
 						VALUES
 						(%d,%d,%d,%s);
 						";
-		//global $wpdb;
+
 		$sql = $this->db->prepare($sql, $answerData ['eid'], $answerData ['qid'], $answerData ['sid'], $answerData ['identifier']);
 
 		$this->db->query($sql);
