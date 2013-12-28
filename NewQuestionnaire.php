@@ -11,48 +11,6 @@ namespace cd;
 class NewQuestionnaire {
 
 	/**
-	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
-	 * @var unknown
-	 */
-	var $tableName = NULL;
-
-	/**
-	 * アンケート id
-	 * @var unknown
-	 */
-	var $enquete_id = NULL;
-	/**
-	 * アンケート名(タイトル)
-	 * @var unknown
-	 */
-	var $enquete_name = NULL;
-	/**
-	 * 開始日
-	 * @var null
-	 */
-	var $start_date = NULL;
-	/**
-	 * 終了日
-	 * @var null
-	 */
-	var $end_date = NULL;
-	/**
-	 * アンケートデータ
-	 * @var null
-	 */
-	var $enquete = NULL;
-
-	// 表示文
-	var $new_enquete_phase = array(
-			'title' => '新規アンケート作成',
-			'submit_value' => '新規作成'
-	);
-	var $edit_enquete_phase = array(
-			'title' => 'アンケートの編集',
-			'submit_value' => '変更を保存'
-	);
-
-	/**
 	 * コンストラクタ
 	 * メニュー表示
 	 */
@@ -67,36 +25,31 @@ class NewQuestionnaire {
 	function cd_questionnaire_add_pages() {
 		$hook_new = add_submenu_page('cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 8, __FILE__ . '?action=new', array(
 				$this,
-				'divideAction'
+				'divide_action'
 		));
 	}
 
-	function divideAction() {
+	function divide_action() {
 		if (isset ($_POST ['action'])) {
-			$this->enquete['enquete_name'] = $_POST ['enquete_name'];
-			$this->enquete['start_date'] = $_POST ['start_date'];
-			$this->enquete['end_date = $_POST'] ['end_date'];
+			$enquete['enquete_name'] = $_POST ['enquete_name'];
+			$enquete['start_date'] = $_POST ['start_date'];
+			$enquete['end_date'] = $_POST ['end_date'];
 
-			$this->enquete['data'] = $_POST ['enquete'] ['questions'];
+			$enquete['data'] = $_POST ['enquete'] ['questions'];
 
 			require_once("QuestionnaireRegist.php");
 			$qre = new QuestionnaireRegist();
-			$qre->questionnaire_regist_page($this->enquete);
+			$qre->questionnaire_regist_page($enquete);
 		} else {
 			$this->questionnaire_new_page();
 		}
 	}
 
 	/**
-	 * アンケートの新規作成
+	 * アンケートの新規作成ページの表示
 	 */
 	function questionnaire_new_page() {
-		$this->setTableName();
 		global $cd_smarty_instance;
-
-		//$this->setEnquetesResult();
-
-		$statement = $this->new_enquete_phase;
 
 		$cd_smarty_instance->assign("afterAdd_selectionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/selectionorders.tpl'));
 		$cd_smarty_instance->assign("afterAdd_questionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/questionorders.tpl'));
@@ -108,14 +61,6 @@ class NewQuestionnaire {
 		$cd_smarty_instance->assign("form_title", '新規登録');
 		$cd_smarty_instance->display("update.tpl");
 	}
-
-	function setTableName() {
-		if (!isset ($this->tableName)) {
-			$dao = new QuestionnaireDAO ();
-			$this->tableName = $dao->getTableNames();
-		}
-	}
-
 
 	function add_javascripts() {
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');

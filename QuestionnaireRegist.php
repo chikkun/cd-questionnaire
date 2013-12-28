@@ -17,24 +17,6 @@ class QuestionnaireRegist {
 	 */
 	var $enquete_id = NULL;
 	/**
-	 * アンケート名(タイトル)
-	 *
-	 * @var unknown
-	 */
-	var $enquete_name = NULL;
-	/**
-	 * 開始日
-	 *
-	 * @var null
-	 */
-	var $start_date = NULL;
-	/**
-	 * 終了日
-	 *
-	 * @var null
-	 */
-	var $end_date = NULL;
-	/**
 	 * アンケートデータ
 	 *
 	 * @var null
@@ -50,19 +32,25 @@ class QuestionnaireRegist {
 		echo $this->printShortCode();
 		$this->showEnquete();
 	}
+
+	/**
+	 * 新規アンケートの登録
+	 */
 	function registEnquete() {
 		$dao = new QuestionnaireDAO ();
 		$this->enquete_id = $dao->insertEnquete($this->enquete);
 	}
+
+	/**
+	 * 新規アンケートの表示
+	 */
 	function showEnquete() {
 		var_dump($this->enquete);
 		global $cd_smarty_instance;
 
 		// TODO テンプレート化
 
-//		$cd_smarty_instance->assign("enquete_name", $this->enquete ['enquete_name']);
-//		$cd_smarty_instance->assign("start_date", $this->enquete ['start_date']);
-//		$cd_smarty_instance->assign("end_date", $this->enquete ['end_date']);
+//		$cd_smarty_instance->assign("enquete", $this->enquete );
 
 		//$cd_smarty_instance->display("show.tpl");
 		echo "登録終了";
