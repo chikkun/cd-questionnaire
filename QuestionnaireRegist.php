@@ -37,6 +37,7 @@ class QuestionnaireRegist {
 	 * 新規アンケートの登録
 	 */
 	function registEnquete() {
+
 		$dao = new QuestionnaireDAO ();
 		$this->enquete_id = $dao->insertEnquete($this->enquete);
 	}

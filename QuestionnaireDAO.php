@@ -191,7 +191,7 @@ WHERE  e.enquete_id = %s AND e.delete_flag = 0;
 EOF;
 
 
-		$sql = $this->db->prepare($sql, $id);
+		$sql = $this->db->prepare($sql, $this->id);
 		return $this->db->get_var($sql);
 	}
 
@@ -328,8 +328,6 @@ EOF;
 	}
 
 	function insertAnswer($answerData) {
-		!isset ($this->tableNames) ? $this->getTableNames() : NULL;
-
 		$sql = "
 				INSERT INTO " . $this->tableNames ['answers'] . "
 						(enquete_id,question_id,selection_id,identifier)
@@ -341,6 +339,31 @@ EOF;
 
 		$this->db->query($sql);
 
+	}
+
+	function insertIdentifier($data) {
+		$sql = "
+				INSERT INTO " . $this->tableNames ['identifiers'] . "
+						(enquete_id,identifier)
+						VALUES
+						(%d,%s);
+						";
+
+		$sql = $this->db->prepare($sql, $data ['enquete_id'], $data ['identifier']);
+
+		$this->db->query($sql);
+
+	}
+
+	/**
+	 * identifiersテーブルから、アンケートの答えを登録した時にくわせたCOOKIEを取り出す。
+	 */
+	function getIdentifier($id) {
+		$sql = "SELECT identifier FROM {$this->tableNames['identifiers']} WHERE enquete_id = %s;";
+
+		$sql = $this->db->prepare($sql, $id);
+
+		return $this->db->get_results($sql);
 	}
 
 
