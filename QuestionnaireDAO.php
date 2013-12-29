@@ -8,12 +8,12 @@ class QuestionnaireDAO {
 	 *
 	 * @var unknown
 	 */
-	var $tables = array (
-			"enquetes",
-			"questions",
-			"selections",
-			"answers",
-		  "identifiers"
+	var $tables = array(
+		"enquetes",
+		"questions",
+		"selections",
+		"answers",
+		"identifiers"
 	);
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
@@ -32,21 +32,24 @@ class QuestionnaireDAO {
 	var $char = NULL;
 
 	var $db;
+
 	function __construct() {
 		global $wpdb;
 		$this->db = $wpdb;
 		// wp-config.phpに書いてある文字コードを使用する
-		$this->char = defined ( "DB_CHARSET" ) ? DB_CHARSET : "utf8";
+		$this->char = defined("DB_CHARSET") ? DB_CHARSET : "utf8";
 		// データベース用 テーブル名を決める
-		$this->setTableNames ();
+		$this->setTableNames();
 	}
+
 	function setTableNames() {
-		foreach ( $this->tables as $name ) {
+		foreach ($this->tables as $name) {
 			$this->tableNames [$name] = $this->db->prefix . $name;
 		}
 	}
+
 	function getTableNames() {
-		! isset ( $this->tableNames ) ? $this->setTableNames () : NULL;
+		!isset ($this->tableNames) ? $this->setTableNames() : NULL;
 		return $this->tableNames;
 	}
 
@@ -94,9 +97,11 @@ GROUP BY name, question_id, selection_id
 ORDER BY question_order, question_id, selection_order, selection_id;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
-		return array($this->db->get_results($sql), $question_number);
+		return array($this->db->get_results($sql),
+			$question_number);
 
 	}
+
 	/**
 	 * 検索ページのデータを取得し、返す。
 	 * @param $fields 検索フィールドの値
@@ -104,7 +109,7 @@ EOF;
 	 * @param $offset 何ページ目か(0始まり)
 	 * @return array (data, total)
 	 */
-	function getQuestionnairesListPerPage($fields, $perPage, $offset){
+	function getQuestionnairesListPerPage($fields, $perPage, $offset) {
 		// where文作成用
 		$where = "";
 		$j = 0;
@@ -138,7 +143,7 @@ EOF;
 				}
 			}
 		}
-		if($where) {
+		if ($where) {
 			$where .= "AND e.delete_flag = 0";
 		} else {
 			$where .= "WHERE e.delete_flag = 0";
@@ -160,10 +165,11 @@ FROM     {$this->tableNames['enquetes']} AS e $where
 ORDER BY e.id DESC LIMIT $perPage OFFSET $offset;
 EOF;
 
-		return array($this->db->get_results($sql), $total);
+		return array($this->db->get_results($sql),
+			$total);
 	}
 
-	function getAlreadyAnsweredNumber($id){
+	function getAlreadyAnsweredNumber($id) {
 		$sql = <<< EOF
 SELECT COUNT(a.id)
 FROM   {$this->tableNames['answers']} AS a
@@ -172,6 +178,7 @@ EOF;
 		$sql = $this->db->prepare($sql, $id);
 		return $this->db->get_var($sql);
 	}
+
 	/**
 	 * delete_flagが立っていないアンケート総数を返す。
 	 * @return mixed
@@ -216,9 +223,33 @@ EOF;
 			ORDER BY
 			q_sort_id, q_id, s_sort_id, s_id;
 EOF;
-		
-		$results = $this->db->get_results ( $this->db->prepare ( $sql, $id ) );
+
+		$results = $this->db->get_results($this->db->prepare($sql, $id));
 		return $results;
+	}
+
+	function deleteQuestionnaireChildren($id) {
+		$sql = <<< EOF
+DELETE {$this->tableNames['enquetes']}
+WHERE  question_id IN (SELECT q.id
+                       FROM   wp_questions AS q
+                       WHERE  q.enquete_id = %s);
+
+EOF;
+		$this->db->prepare($sql, $id);
+		try {
+			$$this->db->query($sql);
+			$sql = <<< EOF
+DELETE {$this->tableNames['question']}
+WHERE enquete_id = %s;
+EOF;
+			$$this->db->prepare($sql, $id);
+			$$this->db->query($sql);
+		} catch (\Exception $e) {
+			var_dumpp($e);
+			return false;
+		}
+		return true;
 	}
 
 	function insertEnquete($enquete) {
@@ -272,7 +303,7 @@ EOF;
   				%d
 			);
 EOF;
-		
+
 		// TODO multiple_answer に対応させる
 		$sql = $this->db->prepare($sql, $e_id, $question ['order'], $question ['question'], 1);
 		$this->db->query($sql);
@@ -289,16 +320,16 @@ EOF;
   				%s
 			);
 EOF;
-		
-		foreach ( $question ['selections'] as $sel ) {
+
+		foreach ($question ['selections'] as $sel) {
 			$sql = $this->db->prepare($sqln, $q_id, $sel ['order'], $sel ['selection']);
 			$this->db->query($sql);
 		}
 	}
 
 	function insertAnswer($answerData) {
-		! isset ( $this->tableNames ) ? $this->getTableNames () : NULL;
-		
+		!isset ($this->tableNames) ? $this->getTableNames() : NULL;
+
 		$sql = "
 				INSERT INTO " . $this->tableNames ['answers'] . "
 						(enquete_id,question_id,selection_id,identifier)
@@ -311,8 +342,8 @@ EOF;
 		$this->db->query($sql);
 
 	}
-	
-	
+
+
 	/**
 	 * 以下テーブル作成のSQL文
 	 *
@@ -334,6 +365,7 @@ CREATE TABLE {$this->tableNames['enquetes']} (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET={$this->char} COMMENT='アンケートテーブル';
 EOS;
 	}
+
 	function questionsSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['questions']} (
@@ -365,6 +397,7 @@ CREATE TABLE {$this->tableNames['selections']} (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET={$this->char} COMMENT='選択肢テーブル';
 EOS;
 	}
+
 	function answersSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['answers']} (
@@ -382,6 +415,7 @@ CREATE TABLE {$this->tableNames['answers']} (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET={$this->char} COMMENT='回答結果テーブル';
 EOS;
 	}
+
 	function identifiersSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['identifiers']} (
