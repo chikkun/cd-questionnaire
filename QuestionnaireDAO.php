@@ -228,6 +228,27 @@ EOF;
 		return $results;
 	}
 
+
+	/**
+	 * identifiersテーブルから、アンケートの答えを登録した時にくわせたCOOKIEを取り出す。
+	 */
+	function getIdentifier($id) {
+		$sql = "SELECT identifier FROM {$this->tableNames['identifiers']} WHERE enquete_id = %s;";
+
+		$sql = $this->db->prepare($sql, $id);
+
+		return $this->db->get_results($sql);
+	}
+
+function getRespondedAnswer($id) {
+	$sql = "SELECT enquete_id,question_id,selection_id  FROM {$this->tableNames['answers']} WHERE enquete_id = %s and identifier = %s;";
+
+	$sql = $this->db->prepare($sql, $id);
+
+	return $this->db->get_results($sql);
+
+}
+
 	function deleteQuestionnaireChildren($id) {
 		$sql = <<< EOF
 DELETE {$this->tableNames['enquetes']}
@@ -354,18 +375,6 @@ EOF;
 		$this->db->query($sql);
 
 	}
-
-	/**
-	 * identifiersテーブルから、アンケートの答えを登録した時にくわせたCOOKIEを取り出す。
-	 */
-	function getIdentifier($id) {
-		$sql = "SELECT identifier FROM {$this->tableNames['identifiers']} WHERE enquete_id = %s;";
-
-		$sql = $this->db->prepare($sql, $id);
-
-		return $this->db->get_results($sql);
-	}
-
 
 	/**
 	 * 以下テーブル作成のSQL文

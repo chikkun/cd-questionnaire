@@ -9,9 +9,9 @@
 namespace cd;
 
 
-class QuestionnaireAnswerDisplay {
+class QuestionnaireDisplay {
 
-	function displayAnswer($results) {
+	function displayAnswer($results, $registered) {
 
 		global $cd_smarty_instance;
 		$cd_smarty_instance->assign("enquete_name", $results[0]->e_name);

@@ -1,14 +1,13 @@
 <?php
 namespace cd;
 
-//use \cd\QuestionnaireDAO;
 /**
- * FILE: CDQuestionnaireAnswer.php
+ * FILE: QuestionnaireAnswers.php
  * Author: C & D, Inc.;
  * アンケート質問事項の表示を行う。
  * 扱うテーブルは、アンケートの答えを登録する/してあるテーブル一つのみ。
  */
-class CDQuestionnaireAnswer {
+class QuestionnaireAnswers {
 
 	/* アンケートid */
 	var $id = NULL;
@@ -33,7 +32,6 @@ class CDQuestionnaireAnswer {
 		$dao = new QuestionnaireDAO();
 
 		wp_enqueue_script('jquery');
-		wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('jquery'), false, true);
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, true);
 
 		extract(shortcode_atts(array(
@@ -49,22 +47,13 @@ class CDQuestionnaireAnswer {
 			$opt = $_POST ['enquete_options'];
 			$opt = $opt['enquete_answer'];
 
-			$identifier = $_COOKIE['CDQ_enquete'];
-
 			//TODO
 			//   identifier ---> $_COOKIE['CDQ_enquete'][] = $e_id
 			//
+			$identifier = $_COOKIE['CDQ_enquete'];
+
 			$opt['enquete_id'] = $id;
 			$opt['identifier'] = $identifier;
-
-			$results = $dao->getIdentifier($id);
-
-			foreach ($results as $ident) {
-				if ($ident->identifier == $identifier) {
-					return $this->getMessage('registered');
-				}
-			}
-
 			require_once('QuestionnaireAnswerRegist.php');
 			$qar = new QuestionnaireAnswerRegist();
 			$qar->registerAnswer($opt);
@@ -73,15 +62,33 @@ class CDQuestionnaireAnswer {
 
 		} else {
 			//アンケートを表示
+			$registered = array();
+			$registered['bool'] = FALSE;
+			//
+			wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
+			wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
+			// 既に回答済みかチェック
+			$identifier = $_COOKIE['CDQ_enquete'];
 
+			if (NULL != $identifier) {
+				$results = $dao->getIdentifier($id);
+				foreach ($results as $ident) {
+					if ($ident->identifier == $identifier) {
+						$registered['bool'] = TRUE;
+						$reg = $dao->getRespondedAnswer($id);
+						echo $this->getMessage('registered');
+						break;
+					}
+				}
+			}
 			$results = $dao->getEnqueteData($id);
 			if (NULL === $results || !isset($results[0]->q_id)) {
 				return $this->getMessage('retry');
 			}
 
-			require_once("QuestionnaireAnswerDisplay.php");
-			$qad = new QuestionnaireAnswerDisplay();
-			return $qad->displayAnswer($results);
+			require_once("QuestionnaireDisplay.php");
+			$qad = new QuestionnaireDisplay();
+			$qad->displayAnswer($results, $registered);
 		}
 	}
 

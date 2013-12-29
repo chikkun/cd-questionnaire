@@ -1,6 +1,8 @@
 function setJsonCookie(name, jsondt, dir, days){
     // 名前と値
     var val = encodeURIComponent(name) +"="+ encodeURIComponent(JSON.stringify(jsondt)) +"; ";
+    //var val = jsondt;
+
     //パス
     var path = location.pathname;
     if (dir !== undefined)
@@ -23,16 +25,18 @@ function getJsonCookie(name) {
         var e_idx = cookies.indexOf( ';', s_idx );
         if( e_idx == -1 ) 
             e_idx = cookies.length;
-         
+
         result = JSON.parse( decodeURIComponent( cookies.substring( s_idx, e_idx ) ));
+        //result = cookies.substring( s_idx, e_idx );
     }
     return result;
 }
  
 function getUT() {
     var ns = {};
-    var ut = new Date;
-	var val = "CDQ_[" + ut + "]";// + mt.nextInt(0, 5);// + mt.next();
+    var ut = parseInt(new Date/1);
+    var mt = new MersenneTwister();
+	var val =  ut + mt.nextInt() + mt.next();
 
     ns['ut']  = val;
     
@@ -41,12 +45,12 @@ function getUT() {
         //クッキー作成
         setJsonCookie("CDQ_enquete", ns, '/');
         //クッキー再読み込み
-        gc = getJsonCookie("CDQ_enquete");
-        if(gc !== null) {
-            //クッキーが有効ならリロード
-            window.stop();
-            window.location.reload(true);
-        }
+//        gc = getJsonCookie("CDQ_enquete");
+//        if(gc !== null) {
+//            //クッキーが有効ならリロード
+//            window.stop();
+//            window.location.reload(true);
+//        }
     }
 }
 

@@ -8,12 +8,12 @@
  Author URI: http://www.co-machi.org
 */
 
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDQuestionnaire.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "CDQuestionnaire.php";
 require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "QuestionnaireResults.php";
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR."QuestionnaireDAO.php";
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR."NewQuestionnaire.php";
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR."CDQuestionnaireAnswer.php";
-require_once dirname(__FILE__).DIRECTORY_SEPARATOR."SearchAndUpdateQuestionnaire.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "QuestionnaireDAO.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "NewQuestionnaire.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "QuestionnaireAnswers.php";
+require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . "SearchAndUpdateQuestionnaire.php";
 
 use \cd\CDQuestionnaire;
 use \cd\QuestionnaireDAO;
@@ -21,6 +21,7 @@ use \cd\SearchAndUpdateQuestionnaire;
 use \cd\NewQuestionnaire;
 use \cd\CDQuestionnaireAnswer;
 use \cd\QuestionnaireResults;
+use cd\QuestionnaireAnswers;
 
 $question = new CDQuestionnaire();
 $search = new SearchAndUpdateQuestionnaire();
@@ -28,18 +29,18 @@ $new = new NewQuestionnaire();
 // 有効化の時に実行する
 register_activation_hook(__FILE__, array($question, "activate"));
 // ショートコード有効化
-$cde = new CDQuestionnaireAnswer();
+$cde = new QuestionnaireAnswers();
 $result = new QuestionnaireResults();
 
 //smarty設定
 $cd_smarty_version = "3.1.16";
-$cd_smarty_dir = plugin_dir_path( __FILE__ ) . "Smarty-" . $cd_smarty_version . "/libs/";
+$cd_smarty_dir = plugin_dir_path(__FILE__) . "Smarty-" . $cd_smarty_version . "/libs/";
 
 require_once($cd_smarty_dir . "Smarty.class.php");
 $cd_smarty_instance = new Smarty();
-$cd_smarty_instance->template_dir = plugin_dir_path( __FILE__ ) . 'templates/';
-$cd_smarty_instance->compile_dir  = plugin_dir_path( __FILE__ ) . 'templates_c/';
-$cd_smarty_instance->config_dir   = plugin_dir_path( __FILE__ ) . 'configs/';
-$cd_smarty_instance->cache_dir    = plugin_dir_path( __FILE__ ) . 'cache/';
+$cd_smarty_instance->template_dir = plugin_dir_path(__FILE__) . 'templates/';
+$cd_smarty_instance->compile_dir = plugin_dir_path(__FILE__) . 'templates_c/';
+$cd_smarty_instance->config_dir = plugin_dir_path(__FILE__) . 'configs/';
+$cd_smarty_instance->cache_dir = plugin_dir_path(__FILE__) . 'cache/';
 $cd_smarty_instance->left_delimiter = "{{";
 $cd_smarty_instance->right_delimiter = "}}";
