@@ -259,7 +259,6 @@ WHERE  question_id IN (SELECT q.id
 EOF;
 		$sql = $this->db->prepare($sql, $id);
 		try {
-			var_dump($sql);
 			$this->db->query($sql);
 		} catch (\Exception $e) {
 			var_dumpp($e);
@@ -326,7 +325,6 @@ EOF;
 				$sql .= " WHERE id = %n";
 				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete_id);
 			}
-			var_dump($sql);
 			$this->db->query($sql);
 		}
 
