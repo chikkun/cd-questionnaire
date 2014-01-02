@@ -3,7 +3,7 @@
 namespace cd;
 
 class UpdateShowForm {
-	function update_show_form() {
+	function update_show_form($mes = "", $delete_flag = true) {
 		if(!isset($_GET ['id']) || !preg_match("/\d+/", $_GET ['id'])){
 			return false;
 		}
@@ -22,7 +22,7 @@ class UpdateShowForm {
 
 		$cddb = new \cd\QuestionnaireDAO();
 		$answer_number = $cddb->getAlreadyAnsweredNumber($_GET['id']);
-		$results = $cddb->getEnqueteData($_GET['id']);
+		$results = $cddb->getEnqueteData($_GET['id'], $delete_flag);
 		$num = 0;
 		$before = "";
 		$alldata = new \stdClass ();
@@ -58,7 +58,7 @@ class UpdateShowForm {
 			array_push($each_results->enquete_questions_index_selections, $select);
 			$before = $val->question_text;
 		}
-		array_push($each_results->enquete_questions_index_selections, $select);
+		//array_push($each_results->enquete_questions_index_selections, $select);
 		array_push($alldata->data, $each_results);
 
 		$json = json_encode($alldata);
@@ -76,6 +76,7 @@ class UpdateShowForm {
 		}
 		$cd_smarty_instance->assign("enquete_title", $enquete_title);
 		$cd_smarty_instance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
+		$cd_smarty_instance->assign("mes", $mes);
 		$cd_smarty_instance->assign("start_date", $start_date);
 		$cd_smarty_instance->assign("end_date", $end_date);
 		$cd_smarty_instance->assign("form_title", "修正/削除");

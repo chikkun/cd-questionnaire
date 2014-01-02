@@ -20,4 +20,9 @@ class UpdateQuestionnaire {
 		$dao->insertEnquete($enquete, false, $id);
 		return true;
 	}
+	function delete($id) {
+		$dao = new \cd\QuestionnaireDAO();
+		$dao->deleteEnquete($id);
+		return true;
+	}
 } 

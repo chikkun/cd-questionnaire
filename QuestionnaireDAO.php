@@ -195,7 +195,22 @@ EOF;
 		return $this->db->get_var($sql);
 	}
 
-	function getEnqueteData($id) {
+	function deleteEnquete($id){
+		$sql = <<< EOF
+UPDATE {$this->tableNames['enquetes']}
+SET delete_flag = 1
+WHERE id = %s;
+EOF;
+    $sql = $this->db->prepare($sql, $id);
+		try {
+			$this->db->query($sql);
+		} catch (\Exception $e) {
+			var_dumpp($e);
+			return false;
+		}
+	}
+
+	function getEnqueteData($id, $delete_flag = true) {
 		$sql = <<<EOF
 			SELECT e.id AS e_id,
 			e.name AS e_name,
@@ -219,10 +234,12 @@ EOF;
 			INNER JOIN
 			{$this->tableNames['selections']} AS s
 			ON q.id = s.question_id
-			WHERE  e.id = %s AND e.delete_flag = 0
-			ORDER BY
-			q_sort_id, q_id, s_sort_id, s_id;
+			WHERE  e.id = %s
 EOF;
+		if($delete_flag) {
+			$sql .= "AND e.delete_flag = 0 ";
+		}
+		$sql .= "ORDER BY q_sort_id, q_id, s_sort_id, s_id";
 
 		$results = $this->db->get_results($this->db->prepare($sql, $id));
 		return $results;

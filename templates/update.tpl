@@ -23,6 +23,7 @@ label.error {
 </style>
 
 <div class="container">
+	<div class="row">{{$mes}}</div>
   <div class="row span12">
     <h2>アンケート{{$form_title}}</h2>
   </div>
