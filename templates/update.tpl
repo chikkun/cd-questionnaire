@@ -28,6 +28,7 @@ label.error {
   </div>
   <div class="row span12">
     <form id="enquete" role="form" class="form-horizontal" method="post" action="">
+			{{$hidden_id}}
       <fieldset>
         <div class="control-group row">
           <label for="enquete_name" class="span2 colabel">アンケート名</label>

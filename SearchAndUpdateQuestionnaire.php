@@ -36,7 +36,8 @@ class SearchAndUpdateQuestionnaire {
 			case 'update' :
 				require_once("UpdateQuestionnaire.php");
 				$update_questionnaire = new \cd\UpdateQuestionnaire();
-				$update_questionnaire->update();
+				$enquete_id = $_POST["enquete_id"];
+				$update_questionnaire->update($enquete_id);
 				break;
 			case 'search' :
 				require_once("SearchQuestionnaire.php");

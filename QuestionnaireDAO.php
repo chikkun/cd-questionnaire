@@ -240,41 +240,64 @@ EOF;
 		return $this->db->get_results($sql);
 	}
 
-function getRespondedAnswer($id) {
-	$sql = "SELECT enquete_id,question_id,selection_id  FROM {$this->tableNames['answers']} WHERE enquete_id = %s and identifier = %s;";
+	function getRespondedAnswer($id) {
+		$sql = "SELECT enquete_id,question_id,selection_id  FROM {$this->tableNames['answers']} WHERE enquete_id = %s and identifier = %s;";
 
-	$sql = $this->db->prepare($sql, $id);
+		$sql = $this->db->prepare($sql, $id);
 
-	return $this->db->get_results($sql);
+		return $this->db->get_results($sql);
 
-}
+	}
 
 	function deleteQuestionnaireChildren($id) {
 		$sql = <<< EOF
-DELETE {$this->tableNames['enquetes']}
+DELETE FROM {$this->tableNames['selections']}
 WHERE  question_id IN (SELECT q.id
                        FROM   wp_questions AS q
                        WHERE  q.enquete_id = %s);
 
 EOF;
-		$this->db->prepare($sql, $id);
+		$sql = $this->db->prepare($sql, $id);
 		try {
-			$$this->db->query($sql);
-			$sql = <<< EOF
-DELETE {$this->tableNames['question']}
-WHERE enquete_id = %s;
-EOF;
-			$$this->db->prepare($sql, $id);
-			$$this->db->query($sql);
+			var_dump($sql);
+			$this->db->query($sql);
 		} catch (\Exception $e) {
 			var_dumpp($e);
 			return false;
 		}
+		$sql = <<< EOF
+DELETE FROM {$this->tableNames['questions']}
+WHERE enquete_id = %s;
+EOF;
+		$sql = $this->db->prepare($sql, $id);
+
+		try {
+			$this->db->query($sql);
+		} catch (\Exception $e) {
+			var_dumpp($e);
+			return false;
+		}
+
 		return true;
 	}
 
-	function insertEnquete($enquete) {
-		$sql = <<<EOF
+	function insertEnquete($enquete, $enquete_insert_flag = true, $enquete_id = null) {
+	  //insertの時
+		if ($enquete_insert_flag) {
+			if ("" === $enquete ['end_date'] || NULL === $enquete ['end_date']) {
+				$sql = <<<EOF
+			INSERT INTO {$this->tableNames['enquetes']}
+			(name,start_date,poll_or_question)
+			VALUES
+			(
+	 			%s,
+  				%s,
+  				'1'
+			);
+EOF;
+				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date']);
+			} else {
+				$sql = <<<EOF
 			INSERT INTO {$this->tableNames['enquetes']}
 			(name,start_date,end_date,poll_or_question)
 			VALUES
@@ -285,25 +308,28 @@ EOF;
   				'1'
 			);
 EOF;
-		$sql2 = <<<EOF
-			INSERT INTO {$this->tableNames['enquetes']}
-			(name,start_date,poll_or_question)
-			VALUES
-			(
-	 			%s,
-  				%s,
-  				'1'
-			);
-EOF;
-
-		if ("" === $enquete ['end_date'] || NULL === $enquete ['end_date']) {
-			$sql = $this->db->prepare($sql2, $enquete ['enquete_name'], $enquete ['start_date']);
+				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete ['end_date']);
+			}
+			$this->db->query($sql);
+			$query = 'select last_insert_id();';
+			$enquete_id = $this->db->get_var($query);
 		} else {
-			$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete ['end_date']);
+			// updateの時
+			$sql = <<<EOF
+			UPDATE  {$this->tableNames['enquetes']}
+			SET name = %s, start_date = %s, poll_or_question = 1
+EOF;
+			if ("" !== $enquete ['end_date'] && NULL !== $enquete ['end_date']) {
+				$sql .= ", end_date = %s WHERE id = %s";
+				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete ['end_date'], $enquete_id);
+			} else {
+				$sql .= " WHERE id = %n";
+				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete_id);
+			}
+			var_dump($sql);
+			$this->db->query($sql);
 		}
-		$this->db->query($sql);
-		$query = 'select last_insert_id();';
-		$enquete_id = $this->db->get_var($query);
+
 		$data = $enquete ['data'];
 		foreach ($data as $question) {
 			$this->insertQuestion($enquete_id, $question);

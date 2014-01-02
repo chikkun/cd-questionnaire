@@ -75,6 +75,7 @@ class UpdateShowForm {
 			$cd_smarty_instance->assign("enable", "ng");
 		}
 		$cd_smarty_instance->assign("enquete_title", $enquete_title);
+		$cd_smarty_instance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
 		$cd_smarty_instance->assign("start_date", $start_date);
 		$cd_smarty_instance->assign("end_date", $end_date);
 		$cd_smarty_instance->assign("form_title", "修正/削除");
