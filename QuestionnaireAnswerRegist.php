@@ -21,6 +21,7 @@ class QuestionnaireAnswerRegist {
 				$answerData['eid'] = $data['enquete_id'];
 				$answerData['qid'] = $qid;
 				$answerData['identifier'] = $data['identifier'];
+				$answerData['ip_address'] = $data['ip_address'];
 				if ('question' === $cid) {
 					$answerData['question'] = $sel;
 				} else {
@@ -32,7 +33,6 @@ class QuestionnaireAnswerRegist {
 				}
 			}
 		}
-
 		$dao->insertIdentifier($data);
 
 	}

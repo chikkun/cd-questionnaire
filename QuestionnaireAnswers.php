@@ -51,6 +51,8 @@ class QuestionnaireAnswers {
 
 			$opt['enquete_id'] = $id;
 			$opt['identifier'] = $identifier;
+			$opt['ip_address'] = $_SERVER["REMOTE_ADDR"];
+
 			require_once('QuestionnaireAnswerRegist.php');
 			$qar = new QuestionnaireAnswerRegist();
 			$qar->registerAnswer($opt);
