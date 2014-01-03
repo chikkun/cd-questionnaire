@@ -2,10 +2,12 @@
 <form action="" method="post">
 
     <ol class="cdq_enquete">
-        {{$questions}}
+        <div class="container-fluid">
+            {{$questions}}
+        </div>
     </ol>
 
-    <input type="submit" name="enquete_options[enquete_answer][submit]" value="アンケートに答える">
+    <input type="{{$submit}}" name="enquete_options[enquete_answer][submit]" value="アンケートに答える">
     <input type="hidden" name="enquete_options[enquete_answer][enquete_id]" value="{{$enquete_id}}">
 </form>
 

@@ -11,9 +11,23 @@ namespace cd;
 
 class QuestionnaireDisplay {
 
-	function displayAnswer($results, $registered) {
-
+	function displayEnquete($results, $registered) {
 		global $cd_smarty_instance;
+		$submit = 'button';
+		if ('responded' == $registered['phase']) {
+			// 返答済のアンケートの表示の場合
+			// TODO
+			$respondedAnswer = $registered['responded_answer'];
+		} else if ('responding' == $registered['phase']) {
+			// これからアンケートに応える
+			$submit = 'submit';
+		} else if ('new' == $registered['phase']) {
+			// 新規にアンケートを作成した場合
+			echo "ただいま作成されたアンケートです。";
+		}
+		$cd_smarty_instance->assign("submit", $submit);
+
+		//
 		$cd_smarty_instance->assign("enquete_name", $results[0]->e_name);
 		$cd_smarty_instance->assign("enquete_id", $results[0]->e_id);
 		$cd_smarty_instance->assign("start_date", $results[0]->start_date);

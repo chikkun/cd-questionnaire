@@ -27,34 +27,27 @@ class QuestionnaireRegist {
 	 * 新規アンケートの登録/表示
 	 */
 	function questionnaire_regist_page($enquete) {
-		$this->enquete = $enquete;
-		$this->registEnquete();
-		echo $this->printShortCode();
-		$this->showEnquete();
-	}
-
-	/**
-	 * 新規アンケートの登録
-	 */
-	function registEnquete() {
-
 		$dao = new QuestionnaireDAO ();
 		$this->enquete_id = $dao->insertEnquete($this->enquete);
+		echo $this->printShortCode();
+		$this->showEnquete();
 	}
 
 	/**
 	 * 新規アンケートの表示
 	 */
 	function showEnquete() {
-		var_dump($this->enquete);
-		global $cd_smarty_instance;
+		$dao = new QuestionnaireDAO ();
+		$results = $dao->getEnqueteData($this->enquete_id);
 
-		// TODO テンプレート化
+		// TODO 新規登録されたアンケートの表示
+		$registered['phase'] = 'new';
+		require_once("QuestionnaireDisplay.php");
+		$qd = new QuestionnaireDisplay();
+		$qd->displayEnquete($results, $registered);
 
-//		$cd_smarty_instance->assign("enquete", $this->enquete );
+		echo "<br /><br />登録終了<br /><br />";
 
-		//$cd_smarty_instance->display("show.tpl");
-		echo "登録終了";
 	}
 	function printShortCode() {
 		return <<<EOF

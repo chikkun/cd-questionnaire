@@ -38,6 +38,7 @@ class QuestionnaireAnswers {
 				'id' => 0
 		), $atts));
 		$this->id = $id;
+		$identifier = $_COOKIE['CDQ_enquete'];
 
 		if (isset($_POST['enquete_options'])) {
 			// アンケートを登録
@@ -47,10 +48,6 @@ class QuestionnaireAnswers {
 			$opt = $_POST ['enquete_options'];
 			$opt = $opt['enquete_answer'];
 
-			//TODO
-			//   identifier ---> $_COOKIE['CDQ_enquete'][] = $e_id
-			//
-			$identifier = $_COOKIE['CDQ_enquete'];
 
 			$opt['enquete_id'] = $id;
 			$opt['identifier'] = $identifier;
@@ -62,20 +59,19 @@ class QuestionnaireAnswers {
 
 		} else {
 			//アンケートを表示
-			$registered = array();
-			$registered['bool'] = FALSE;
+			$registered['phase'] = 'responding';
 			//
 			wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
 			wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
 			// 既に回答済みかチェック
-			$identifier = $_COOKIE['CDQ_enquete'];
 
 			if (NULL != $identifier) {
 				$results = $dao->getIdentifier($id);
 				foreach ($results as $ident) {
 					if ($ident->identifier == $identifier) {
-						$registered['bool'] = TRUE;
-						$reg = $dao->getRespondedAnswer($id);
+						$registered['phase'] = 'responded';
+						//TODO DAO 編集
+						//$registered['responded_answer'] = $dao->getRespondedAnswer($id,$ident->identifier);
 						echo $this->getMessage('registered');
 						break;
 					}
@@ -87,8 +83,8 @@ class QuestionnaireAnswers {
 			}
 
 			require_once("QuestionnaireDisplay.php");
-			$qad = new QuestionnaireDisplay();
-			$qad->displayAnswer($results, $registered);
+			$qd = new QuestionnaireDisplay();
+			$qd->displayEnquete($results, $registered);
 		}
 	}
 
