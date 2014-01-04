@@ -3,10 +3,7 @@
 namespace cd;
 
 class UpdateShowForm {
-	function update_show_form($mes = "", $delete_flag = true) {
-		if(!isset($_GET ['id']) || !preg_match("/\d+/", $_GET ['id'])){
-			return false;
-		}
+	function updateShowForm($id, $mes = "", $deleteFlag = true) {
 		// smartyオブジェクト
 		global $cdSmartyInstance;
 		wp_enqueue_script('jquery');
@@ -21,8 +18,8 @@ class UpdateShowForm {
 		wp_enqueue_style('jquery.ui.all', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
 
 		$cddb = new \cd\QuestionnaireDAO();
-		$answer_number = $cddb->getAlreadyAnsweredNumber($_GET['id']);
-		$results = $cddb->getEnqueteData($_GET['id'], $delete_flag);
+		$answer_number = $cddb->getAlreadyAnsweredNumber($id);
+		$results = $cddb->getEnqueteData($id, $deleteFlag);
 		$num = 0;
 		$before = "";
 		$alldata = new \stdClass ();
@@ -73,6 +70,8 @@ class UpdateShowForm {
 		$cdSmartyInstance->assign("data", $json);
 		if($answer_number > 0 ){
 			$cdSmartyInstance->assign("enable", "ng");
+		} else {
+			$cdSmartyInstance->assign("enable", "");
 		}
 		$cdSmartyInstance->assign("enquete_title", $enquete_title);
 		$cdSmartyInstance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
@@ -83,6 +82,5 @@ class UpdateShowForm {
 		$cdSmartyInstance->assign("enqueteAction", "update");
 		$cdSmartyInstance->assign("enquete_button", "修正");
 		$cdSmartyInstance->display("update.tpl");
-		return true;
 	}
 }

@@ -9,13 +9,9 @@
 namespace cd;
 
 class SearchQuestionnaire {
-	function search($page, $perPage, $pageID) {
+	function search($where, $page, $perPage, $pageID) {
 		// smartyオブジェクト
 		global $cdSmartyInstance;
-		// Pagerの1ページ当たりの表示数
-		$perPage = 10;
-		// http://wordpress.chikkun.com/wp-admin/admin.php?page=cd-questionnaire/CDQuestionnaire2.php
-		// の「cd-questionnaire/CDQuestionnaire2.php」を取得、hiddenにセットする
 		$offset = ($pageID - 1) * $perPage;
 		// カレントディレクトリをincludeパスに追加(Pagerには必要だった---smartyにはいらない)
 		$path = plugin_dir_path(__FILE__);
@@ -24,12 +20,29 @@ class SearchQuestionnaire {
 		// Pager読み込み
 		require_once('Pager/Pager.php');
 		$cddb = new \cd\QuestionnaireDAO();
-		list($results, $total)= $cddb->getQuestionnairesListPerPage($_GET['where'], $perPage, $offset);
+		list($results, $total) = $cddb->getQuestionnairesListPerPage($where, $perPage, $offset);
 		// 検索fieldに値をセット
-		foreach ($_GET['where'] as $key => $value) {
-			$cdSmartyInstance->assign($key, $value);
+		if(is_array($where) && isset($where["name"])){
+			$cdSmartyInstance->assign("name", $where["name"]);
+		} else {
+			$cdSmartyInstance->assign("name", "");
 		}
-			$cdSmartyInstance->assign("e_list", $results);
+		if(is_array($where) && isset($where["id"])){
+			$cdSmartyInstance->assign("id", $where["id"]);
+		} else {
+			$cdSmartyInstance->assign("id", "");
+		}
+		if(is_array($where) && isset($where["start_date_after"])){
+			$cdSmartyInstance->assign("start_date_after", $where["start_date_after"]);
+		} else {
+			$cdSmartyInstance->assign("start_date_after", "");
+		}
+		if(is_array($where) && isset($where["start_date_before"])){
+			$cdSmartyInstance->assign("start_date_before", $where["start_date_before"]);
+		} else {
+			$cdSmartyInstance->assign("start_date_before", "");
+		}
+		$cdSmartyInstance->assign("e_list", $results);
 		$pager_array = array(
 			'mode' => 'Sliding',
 			// 表示タイプ(Jumping/Sliding)
@@ -53,7 +66,7 @@ class SearchQuestionnaire {
 			'lastPagePost' => ''
 		);
 		// Pageオブジェクト生成
-		$pager = & \Pager::factory($pager_array);
+		$pager = @ \Pager::factory($pager_array);
 		// linkタグをもらう
 		$pager_links = $pager->getLinks();
 		$pager_html = <<< EOD

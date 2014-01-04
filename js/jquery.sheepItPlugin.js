@@ -23,7 +23,7 @@
  * You should have received a copy of the MIT license
  * along with SheepIt.  If not, see <http://en.wikipedia.org/wiki/MIT_License>.
  */
-
+var fillflag = 0;
 (function($){
 
     jQuery.fn.sheepIt = function (options){
@@ -448,7 +448,6 @@
                     }
                     newForm.data('nestedForms',nestedForms);
                 }
-
                 extendForm(newForm);
                 
                 forms.push(newForm);
@@ -974,7 +973,6 @@
         function fillForm(form, data)
         {
             var x = 0;
-
             // For each element, try to get the correct field or fields
             $.each(data, function(index, value) {
                 
@@ -1079,7 +1077,6 @@
                 
             });
             
-
         }
 
         function fillFormField(field, value)
@@ -1090,7 +1087,7 @@
             }
             // hidden, text, password
             if (type == 'text' || type == 'hidden' || type == 'password') {
-                field.attr('value', value);
+                $(field).attr('value', value);
                 return true;
             }
             // textarea
@@ -1221,14 +1218,15 @@
 
             }
 
+            normalizeAll();
             /**
              * Data injection
              */
             if(options.data){
+		fillflag = 1;
                 source.inject(options.data);
+		fillflag = 0;
             }
-
-            normalizeAll();
 
             source.show();
         }

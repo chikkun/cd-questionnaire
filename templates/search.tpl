@@ -55,9 +55,9 @@
     </div>
 
     <div class="row span3 offset2">
-        <input type="submit" class="btn btn-primary btn-large" value="検　索"><input type="reset"
+        <button type="submit" class="btn btn-primary btn-large" name="action" value="search">検　索</button><button type="reset"
                                                                                   class="btn btn-warning btn-large"
-                                                                                  value="クリア">
+																																									value="クリア">クリア</button>
     </div>
 </form>
 
@@ -124,7 +124,7 @@
 				}
 				return r[3] <= (r[2] == 4 || r[2] == 6 || r[2] == 9 || r[2] == 11 ? 30 : 31);
 			}, "YYYY/MM/DD形式で入力して下さい。");
-        $('#enquete input[type="reset"]').click(function () {
+        $('#enquete button[type="reset"]').click(function () {
             $('#enquete input[type="text"]').each(function () {
               $(this).attr("value", "");
         });

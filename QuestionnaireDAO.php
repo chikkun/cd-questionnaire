@@ -239,10 +239,11 @@ EOF;
 			WHERE  e.id = %s
 EOF;
 		if($delete_flag) {
-			$sql .= "AND e.delete_flag = 0 ";
+			$sql .= " AND e.delete_flag = 0 ";
 		}
-		$sql .= "ORDER BY q_sort_id, q_id, s_sort_id, s_id";
+		$sql .= " ORDER BY q_sort_id, q_id, s_sort_id, s_id";
 
+		var_dump($sql);
 		$results = $this->db->get_results($this->db->prepare($sql, $id));
 		return $results;
 	}

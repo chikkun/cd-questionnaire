@@ -1,8 +1,9 @@
 <?php
 namespace cd;
 class SearchAndUpdateQuestionnaire {
-	var $version = 0.1;
-	var $perPage = 10;
+	public $version = 0.1;
+	private $perPage = 10;
+
 	function __construct() {
 		$this->db_version = get_option('cdq_db_version', 0);
 		// メニュー表示
@@ -12,48 +13,67 @@ class SearchAndUpdateQuestionnaire {
 
 	function questionnaireAddPages() {
 		$hook = add_menu_page('CDQuestionnaire', 'アンケート', 'level_8', 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', array(
-				$this,
+			$this,
 			'searchUpdateQuestionnaire'
 		), '', 26);
 	}
 
 	function searchUpdateQuestionnaire() {
 		$action = "";
-		if(isset($_GET ['action'])){
+		if (isset($_GET ['action'])) {
 			$action = $_GET ['action'];
 		}
-		if(isset($_POST ['action'])){
-			$action =$_POST ['action'];
+		if (isset($_POST ['action'])) {
+			$action = $_POST ['action'];
 		}
 		switch ($action) {
 			case 'update_form' :
-				require_once("UpdateShowForm.php");
-				$update_show_form = new \cd\UpdateShowForm();
-				$flag = $update_show_form->update_show_form();
 				// idなどの改ざんがあったら、そのまま一覧表示に
-				if(!$flag){
+				if(!isset($_GET ['id']) || !preg_match("/\d+/", $_GET ['id'])){
 					require_once("SearchQuestionnaire.php");
-					$search_questionnaire = new \cd\SearchQuestionnaire();
-					$search_questionnaire->search();
+					if (!isset($_GET ['page'])) {
+						$_GET ['page'] = "cd-questionnaire/SearchQuestionnaire.php";
+					}
+					$searchQuestionnaire = new \cd\SearchQuestionnaire();
+					$searchQuestionnaire->search(array(), $_GET ['page'], $this->perPage, 1);
+				} else {
+					$id = $_GET ['id'];
 				}
+
+				require_once("UpdateShowForm.php");
+				$updateShowForm = new \cd\UpdateShowForm();
+
+				$updateShowForm->updateShowForm($id);
 				break;
 			case 'update' :
+				if(!isset($_POST["enquete_id"]) || !preg_match("/\d+/", $_POST["enquete_id"])){
+					require_once("SearchQuestionnaire.php");
+					if (!isset($_GET ['page'])) {
+						$_GET ['page'] = "cd-questionnaire/SearchQuestionnaire.php";
+					}
+					$searchQuestionnaire = new \cd\SearchQuestionnaire();
+					$searchQuestionnaire->search(array(), $_GET ['page'], $this->perPage, 1);
+				} else {
+					$enqueteId = $_POST["enquete_id"];
+				}
 				require_once("UpdateQuestionnaire.php");
-				$update_questionnaire = new \cd\UpdateQuestionnaire();
-				$enquete_id = $_POST["enquete_id"];
-				$re = $update_questionnaire->update($enquete_id);
-				if(!$re){
+				$updateQuestionnaire = new \cd\UpdateQuestionnaire();
+				$enqueteId = $_POST["enquete_id"];
+				$re = $updateQuestionnaire->update($enqueteId);
+				if (!$re) {
 					$mes = "更新に失敗しました";
-				}else {
+				} else {
 					$mes = "更新しました";
 				}
 				require_once("UpdateShowForm.php");
-				$update_show_form = new \cd\UpdateShowForm();
-				$flag = $update_show_form->update_show_form($mes);
+				$updateShowForm = new \cd\UpdateShowForm();
+				$flag = $updateShowForm->updateShowForm($enqueteId, $mes);
 
 				break;
 			case 'search' :
 				require_once("SearchQuestionnaire.php");
+				// http://wordpress.chikkun.com/wp-admin/admin.php?page=cd-questionnaire/SearchQuestionnaire.php
+				// の「cd-questionnaire/SearchQuestionnaire.php」を取得、hiddenにセットする
 				$page = $_GET ['page'];
 				// PagerのpageIDからoffsetを計算
 				if (isset($_GET ['pageID'])) {
@@ -61,29 +81,35 @@ class SearchAndUpdateQuestionnaire {
 				} else {
 					$pageID = 1;
 				}
-
-				$search_questionnaire = new \cd\SearchQuestionnaire();
-				$search_questionnaire->search();
+				$where = $_GET['where'];
+				if (!is_array($where)) {
+					$where = array();
+				}
+				$searchQuestionnaire = new \cd\SearchQuestionnaire();
+				$searchQuestionnaire->search($where, $page, $this->perPage, $pageID);
 				break;
 			case 'delete' :
 				require_once("UpdateQuestionnaire.php");
-				$update_questionnaire = new \cd\UpdateQuestionnaire();
-				$enquete_id = $_POST["enquete_id"];
-				$re = $update_questionnaire->delete($enquete_id);
-				if(!$re){
+				$updateQuestionnaire = new \cd\UpdateQuestionnaire();
+				$enqueteId = $_POST["enquete_id"];
+				$re = $updateQuestionnaire->delete($enqueteId);
+				if (!$re) {
 					$mes = "削除に失敗しました";
-				}else {
+				} else {
 					$mes = "削除しました";
 				}
 				require_once("UpdateShowForm.php");
-				$update_show_form = new \cd\UpdateShowForm();
-				$flag = $update_show_form->update_show_form($mes, false);
+				$updateShowForm = new \cd\UpdateShowForm();
+				$flag = $updateShowForm->updateShowForm($enqueteId, $mes, false);
 
 				break;
 			default :
 				require_once("SearchQuestionnaire.php");
-				$search_questionnaire = new \cd\SearchQuestionnaire();
-				$search_questionnaire->search();
+				if (!isset($_GET ['page'])) {
+					$_GET ['page'] = "cd-questionnaire/SearchQuestionnaire.php";
+				}
+				$searchQuestionnaire = new \cd\SearchQuestionnaire();
+				$searchQuestionnaire->search(array(), $_GET ['page'], $this->perPage, 1);
 		}
 	}
 }
