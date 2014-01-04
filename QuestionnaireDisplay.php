@@ -18,18 +18,21 @@ class QuestionnaireDisplay {
 //		var_dump($registered['responded_answer']);
 		global $cdSmartyInstance;
 		$submit = 'button';
+		$print_only = 'false';
 		if ('responded' == $registered['phase']) {
 			// 返答済のアンケートの表示の場合
-
+			$print_only = 'true';
 			$respondedAnswer = $registered['responded_answer'];
 		} else if ('responding' == $registered['phase']) {
 			// これからアンケートに応える
-			$submit = 'submit';
+			if ($results[0]->start_date)
+				$submit = 'submit';
 		} else if ('new' == $registered['phase']) {
 			// 新規にアンケートを作成した場合
 			echo "ただいま作成されたアンケートです。";
 		}
 		$cdSmartyInstance->assign("submit", $submit);
+		$cdSmartyInstance->assign("print_only", $print_only);
 
 		//
 		$cdSmartyInstance->assign("enquete_name", $results[0]->e_name);
@@ -74,8 +77,9 @@ class QuestionnaireDisplay {
 			$sel['selectionID'] = $data->s_id;
 			$sel['checkboxID'] = $checkbox;
 			// checked
+			$sel['checked'][$data->q_id][$data->s_id] = "";
 			if (isset($respondedAnswer)) {
-				$sel['checked'][$data->q_id][$data->s_id] = "readonly ";
+				$sel['checked'][$data->q_id][$data->s_id] = "disabled ";
 				foreach ($respondedAnswer as $ans) {
 					if ($ans->question_id == $data->q_id && $ans->selection_id == $data->s_id) {
 						$sel['checked'][$data->q_id][$data->s_id] .= "checked";

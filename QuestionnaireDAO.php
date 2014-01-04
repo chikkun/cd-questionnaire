@@ -247,9 +247,8 @@ EOF;
 		return $results;
 	}
 
-
 	/**
-	 * identifiersテーブルから、アンケートの答えを登録した時にくわせたCOOKIEを取り出す。
+	 * identifiersテーブルから、アンケートの答えを登録した時にくわせたidentifierを取り出す。
 	 */
 	function getIdentifier($id) {
 		$sql = "SELECT identifier FROM {$this->tableNames['identifiers']} WHERE enquete_id = %s;";

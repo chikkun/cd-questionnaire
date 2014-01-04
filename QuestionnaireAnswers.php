@@ -64,6 +64,9 @@ class QuestionnaireAnswers {
 			$qar->registerAnswer($opt);
 
 			echo $this->getMessage('thanks');
+
+			add_shortcode('CDQ-results', array($this, 'getEnquete'));
+
 			echo $this->getMessage('result');
 			return;
 		} else {
@@ -99,7 +102,7 @@ class QuestionnaireAnswers {
 	function getMessage($mes) {
 		if ('retry' == $mes) {
 			return <<<EOF
-<p>id= 『 $this->id 』 のアンケートが取得できませんでした。別の「id」番号でやり直して下さい。<p>
+<p>id= 『 $this->id 』 のアンケートはありませんでした。別の「id」番号でやり直して下さい。<p>
 
 EOF;
 		}
