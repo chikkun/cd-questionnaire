@@ -8,7 +8,10 @@
 
 namespace cd;
 
-
+/**
+ * Class QuestionnaireAnswerRegist
+ * @package cd
+ */
 class QuestionnaireAnswerRegist {
 
 	function registerAnswer($data) {
@@ -36,4 +39,4 @@ class QuestionnaireAnswerRegist {
 		$dao->insertIdentifier($data);
 
 	}
-} 
+}

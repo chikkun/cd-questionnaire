@@ -1,19 +1,22 @@
 <?php
 namespace cd;
+
+/**
+ * Class CDQuestionnaire
+ * @package cd
+ */
 class CDQuestionnaire {
 	/**
 	 * プラグインのバージョン
-	 *
-	 * @var unknown
+	 * @var float
 	 */
-	var $version = 0.128;
+	private $version = 0.128;
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
-	 *
-	 * @var unknown
-	 *
+	 * @var null
 	 */
-	var $tableNames = NULL;
+	private $tableNames = NULL;
+
 	function __construct() {
 		$this->db_version = get_option ( 'cdq_db_version', 0 );
 		

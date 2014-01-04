@@ -4,9 +4,10 @@ namespace cd;
 /**
  * FILE: NewQuestionnaire.php
  * Author: C & D, Inc.;
- * アンケート作成を行う管理者の作業
  *
- * @property mixed getShortCode
+ * アンケート作成を行う管理者の作業
+ * Class NewQuestionnaire
+ * @package cd
  */
 class NewQuestionnaire {
 
@@ -40,20 +41,20 @@ class NewQuestionnaire {
 
 			require_once("QuestionnaireRegist.php");
 			$qre = new QuestionnaireRegist();
-			$qre->questionnaire_regist_page($enquete);
+			$qre->questionnaireRegistPage($enquete);
 		} else {
-			$this->questionnaire_new_page();
+			$this->questionnaireNewPage();
 		}
 	}
 
 	/**
 	 * アンケートの新規作成ページの表示
 	 */
-	function questionnaire_new_page() {
+	function questionnaireNewPage() {
 		global $cdSmartyInstance;
 
-		$cdSmartyInstance->assign("afterAdd_selectionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/selectionorders.tpl'));
-		$cdSmartyInstance->assign("afterAdd_questionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/questionorders.tpl'));
+//		$cdSmartyInstance->assign("afterAdd_selectionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/selectionorders.tpl'));
+//		$cdSmartyInstance->assign("afterAdd_questionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/questionorders.tpl'));
 
 		$cdSmartyInstance->assign("enqueteAction", 'new');
 		$cdSmartyInstance->assign("enquete_button", '登録');

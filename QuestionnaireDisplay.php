@@ -8,16 +8,19 @@
 
 namespace cd;
 
-
+/**
+ * Class QuestionnaireDisplay
+ * @package cd
+ */
 class QuestionnaireDisplay {
 
 	function displayEnquete($results, $registered) {
-		var_dump($registered['responded_answer']);
+//		var_dump($registered['responded_answer']);
 		global $cdSmartyInstance;
 		$submit = 'button';
 		if ('responded' == $registered['phase']) {
 			// 返答済のアンケートの表示の場合
-			// TODO
+
 			$respondedAnswer = $registered['responded_answer'];
 		} else if ('responding' == $registered['phase']) {
 			// これからアンケートに応える
@@ -71,8 +74,14 @@ class QuestionnaireDisplay {
 			$sel['selectionID'] = $data->s_id;
 			$sel['checkboxID'] = $checkbox;
 			// checked
-			$sel['checked'][$data->q_id][$data->s_id] = "";
-
+			if (isset($respondedAnswer)) {
+				$sel['checked'][$data->q_id][$data->s_id] = "readonly ";
+				foreach ($respondedAnswer as $ans) {
+					if ($ans->question_id == $data->q_id && $ans->selection_id == $data->s_id) {
+						$sel['checked'][$data->q_id][$data->s_id] .= "checked";
+					}
+				}
+			}
 			$cdSmartyInstance->assign("sel", $sel);
 			$selections .= $cdSmartyInstance->fetch("show_selection.tpl");
 			"checkbox" === $type ? $checkbox++ : 0;

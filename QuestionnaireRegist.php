@@ -8,25 +8,27 @@
  */
 namespace cd;
 
+/**
+ * Class QuestionnaireRegist
+ * @package cd
+ */
 class QuestionnaireRegist {
 
 	/**
 	 * アンケート id
-	 *
-	 * @var unknown
-	 */
-	var $enquete_id = NULL;
-	/**
-	 * アンケートデータ
-	 *
 	 * @var null
 	 */
-	var $enquete = NULL;
+	private $enquete_id = NULL;
+	/**
+	 * アンケートデータ
+	 * @var null
+	 */
+	private $enquete = NULL;
 
 	/**
 	 * 新規アンケートの登録/表示
 	 */
-	function questionnaire_regist_page($enquete) {
+	function questionnaireRegistPage($enquete) {
 		$dao = new QuestionnaireDAO ();
 		$this->enquete_id = $dao->insertEnquete($enquete);
 		echo $this->printShortCode();
