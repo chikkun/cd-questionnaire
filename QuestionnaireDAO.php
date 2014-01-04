@@ -257,10 +257,10 @@ EOF;
 		return $this->db->get_results($sql);
 	}
 
-	function getRespondedAnswer($id) {
+	function getRespondedAnswer($id, $identifier) {
 		$sql = "SELECT enquete_id,question_id,selection_id  FROM {$this->tableNames['answers']} WHERE enquete_id = %s and identifier = %s;";
 
-		$sql = $this->db->prepare($sql, $id);
+		$sql = $this->db->prepare($sql, $id, $identifier);
 
 		return $this->db->get_results($sql);
 
@@ -406,12 +406,12 @@ EOF;
 	function insertIdentifier($data) {
 		$sql = "
 				INSERT INTO " . $this->tableNames ['identifiers'] . "
-						(enquete_id,identifier)
+						(enquete_id,identifier,ip_address)
 						VALUES
-						(%d,%s);
+						(%d,%s,%s);
 						";
 
-		$sql = $this->db->prepare($sql, $data ['enquete_id'], $data ['identifier']);
+		$sql = $this->db->prepare($sql, $data ['enquete_id'], $data ['identifier'], $data ['ip_address']);
 
 		$this->db->query($sql);
 

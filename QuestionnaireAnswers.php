@@ -74,8 +74,7 @@ class QuestionnaireAnswers {
 				foreach ($results as $ident) {
 					if ($ident->identifier == $identifier) {
 						$registered['phase'] = 'responded';
-						//TODO DAO 編集
-						//$registered['responded_answer'] = $dao->getRespondedAnswer($id,$ident->identifier);
+						$registered['responded_answer'] = $dao->getRespondedAnswer($id, $ident->identifier);
 						echo $this->getMessage('registered');
 						break;
 					}
