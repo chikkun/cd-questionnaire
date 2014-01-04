@@ -54,7 +54,6 @@ class QuestionnaireAnswers {
 			$opt = $_POST ['enquete_options'];
 			$opt = $opt['enquete_answer'];
 
-
 			$opt['enquete_id'] = $id;
 			$opt['identifier'] = $identifier;
 			$opt['ip_address'] = $_SERVER["REMOTE_ADDR"];
@@ -65,11 +64,12 @@ class QuestionnaireAnswers {
 
 			echo $this->getMessage('thanks');
 
-			add_shortcode('CDQ-results', array($this, 'getEnquete'));
-
-			echo $this->getMessage('result');
+			require_once("QuestionnaireResults.php");
+			$qr = new QuestionnaireResults();
+			$qr->getResults(array("id" => $this->id));
 			return;
 		} else {
+
 			//アンケートを表示
 			$registered['phase'] = 'responding';
 			//
@@ -84,6 +84,7 @@ class QuestionnaireAnswers {
 						$registered['phase'] = 'responded';
 						$registered['responded_answer'] = $dao->getRespondedAnswer($id, $ident->identifier);
 						echo $this->getMessage('registered');
+
 						break;
 					}
 				}
@@ -117,7 +118,7 @@ EOF;
 
 		if ('result' == $mes) {
 			return <<<EOF
-<p>[CDQ-results id={$this->id}]</p>
+[CDQ-results id={$this->id}]
 
 EOF;
 

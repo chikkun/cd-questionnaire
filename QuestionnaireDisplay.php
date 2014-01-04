@@ -25,8 +25,7 @@ class QuestionnaireDisplay {
 			$respondedAnswer = $registered['responded_answer'];
 		} else if ('responding' == $registered['phase']) {
 			// これからアンケートに応える
-			if ($results[0]->start_date)
-				$submit = 'submit';
+			$submit = 'submit';
 		} else if ('new' == $registered['phase']) {
 			// 新規にアンケートを作成した場合
 			echo "ただいま作成されたアンケートです。";

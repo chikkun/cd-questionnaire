@@ -19,20 +19,25 @@ class QuestionnaireAnswerRegist {
 		/* 登録するアンケートの答えを格納する配列 */
 		$answerData = array();
 		// 登録実行
+		$eid = $data['enquete_id'];
+		$identifier = $data['identifier'];
+		$ip_address = $data['ip_address'];
 		foreach ($data as $qid => $value) {
-			foreach ($value as $cid => $sel) {
-				$answerData['eid'] = $data['enquete_id'];
-				$answerData['qid'] = $qid;
-				$answerData['identifier'] = $data['identifier'];
-				$answerData['ip_address'] = $data['ip_address'];
-				if ('question' === $cid) {
-					$answerData['question'] = $sel;
-				} else {
-					preg_match("/^(\d+)?:/", $sel, $sid);
-					$answerData['sid'] = $sid[1];
+			if (is_array($value)) {
+				foreach ($value as $cid => $sel) {
+					if ('question' === $cid) {
+						$answerData['question'] = $sel;
+					} else {
+						preg_match("/^(\d+)?:/", $sel, $sid);
+						$answerData['sid'] = $sid[1];
+						$answerData['qid'] = $qid;
+						$answerData['eid'] = $eid;
+						$answerData['identifier'] = $identifier;
+						$answerData['ip_address'] = $ip_address;
 
-					$dao->insertAnswer($answerData);
-					$answerData = array();
+						$dao->insertAnswer($answerData);
+						$answerData = array();
+					}
 				}
 			}
 		}

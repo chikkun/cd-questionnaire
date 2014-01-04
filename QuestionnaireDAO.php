@@ -9,11 +9,11 @@ class QuestionnaireDAO {
 	 * @var unknown
 	 */
 	var $tables = array(
-		"enquetes",
-		"questions",
-		"selections",
-		"answers",
-		"identifiers"
+			"enquetes",
+			"questions",
+			"selections",
+			"answers",
+			"identifiers"
 	);
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
@@ -98,7 +98,7 @@ ORDER BY question_order, question_id, selection_order, selection_id;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
 		return array($this->db->get_results($sql),
-			$question_number);
+				$question_number);
 
 	}
 
@@ -114,7 +114,7 @@ EOF;
 		$where = "";
 		$j = 0;
 		// where文作成、ついでにフォームのinputのvalueにアサイン
-		if(!is_array($fields)){
+		if (!is_array($fields)) {
 			$fields = array();
 		}
 		foreach ($fields as $key => $value) {
@@ -168,7 +168,7 @@ ORDER BY e.id DESC LIMIT $perPage OFFSET $offset;
 EOF;
 
 		return array($this->db->get_results($sql),
-			$total);
+				$total);
 	}
 
 	function getAlreadyAnsweredNumber($id) {
@@ -197,13 +197,13 @@ EOF;
 		return $this->db->get_var($sql);
 	}
 
-	function deleteEnquete($id){
+	function deleteEnquete($id) {
 		$sql = <<< EOF
 UPDATE {$this->tableNames['enquetes']}
 SET delete_flag = 1
 WHERE id = %s;
 EOF;
-    $sql = $this->db->prepare($sql, $id);
+		$sql = $this->db->prepare($sql, $id);
 		try {
 			$this->db->query($sql);
 		} catch (\Exception $e) {
@@ -238,12 +238,11 @@ EOF;
 			ON q.id = s.question_id
 			WHERE  e.id = %s
 EOF;
-		if($delete_flag) {
+		if ($delete_flag) {
 			$sql .= " AND e.delete_flag = 0 ";
 		}
 		$sql .= " ORDER BY q_sort_id, q_id, s_sort_id, s_id";
 
-		var_dump($sql);
 		$results = $this->db->get_results($this->db->prepare($sql, $id));
 		return $results;
 	}
@@ -300,7 +299,7 @@ EOF;
 	}
 
 	function insertEnquete($enquete, $enquete_insert_flag = true, $enquete_id = null) {
-	  //insertの時
+		//insertの時
 		if ($enquete_insert_flag) {
 			if ("" === $enquete ['end_date'] || NULL === $enquete ['end_date']) {
 				$sql = <<<EOF
