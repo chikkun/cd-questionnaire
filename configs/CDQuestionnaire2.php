@@ -46,7 +46,7 @@ class CDQuestionnaire2 {
 	}
 	function search_enquetes() {
 	  wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css', false, false, false );
-	  global $cd_smarty_instance;
+	  global $cdSmartyInstance;
 	  global $wpdb;
 	  require_once(plugin_dir_path( __FILE__ ) . 'Pager/Pager.php');
 	  $sql = <<< EOF
@@ -68,7 +68,7 @@ EOF;
 
 $sql = $wpdb->prepare($sql);
          $results = $wpdb->get_results($sql);
-         $cd_smarty_instance->assign("e_list", $results);
+         $cdSmartyInstance->assign("e_list", $results);
           $pager_array = array(
 			       'mode'      => 'Jumping', // 表示タイプ(Jumping/Sliding)
 			       'perPage'   => 20,       // 一ページ内で表示する件数
@@ -79,7 +79,7 @@ $sql = $wpdb->prepare($sql);
 			       'nextImg'   => '次へ≫'  // 次へリンクのテキスト(imgタグ使用可)
 			       );
 
- $cd_smarty_instance->display("search.tpl");
+ $cdSmartyInstance->display("search.tpl");
 
 $pager = & Pager::factory($pager_array);
    $pager_links = $pager->getLinks();
@@ -88,7 +88,7 @@ $pager = & Pager::factory($pager_array);
 	      {$pager_links['pages']} {$pager_links['last']}
               {$pager_links['next']}
 EOD;
-   $cd_smarty_instance->assign("paging",$pager_html);
+   $cdSmartyInstance->assign("paging",$pager_html);
    //	  echo "......";
 	}
 

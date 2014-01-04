@@ -8,7 +8,7 @@ class UpdateShowForm {
 			return false;
 		}
 		// smartyオブジェクト
-		global $cd_smarty_instance;
+		global $cdSmartyInstance;
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js');
 		wp_enqueue_script('jquery.ui.datepicker', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker.min.js');
@@ -70,19 +70,19 @@ class UpdateShowForm {
 		$json = preg_replace('/^\{/', '', $json);
 		$json = preg_replace('/\}$/', '', $json);
 		$json .= ",";
-		$cd_smarty_instance->assign("data", $json);
+		$cdSmartyInstance->assign("data", $json);
 		if($answer_number > 0 ){
-			$cd_smarty_instance->assign("enable", "ng");
+			$cdSmartyInstance->assign("enable", "ng");
 		}
-		$cd_smarty_instance->assign("enquete_title", $enquete_title);
-		$cd_smarty_instance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
-		$cd_smarty_instance->assign("mes", $mes);
-		$cd_smarty_instance->assign("start_date", $start_date);
-		$cd_smarty_instance->assign("end_date", $end_date);
-		$cd_smarty_instance->assign("form_title", "修正/削除");
-		$cd_smarty_instance->assign("enqueteAction", "update");
-		$cd_smarty_instance->assign("enquete_button", "修正");
-		$cd_smarty_instance->display("update.tpl");
+		$cdSmartyInstance->assign("enquete_title", $enquete_title);
+		$cdSmartyInstance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
+		$cdSmartyInstance->assign("mes", $mes);
+		$cdSmartyInstance->assign("start_date", $start_date);
+		$cdSmartyInstance->assign("end_date", $end_date);
+		$cdSmartyInstance->assign("form_title", "修正/削除");
+		$cdSmartyInstance->assign("enqueteAction", "update");
+		$cdSmartyInstance->assign("enquete_button", "修正");
+		$cdSmartyInstance->display("update.tpl");
 		return true;
 	}
 }

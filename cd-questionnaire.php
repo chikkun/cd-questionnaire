@@ -37,10 +37,10 @@ $cd_smarty_version = "3.1.16";
 $cd_smarty_dir = plugin_dir_path(__FILE__) . "Smarty-" . $cd_smarty_version . "/libs/";
 
 require_once($cd_smarty_dir . "Smarty.class.php");
-$cd_smarty_instance = new Smarty();
-$cd_smarty_instance->template_dir = plugin_dir_path(__FILE__) . 'templates/';
-$cd_smarty_instance->compile_dir = plugin_dir_path(__FILE__) . 'templates_c/';
-$cd_smarty_instance->config_dir = plugin_dir_path(__FILE__) . 'configs/';
-$cd_smarty_instance->cache_dir = plugin_dir_path(__FILE__) . 'cache/';
-$cd_smarty_instance->left_delimiter = "{{";
-$cd_smarty_instance->right_delimiter = "}}";
+$cdSmartyInstance = new Smarty();
+$cdSmartyInstance->template_dir = plugin_dir_path(__FILE__) . 'templates/';
+$cdSmartyInstance->compile_dir = plugin_dir_path(__FILE__) . 'templates_c/';
+$cdSmartyInstance->config_dir = plugin_dir_path(__FILE__) . 'configs/';
+$cdSmartyInstance->cache_dir = plugin_dir_path(__FILE__) . 'cache/';
+$cdSmartyInstance->left_delimiter = "{{";
+$cdSmartyInstance->right_delimiter = "}}";

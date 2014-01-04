@@ -11,7 +11,7 @@ namespace cd;
 class SearchQuestionnaire {
 	function search($page, $perPage, $pageID) {
 		// smartyオブジェクト
-		global $cd_smarty_instance;
+		global $cdSmartyInstance;
 		// Pagerの1ページ当たりの表示数
 		$perPage = 10;
 		// http://wordpress.chikkun.com/wp-admin/admin.php?page=cd-questionnaire/CDQuestionnaire2.php
@@ -27,9 +27,9 @@ class SearchQuestionnaire {
 		list($results, $total)= $cddb->getQuestionnairesListPerPage($_GET['where'], $perPage, $offset);
 		// 検索fieldに値をセット
 		foreach ($_GET['where'] as $key => $value) {
-			$cd_smarty_instance->assign($key, $value);
+			$cdSmartyInstance->assign($key, $value);
 		}
-			$cd_smarty_instance->assign("e_list", $results);
+			$cdSmartyInstance->assign("e_list", $results);
 		$pager_array = array(
 			'mode' => 'Sliding',
 			// 表示タイプ(Jumping/Sliding)
@@ -61,10 +61,10 @@ class SearchQuestionnaire {
 {$pager_links['pages']}
 {$pager_links['next']}{$pager_links['last']}
 EOD;
-		$cd_smarty_instance->assign("paging", $pager_html);
-		$cd_smarty_instance->assign("page", $page);
+		$cdSmartyInstance->assign("paging", $pager_html);
+		$cdSmartyInstance->assign("page", $page);
 
-		$cd_smarty_instance->display("search.tpl");
+		$cdSmartyInstance->display("search.tpl");
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js', array(
 				'jquery'

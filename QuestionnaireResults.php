@@ -12,7 +12,7 @@ class QuestionnaireResults {
 	}
 
 	function getResults($atts) {
-		global $cd_smarty_instance;
+		global $cdSmartyInstance;
 		$id = 0;
 		extract(shortcode_atts(array(
 			'id' => 1
@@ -52,7 +52,7 @@ class QuestionnaireResults {
 		}
 		$each_results["question_text"] = $before;
 		$count[$qnum - 1] = $each_results;
-		$cd_smarty_instance->assign("enquete_title", $enquete_title);
+		$cdSmartyInstance->assign("enquete_title", $enquete_title);
 		$graph_list = array();
 		$js_list = array();
 		for ($i = 1; $i <= $question_number; $i++) {
@@ -78,9 +78,9 @@ class QuestionnaireResults {
 			$graph_list[] = $graph;
 			$js_list[] = $js;
 		}
-		$cd_smarty_instance->assign("js_list", $js_list);
-		$cd_smarty_instance->assign("graph_list", $graph_list);
-		$cd_smarty_instance->display("jqplot.tpl");
+		$cdSmartyInstance->assign("js_list", $js_list);
+		$cdSmartyInstance->assign("graph_list", $graph_list);
+		$cdSmartyInstance->display("jqplot.tpl");
 
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jqplot', plugin_dir_url(__FILE__) . 'js/jquery.jqplot.min.js', array('jquery'), false, true);

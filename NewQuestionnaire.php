@@ -50,17 +50,17 @@ class NewQuestionnaire {
 	 * アンケートの新規作成ページの表示
 	 */
 	function questionnaire_new_page() {
-		global $cd_smarty_instance;
+		global $cdSmartyInstance;
 
-		$cd_smarty_instance->assign("afterAdd_selectionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/selectionorders.tpl'));
-		$cd_smarty_instance->assign("afterAdd_questionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/questionorders.tpl'));
+		$cdSmartyInstance->assign("afterAdd_selectionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/selectionorders.tpl'));
+		$cdSmartyInstance->assign("afterAdd_questionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/questionorders.tpl'));
 
-		$cd_smarty_instance->assign("enqueteAction", 'new');
-		$cd_smarty_instance->assign("enquete_button", '登録');
+		$cdSmartyInstance->assign("enqueteAction", 'new');
+		$cdSmartyInstance->assign("enquete_button", '登録');
 
-		$cd_smarty_instance->assign("data", '');
-		$cd_smarty_instance->assign("form_title", '新規登録');
-		$cd_smarty_instance->display("update.tpl");
+		$cdSmartyInstance->assign("data", '');
+		$cdSmartyInstance->assign("form_title", '新規登録');
+		$cdSmartyInstance->display("update.tpl");
 	}
 
 	function add_javascripts() {

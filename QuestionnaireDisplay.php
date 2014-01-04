@@ -13,7 +13,7 @@ class QuestionnaireDisplay {
 
 	function displayEnquete($results, $registered) {
 		var_dump($registered['responded_answer']);
-		global $cd_smarty_instance;
+		global $cdSmartyInstance;
 		$submit = 'button';
 		if ('responded' == $registered['phase']) {
 			// 返答済のアンケートの表示の場合
@@ -26,13 +26,13 @@ class QuestionnaireDisplay {
 			// 新規にアンケートを作成した場合
 			echo "ただいま作成されたアンケートです。";
 		}
-		$cd_smarty_instance->assign("submit", $submit);
+		$cdSmartyInstance->assign("submit", $submit);
 
 		//
-		$cd_smarty_instance->assign("enquete_name", $results[0]->e_name);
-		$cd_smarty_instance->assign("enquete_id", $results[0]->e_id);
-		$cd_smarty_instance->assign("start_date", $results[0]->start_date);
-		$cd_smarty_instance->assign("end_date", $results[0]->end_date);
+		$cdSmartyInstance->assign("enquete_name", $results[0]->e_name);
+		$cdSmartyInstance->assign("enquete_id", $results[0]->e_id);
+		$cdSmartyInstance->assign("start_date", $results[0]->start_date);
+		$cdSmartyInstance->assign("end_date", $results[0]->end_date);
 
 		$questions = "";
 		$selections = "";
@@ -47,9 +47,9 @@ class QuestionnaireDisplay {
 			$cur_question = $data->question_text;
 			if ($pre_id != $data->q_id) {
 				if ("" != $selections) {
-					$cd_smarty_instance->assign("question_text", $question_text);
-					$cd_smarty_instance->assign("selections", $selections);
-					$questions .= $cd_smarty_instance->fetch("show_question.tpl");
+					$cdSmartyInstance->assign("question_text", $question_text);
+					$cdSmartyInstance->assign("selections", $selections);
+					$questions .= $cdSmartyInstance->fetch("show_question.tpl");
 
 					$selections = "";
 				}
@@ -73,16 +73,16 @@ class QuestionnaireDisplay {
 			// checked
 			$sel['checked'][$data->q_id][$data->s_id] = "";
 
-			$cd_smarty_instance->assign("sel", $sel);
-			$selections .= $cd_smarty_instance->fetch("show_selection.tpl");
+			$cdSmartyInstance->assign("sel", $sel);
+			$selections .= $cdSmartyInstance->fetch("show_selection.tpl");
 			"checkbox" === $type ? $checkbox++ : 0;
 		}
-		$cd_smarty_instance->assign("question_text", $question_text);
-		$cd_smarty_instance->assign("selections", $selections);
-		$questions .= $cd_smarty_instance->fetch("show_question.tpl");
+		$cdSmartyInstance->assign("question_text", $question_text);
+		$cdSmartyInstance->assign("selections", $selections);
+		$questions .= $cdSmartyInstance->fetch("show_question.tpl");
 
-		$cd_smarty_instance->assign("questions", $questions);
+		$cdSmartyInstance->assign("questions", $questions);
 
-		return $cd_smarty_instance->display("show_enquete.tpl");
+		return $cdSmartyInstance->display("show_enquete.tpl");
 	}
 } 
