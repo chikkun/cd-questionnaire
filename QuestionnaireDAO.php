@@ -247,22 +247,33 @@ EOF;
 		return $results;
 	}
 
-	/**
-	 * identifiersテーブルから、アンケートの答えを登録した時にくわせたidentifierを取り出す。
-	 */
-	function getIdentifier($id) {
-		$sql = "SELECT identifier FROM {$this->tableNames['identifiers']} WHERE enquete_id = %s;";
-
-		$sql = $this->db->prepare($sql, $id);
-
-		return $this->db->get_results($sql);
-	}
-
 	function getRespondedAnswer($id, $identifier) {
-		$sql = "SELECT enquete_id,question_id,selection_id  FROM {$this->tableNames['answers']} WHERE enquete_id = %s and identifier = %s;";
+		$sql = <<<EOF
+SELECT
+  enquete_id
+ ,question_id
+ ,selection_id
+FROM {$this->tableNames['answers']}
+WHERE enquete_id = %s
+  and identifier = %s;
+EOF;
 
 		$sql = $this->db->prepare($sql, $id, $identifier);
+		return $this->db->get_results($sql);
 
+	}
+
+	function existIdentifier($id, $identifier) {
+		$sql = <<<EOF
+SELECT
+   identifier
+  ,ip_address
+FROM {$this->tableNames['identifiers']}
+WHERE enquete_id = %s
+  and identifier = %s;
+EOF;
+
+		$sql = $this->db->prepare($sql, $id, $identifier);
 		return $this->db->get_results($sql);
 
 	}

@@ -43,9 +43,11 @@ class QuestionnaireAnswers {
 				'id' => 0
 		), $atts));
 		$this->id = $id;
+		$identifier = NULL;
 		if (isset($_COOKIE['CDQ_enquete'])) {
 			$identifier = $_COOKIE['CDQ_enquete'];
 		}
+
 		if (isset($_POST['enquete_options'])) {
 			// アンケートを登録
 
@@ -73,22 +75,20 @@ class QuestionnaireAnswers {
 			//アンケートを表示
 			$registered['phase'] = 'responding';
 			//
-			wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
-			wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
+			if (!isset($_COOKIE['CDQ_enquete'])) {
+				wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
+				wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
+			}
 			// 既に回答済みかチェック
-
 			if (NULL != $identifier) {
-				$results = $dao->getIdentifier($id);
-				foreach ($results as $ident) {
-					if ($ident->identifier == $identifier) {
-						$registered['phase'] = 'responded';
-						$registered['responded_answer'] = $dao->getRespondedAnswer($id, $ident->identifier);
-						echo $this->getMessage('registered');
-
-						break;
-					}
+				$identExist = $dao->existIdentifier($this->id, $identifier);
+				if (count($identExist) > 0) {
+					$registered['phase'] = 'responded';
+					$registered['responded_answer'] = $dao->getRespondedAnswer($id, $identifier);
+					echo $this->getMessage('registered');
 				}
 			}
+
 			$results = $dao->getEnqueteData($id);
 			if (NULL === $results || !isset($results[0]->q_id)) {
 				return $this->getMessage('retry');
