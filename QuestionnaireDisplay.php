@@ -12,6 +12,7 @@ namespace cd;
 class QuestionnaireDisplay {
 
 	function displayEnquete($results, $registered) {
+		var_dump($registered['responded_answer']);
 		global $cd_smarty_instance;
 		$submit = 'button';
 		if ('responded' == $registered['phase']) {

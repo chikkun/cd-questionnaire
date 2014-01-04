@@ -24,11 +24,11 @@ class NewQuestionnaire {
 	function cd_questionnaire_add_pages() {
 		$hook_new = add_submenu_page('cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 'level_8', __FILE__ . '?action=new', array(
 				$this,
-				'divide_action'
+				'divideAction'
 		));
 	}
 
-	function divide_action() {
+	function divideAction() {
 		$this->add_javascripts();
 
 		if (isset ($_POST ['action'])) {
