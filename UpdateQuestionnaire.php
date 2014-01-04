@@ -16,7 +16,10 @@ class UpdateQuestionnaire {
 		$enquete['end_date'] = $_POST ['end_date'];
 		$enquete['data'] = $_POST ['enquete'] ['questions'];
 		$dao = new \cd\QuestionnaireDAO();
-		$dao->deleteQuestionnaireChildren($id);
+		$flag = $dao->deleteQuestionnaireChildren($id);
+		if($flag){
+
+		}
 		$dao->insertEnquete($enquete, false, $id);
 		return true;
 	}

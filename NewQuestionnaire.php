@@ -15,7 +15,7 @@ class NewQuestionnaire {
 	 * メニュー表示
 	 */
 	function __construct() {
-		add_action('admin_menu', array($this, 'cd_questionnaire_add_pages'));
+		add_action('admin_menu', array($this, 'cdQuestionnaireAddPages'));
 	}
 
 	/**

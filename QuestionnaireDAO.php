@@ -114,7 +114,9 @@ EOF;
 		$where = "";
 		$j = 0;
 		// where文作成、ついでにフォームのinputのvalueにアサイン
-
+		if(!is_array($fields)){
+			$fields = array();
+		}
 		foreach ($fields as $key => $value) {
 			// valueは未記入だと空文字なので、空文字じゃないとき
 			if (isset ($value) && mb_strlen($value) != 0) {
@@ -278,7 +280,7 @@ EOF;
 		try {
 			$this->db->query($sql);
 		} catch (\Exception $e) {
-			var_dumpp($e);
+			var_dump($e);
 			return false;
 		}
 		$sql = <<< EOF
@@ -290,7 +292,7 @@ EOF;
 		try {
 			$this->db->query($sql);
 		} catch (\Exception $e) {
-			var_dumpp($e);
+			var_dump($e);
 			return false;
 		}
 
@@ -339,7 +341,7 @@ EOF;
 				$sql .= ", end_date = %s WHERE id = %s";
 				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete ['end_date'], $enquete_id);
 			} else {
-				$sql .= " WHERE id = %n";
+				$sql .= " WHERE id = %s";
 				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete_id);
 			}
 			$this->db->query($sql);

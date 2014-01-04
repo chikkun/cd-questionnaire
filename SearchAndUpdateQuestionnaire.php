@@ -2,15 +2,15 @@
 namespace cd;
 class SearchAndUpdateQuestionnaire {
 	var $version = 0.1;
-
+	var $perPage = 10;
 	function __construct() {
 		$this->db_version = get_option('cdq_db_version', 0);
 		// メニュー表示
 		add_action('admin_menu', array($this,
-			'cd_questionnaire_add_pages'));
+			'cdQuestionnaireAddPages'));
 	}
 
-	function cd_questionnaire_add_pages() {
+	function cdQuestionnaireAddPages() {
 		$hook = add_menu_page('CDQuestionnaire', 'アンケート', 'level_8', 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', array(
 				$this,
 			'search_update_questionnaire'
@@ -18,8 +18,11 @@ class SearchAndUpdateQuestionnaire {
 	}
 
 	function search_update_questionnaire() {
-		$action = $_GET ['action'];
-		if($_POST ['action']){
+		$action = "";
+		if(isset($_GET ['action'])){
+			$action = $_GET ['action'];
+		}
+		if(isset($_POST ['action'])){
 			$action =$_POST ['action'];
 		}
 		switch ($action) {
