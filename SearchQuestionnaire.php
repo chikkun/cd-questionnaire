@@ -9,20 +9,13 @@
 namespace cd;
 
 class SearchQuestionnaire {
-	function search() {
+	function search($page, $perPage, $pageID) {
 		// smartyオブジェクト
 		global $cd_smarty_instance;
 		// Pagerの1ページ当たりの表示数
 		$perPage = 10;
 		// http://wordpress.chikkun.com/wp-admin/admin.php?page=cd-questionnaire/CDQuestionnaire2.php
 		// の「cd-questionnaire/CDQuestionnaire2.php」を取得、hiddenにセットする
-		$page = $_GET ['page'];
-		// PagerのpageIDからoffsetを計算
-		if ($_GET ['pageID']) {
-			$pageID = $_GET ['pageID'] + 0;
-		} else {
-			$pageID = 1;
-		}
 		$offset = ($pageID - 1) * $perPage;
 		// カレントディレクトリをincludeパスに追加(Pagerには必要だった---smartyにはいらない)
 		$path = plugin_dir_path(__FILE__);

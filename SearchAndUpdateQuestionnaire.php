@@ -7,17 +7,17 @@ class SearchAndUpdateQuestionnaire {
 		$this->db_version = get_option('cdq_db_version', 0);
 		// メニュー表示
 		add_action('admin_menu', array($this,
-			'cdQuestionnaireAddPages'));
+			'questionnaireAddPages'));
 	}
 
-	function cdQuestionnaireAddPages() {
+	function questionnaireAddPages() {
 		$hook = add_menu_page('CDQuestionnaire', 'アンケート', 'level_8', 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', array(
 				$this,
-			'search_update_questionnaire'
+			'searchUpdateQuestionnaire'
 		), '', 26);
 	}
 
-	function search_update_questionnaire() {
+	function searchUpdateQuestionnaire() {
 		$action = "";
 		if(isset($_GET ['action'])){
 			$action = $_GET ['action'];
@@ -54,6 +54,14 @@ class SearchAndUpdateQuestionnaire {
 				break;
 			case 'search' :
 				require_once("SearchQuestionnaire.php");
+				$page = $_GET ['page'];
+				// PagerのpageIDからoffsetを計算
+				if (isset($_GET ['pageID'])) {
+					$pageID = $_GET ['pageID'] + 0;
+				} else {
+					$pageID = 1;
+				}
+
 				$search_questionnaire = new \cd\SearchQuestionnaire();
 				$search_questionnaire->search();
 				break;
