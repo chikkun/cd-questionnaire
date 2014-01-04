@@ -16,20 +16,21 @@ class NewQuestionnaire {
 	 */
 	function __construct() {
 		add_action('admin_menu', array($this, 'cd_questionnaire_add_pages'));
-		$this->add_javascripts();
 	}
 
 	/**
 	 * 管理者メニューへ表示
 	 */
 	function cd_questionnaire_add_pages() {
-		$hook_new = add_submenu_page('cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 8, __FILE__ . '?action=new', array(
+		$hook_new = add_submenu_page('cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 'level_8', __FILE__ . '?action=new', array(
 				$this,
 				'divide_action'
 		));
 	}
 
 	function divide_action() {
+		$this->add_javascripts();
+
 		if (isset ($_POST ['action'])) {
 			$enquete['enquete_name'] = $_POST ['enquete_name'];
 			$enquete['start_date'] = $_POST ['start_date'];
@@ -55,7 +56,7 @@ class NewQuestionnaire {
 		$cd_smarty_instance->assign("afterAdd_questionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/questionorders.tpl'));
 
 		$cd_smarty_instance->assign("enqueteAction", 'new');
-		$cd_smarty_instance->assign("enquete_button", '新規登録');
+		$cd_smarty_instance->assign("enquete_button", '登録');
 
 		$cd_smarty_instance->assign("data", '');
 		$cd_smarty_instance->assign("form_title", '新規登録');

@@ -38,8 +38,9 @@ class QuestionnaireAnswers {
 				'id' => 0
 		), $atts));
 		$this->id = $id;
-		$identifier = $_COOKIE['CDQ_enquete'];
-
+		if (isset($_COOKIE['CDQ_enquete'])) {
+			$identifier = $_COOKIE['CDQ_enquete'];
+		}
 		if (isset($_POST['enquete_options'])) {
 			// アンケートを登録
 
@@ -57,8 +58,9 @@ class QuestionnaireAnswers {
 			$qar = new QuestionnaireAnswerRegist();
 			$qar->registerAnswer($opt);
 
-			return $this->getMessage('thanks');
-
+			echo $this->getMessage('thanks');
+			echo $this->getMessage('result');
+			return;
 		} else {
 			//アンケートを表示
 			$registered['phase'] = 'responding';
@@ -101,6 +103,14 @@ EOF;
 		if ('thanks' == $mes) {
 			return <<<EOF
 <p>アンケートにお答えいただきありがとうございました。</p>
+
+EOF;
+
+		}
+
+		if ('result' == $mes) {
+			return <<<EOF
+<p>[CDQ-results id={$this->id}]</p>
 
 EOF;
 

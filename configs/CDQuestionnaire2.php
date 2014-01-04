@@ -41,8 +41,8 @@ class CDQuestionnaire2 {
 	}
 	function add_pages() {
 		add_menu_page ( 'アンケート　ページ2', 'アンケート2', 'level_8', __FILE__, array ($this, 'enquetes_table_page'),'',26 );
-		add_submenu_page(__FILE__, 'アンケート一覧/検索', '一覧/検索', 8, __FILE__. '?option=new', array($this, 'search_enquetes'));
-		//add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 8, __FILE__, array($this, 'questionnaire_option_page'));
+		add_submenu_page(__FILE__, 'アンケート一覧/検索', '一覧/検索', 'level_8', __FILE__ . '?option=new', array($this, 'search_enquetes'));
+		//add_submenu_page(__FILE__, '新規アンケート作成', '新規作成', 'level_8', __FILE__, array($this, 'questionnaire_option_page'));
 	}
 	function search_enquetes() {
 	  wp_enqueue_style( 'bootstrap', plugin_dir_url( __FILE__ ) . 'css/bootstrap.min.css', false, false, false );

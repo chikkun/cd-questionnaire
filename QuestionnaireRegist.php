@@ -28,7 +28,7 @@ class QuestionnaireRegist {
 	 */
 	function questionnaire_regist_page($enquete) {
 		$dao = new QuestionnaireDAO ();
-		$this->enquete_id = $dao->insertEnquete($this->enquete);
+		$this->enquete_id = $dao->insertEnquete($enquete);
 		echo $this->printShortCode();
 		$this->showEnquete();
 	}
@@ -49,6 +49,7 @@ class QuestionnaireRegist {
 		echo "<br /><br />登録終了<br /><br />";
 
 	}
+
 	function printShortCode() {
 		return <<<EOF
 		<div class="updated fade">

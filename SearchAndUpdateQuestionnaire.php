@@ -11,8 +11,8 @@ class SearchAndUpdateQuestionnaire {
 	}
 
 	function cd_questionnaire_add_pages() {
-		$hook = add_menu_page('CDQuestionnaire', 'アンケート', 8, 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', array(
-			$this,
+		$hook = add_menu_page('CDQuestionnaire', 'アンケート', 'level_8', 'cd-questionnaire/SearchAndUpdateQuestionnaire.php', array(
+				$this,
 			'search_update_questionnaire'
 		), '', 26);
 	}

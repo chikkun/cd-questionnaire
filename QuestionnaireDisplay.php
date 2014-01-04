@@ -69,6 +69,8 @@ class QuestionnaireDisplay {
 			$sel['type'] = $type;
 			$sel['selectionID'] = $data->s_id;
 			$sel['checkboxID'] = $checkbox;
+			// checked
+			$sel['checked'][$data->q_id][$data->s_id] = "";
 
 			$cd_smarty_instance->assign("sel", $sel);
 			$selections .= $cd_smarty_instance->fetch("show_selection.tpl");
