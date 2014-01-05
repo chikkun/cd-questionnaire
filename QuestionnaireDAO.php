@@ -9,11 +9,11 @@ class QuestionnaireDAO {
 	 * @var unknown
 	 */
 	var $tables = array(
-			"enquetes",
-			"questions",
-			"selections",
-			"answers",
-			"identifiers"
+		"enquetes",
+		"questions",
+		"selections",
+		"answers",
+		"identifiers"
 	);
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
@@ -98,7 +98,7 @@ ORDER BY question_order, question_id, selection_order, selection_id;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
 		return array($this->db->get_results($sql),
-				$question_number);
+			$question_number);
 
 	}
 
@@ -168,7 +168,7 @@ ORDER BY e.id DESC LIMIT $perPage OFFSET $offset;
 EOF;
 
 		return array($this->db->get_results($sql),
-				$total);
+			$total);
 	}
 
 	function getAlreadyAnsweredNumber($id) {
@@ -197,6 +197,11 @@ EOF;
 		return $this->db->get_var($sql);
 	}
 
+	/**
+	 * アンケートレコードにdelete_flagを立てる。
+	 * @param $id 対象のレコードのid
+	 * @return bool 成功したらtrue
+	 */
 	function deleteEnquete($id) {
 		$sql = <<< EOF
 UPDATE {$this->tableNames['enquetes']}
@@ -210,8 +215,16 @@ EOF;
 			var_dumpp($e);
 			return false;
 		}
+		return true;
 	}
 
+	/**
+	 * idを指定したアンケートレコードから、
+	 * 質問、選択レコード一切合切を返す。
+	 * @param $id
+	 * @param bool $delete_flag falseなら、フラグが立っているものも返す
+	 * @return mixed
+	 */
 	function getEnqueteData($id, $delete_flag = true) {
 		$sql = <<<EOF
 			SELECT e.id AS e_id,
@@ -278,6 +291,11 @@ EOF;
 
 	}
 
+	/**
+	 * 質問レコードのidから、その子供の選択肢レコードも削除する。
+	 * @param $id 質問レコードid
+	 * @return bool
+	 */
 	function deleteQuestionnaireChildren($id) {
 		$sql = <<< EOF
 DELETE FROM {$this->tableNames['selections']}
@@ -305,10 +323,17 @@ EOF;
 			var_dump($e);
 			return false;
 		}
-
 		return true;
 	}
 
+	/**
+	 * アンケートレコードを、質問レコード、選択肢レコードと共に保存する。更新時は、
+	 * アンケートレコード以外は削除し、全て新規に登録するが、アンケートレコードのみ更新する。
+	 * @param $enquete
+	 * @param bool $enquete_insert_flag falseの時はレコードを削除せず、更新だけをする(更新時)。
+	 * @param null $enquete_id 更新時にはidが必要
+	 * @return アンケートid
+	 */
 	function insertEnquete($enquete, $enquete_insert_flag = true, $enquete_id = null) {
 		//insertの時
 		if ($enquete_insert_flag) {
@@ -338,9 +363,15 @@ EOF;
 EOF;
 				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete ['end_date']);
 			}
-			$this->db->query($sql);
-			$query = 'select last_insert_id();';
-			$enquete_id = $this->db->get_var($query);
+
+			try {
+				$this->db->query($sql);
+				$query = 'select last_insert_id();';
+				$enquete_id = $this->db->get_var($query);
+			} catch (\Exception $e) {
+				var_dump($e);
+				return false;
+			}
 		} else {
 			// updateの時
 			$sql = <<<EOF
@@ -354,12 +385,22 @@ EOF;
 				$sql .= " WHERE id = %s";
 				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete_id);
 			}
-			$this->db->query($sql);
+			try {
+				$this->db->query($sql);
+			} catch (\Exception $e) {
+				var_dump($e);
+				return false;
+			}
 		}
 
 		$data = $enquete ['data'];
 		foreach ($data as $question) {
-			$this->insertQuestion($enquete_id, $question);
+			try {
+				$this->insertQuestion($enquete_id, $question);
+			} catch (\Exception $e) {
+				var_dump($e);
+				return false;
+			}
 		}
 
 		return $enquete_id;
