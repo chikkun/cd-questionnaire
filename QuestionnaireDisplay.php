@@ -18,10 +18,10 @@ class QuestionnaireDisplay {
 //		var_dump($registered['responded_answer']);
 		global $cdSmartyInstance;
 		$submit = 'button';
-		$print_only = 'false';
+		$print_button = 'true';
 		if ('responded' == $registered['phase']) {
 			// 返答済のアンケートの表示の場合
-			$print_only = 'true';
+			$print_button = 'false';
 			$respondedAnswer = $registered['responded_answer'];
 		} else if ('responding' == $registered['phase']) {
 			// これからアンケートに応える
@@ -31,7 +31,7 @@ class QuestionnaireDisplay {
 			echo "ただいま作成されたアンケートです。";
 		}
 		$cdSmartyInstance->assign("submit", $submit);
-		$cdSmartyInstance->assign("print_only", $print_only);
+		$cdSmartyInstance->assign("print_button", $print_button);
 
 		require_once("DateTransform.php");
 		$dt = new DateTransform();

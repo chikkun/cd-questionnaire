@@ -79,13 +79,26 @@ class QuestionnaireAnswers {
 			//アンケートを表示するかどうか
 			require_once('DateTransform.php');
 			$dt = new DateTransform();
-			echo $dt->checkDate($results[0]->start_date, $results[0]->end_date);
+			$period = $dt->isDuringPeriod($results[0]->start_date, $results[0]->end_date);
+			if ("now" == $period) {
+				$registered['enquete_phase'] = 'now';
+			} else if ("done" == $period) {
+				$registered['enquete_phase'] = 'done';
+			} else if ("todo" == $period) {
+				$registered['enquete_phase'] = 'todo';
+			}
 
 			$registered['phase'] = 'responding';
 			//
 			if (!isset($_COOKIE['CDQ_enquete'])) {
 				wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
 				wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
+			}
+			// had been reloaded
+			if (!isset($_COOKIE['CDQ_enquete'])) {
+				// DISABLE COOKIE
+				$this->getMessage('disableCOOKIE');
+				return;
 			}
 			// 既に回答済みかチェック
 			if (NULL != $identifier) {
@@ -127,5 +140,14 @@ EOF;
 EOF;
 
 		}
+
+		if ('disableCOOKIE' == $mes) {
+			return <<<EOF
+				<div style="text-align: center;font-weight: bold;">お使いのブラウザでは、アンケートのご利用ができません。</div>;
+
+EOF;
+
+		}
+
 	}
 }

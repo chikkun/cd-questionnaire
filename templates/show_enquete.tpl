@@ -16,7 +16,7 @@
         </ol>
     </div>
 
-    {{if 'false' == $print_only}}
+    {{if 'true' == $print_button}}
     <input type="{{$submit}}" name="enquete_options[enquete_answer][submit]" value="アンケートに答える">
     <input type="hidden" name="enquete_options[enquete_answer][enquete_id]" value="{{$enquete_id}}">
     {{/if}}

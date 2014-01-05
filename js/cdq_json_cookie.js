@@ -55,12 +55,12 @@ function getUT() {
         //クッキー作成
         setJsonCookie("CDQ_enquete", ns, '/');
         //クッキー再読み込み
-//        gc = getJsonCookie("CDQ_enquete");
-//        if(gc !== null) {
-//            //クッキーが有効ならリロード
-//            window.stop();
-//            window.location.reload(true);
-//        }
+        gc = getJsonCookie("CDQ_enquete");
+        if (gc !== null) {
+            //クッキーが有効ならリロード
+            window.stop();
+            window.location.reload(true);
+        }
     }
 }
 
