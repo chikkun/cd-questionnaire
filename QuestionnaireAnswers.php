@@ -18,6 +18,19 @@ class QuestionnaireAnswers {
 	private $id = NULL;
 
 	/**
+	 * アンケートtitle
+	 * @var null
+	 */
+	private $title = NULL;
+
+	private $start_date = NULL;
+
+	private $identifier = NULL;
+
+	private $date = NULL;
+	private $dao = NULL;
+
+	/**
 	 * コンストラクタ
 	 *    ショートコード作成
 	 */
@@ -34,7 +47,7 @@ class QuestionnaireAnswers {
 	 * @return string
 	 */
 	function getEnquete($atts) {
-		$dao = new QuestionnaireDAO();
+		$this->dao = new QuestionnaireDAO();
 
 		wp_enqueue_script('jquery');
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, true);
@@ -43,21 +56,20 @@ class QuestionnaireAnswers {
 				'id' => 0
 		), $atts));
 		$this->id = $id;
-		$identifier = NULL;
+
 		if (isset($_COOKIE['CDQ_enquete'])) {
-			$identifier = $_COOKIE['CDQ_enquete'];
+			$this->identifier = $_COOKIE['CDQ_enquete'];
 		}
 
 		if (isset($_POST['enquete_options'])) {
 			// アンケートを登録
 
-			$dao = new QuestionnaireDAO();
 			// answers テーブルに登録
 			$opt = $_POST ['enquete_options'];
 			$opt = $opt['enquete_answer'];
 
 			$opt['enquete_id'] = $id;
-			$opt['identifier'] = $identifier;
+			$opt['identifier'] = $this->identifier;
 			$opt['ip_address'] = $_SERVER["REMOTE_ADDR"];
 
 			require_once('QuestionnaireAnswerRegist.php');
@@ -65,55 +77,82 @@ class QuestionnaireAnswers {
 			$qar->registerAnswer($opt);
 
 			echo $this->getMessage('thanks');
+			$this->getResults();
 
-			require_once("QuestionnaireResults.php");
-			$qr = new QuestionnaireResults();
-			$qr->getResults(array("id" => $this->id));
-			return;
 		} else {
 			//アンケートを表示する
-			$results = $dao->getEnqueteData($id);
+			$registered['phase'] = 'responding';
+
+			// アンケートがない
+			$results = $this->dao->getEnqueteData($id);
 			if (NULL === $results || !isset($results[0]->q_id)) {
 				return $this->getMessage('retry');
 			}
+
+			// 各種チェック
+			$registered = $this->check($registered);
+
 			//アンケートを表示するかどうか
 			require_once('DateTransform.php');
 			$dt = new DateTransform();
 			$period = $dt->isDuringPeriod($results[0]->start_date, $results[0]->end_date);
-			if ("now" == $period) {
-				$registered['enquete_phase'] = 'now';
-			} else if ("done" == $period) {
-				$registered['enquete_phase'] = 'done';
-			} else if ("todo" == $period) {
-				$registered['enquete_phase'] = 'todo';
-			}
 
-			$registered['phase'] = 'responding';
-			//
-			if (!isset($_COOKIE['CDQ_enquete'])) {
-				wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
-				wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
-			}
-			// had been reloaded
-			if (!isset($_COOKIE['CDQ_enquete'])) {
-				// DISABLE COOKIE
-				$this->getMessage('disableCOOKIE');
+			if ("done" == $period) {
+				$this->title = $results[0]->e_name;
+				echo $this->getMessage('done');
+				$this->getResults();
+				echo $this->getMessage('done_thanks');
+				return;
+			} else if ("todo" == $period) {
+				$this->title = $results[0]->e_name;
+				$this->date = $this->getFormattedDate($results[0]->start_date);
+				echo $this->getMessage('todo');
 				return;
 			}
-			// 既に回答済みかチェック
-			if (NULL != $identifier) {
-				$identExist = $dao->existIdentifier($this->id, $identifier);
-				if (count($identExist) > 0) {
-					$registered['phase'] = 'responded';
-					$registered['responded_answer'] = $dao->getRespondedAnswer($id, $identifier);
-					echo $this->getMessage('registered');
-				}
-			}
 
+			//アンケートを表示する
 			require_once("QuestionnaireDisplay.php");
 			$qd = new QuestionnaireDisplay();
 			$qd->displayEnquete($results, $registered);
 		}
+
+	}
+
+	function getResults() {
+		require_once("QuestionnaireResults.php");
+		$qr = new QuestionnaireResults();
+		$qr->getResults(array("id" => $this->id));
+	}
+
+	function check($registered) {
+		// COOKIE チェック
+		if (!isset($_COOKIE['CDQ_enquete'])) {
+			wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
+			wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
+			// had been reloaded
+		}
+		if (!isset($_COOKIE['CDQ_enquete'])) {
+			// DISABLE COOKIE
+			return $this->getMessage('disableCOOKIE');
+		}
+
+		// 既に回答済みかチェック
+		if (NULL != $this->identifier) {
+			$identExist = $this->dao->existIdentifier($this->id, $this->identifier);
+			if (count($identExist) > 0) {
+				$registered['phase'] = 'responded';
+				$registered['responded_answer'] = $this->dao->getRespondedAnswer($this->id, $this->identifier);
+				echo $this->getMessage('registered');
+			}
+		}
+		return $registered;
+	}
+
+	function getFormattedDate($date) {
+		require_once('DateTransform.php');
+		$dt = new DateTransform();
+		$date = $dt->datetimeToDate($date);
+		return $dt->getFormattedDate($date);
 	}
 
 	function getMessage($mes) {
@@ -132,10 +171,34 @@ EOF;
 
 		}
 
+		if ('done_thanks' == $mes) {
+			return <<<EOF
+<p>アンケートにご協力ありがとうございました。</p>
+
+EOF;
+
+		}
+
 		if ('registered' == $mes) {
 			return <<<EOF
-<p>このアンケートにはお答えを頂いております。<br />
-アンケートにご協力ありがとうございました。</p>
+<p>このアンケートにはお答えを頂いております。</p>
+
+EOF;
+
+		}
+
+		if ('done' == $mes) {
+			return <<<EOF
+<p>「 $this->title 」の集計は終了いたしました。</p>
+<p>集計結果が表示されています。</p>
+
+EOF;
+
+		}
+
+		if ('todo' == $mes) {
+			return <<<EOF
+<p>「 $this->title 」のアンケートは{$this->date}より開始いたします。</p>
 
 EOF;
 
@@ -143,7 +206,7 @@ EOF;
 
 		if ('disableCOOKIE' == $mes) {
 			return <<<EOF
-				<div style="text-align: center;font-weight: bold;">お使いのブラウザでは、アンケートのご利用ができません。</div>;
+				<div style="text-align: center;font-weight: bold;">お使いのブラウザでは、アンケートのご利用ができません。</div>
 
 EOF;
 
