@@ -99,5 +99,7 @@ EOD;
 			), false, true);
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('jquery.ui', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
+		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+
 	}
 } 

@@ -1,23 +1,49 @@
 @CHARSET "UTF-8";
 
-.form-horizontal .colabel {
-                            float: left;
-                            padding-top: 5px;
-                            text-align: right;
-                            }
 label.valid {
-              width: 16px;
-              height: 16px;
-              background: url(images/valid.png) center center no-repeat;
-              display: inline-block;
-              padding: 0px;
-              margin-top: 0px;
-              text-indent: -9999px;
-              }
+    width: 16px;
+    height: 16px;
+    background: url(images/valid.png) center center no-repeat;
+    display: inline-block;
+    padding: 0px;
+    margin-top: 0px;
+    text-indent: -9999px;
+}
+
 label.error {
-              font-weight: bold;
-              color: red;
-              padding: 2px 8px;
-              margin-top: 2px;
-              display: inline-block;
-              }
+    font-weight: bold;
+    color: red;
+    padding: 2px 8px;
+    margin-top: 2px;
+    display: inline-block;
+}
+
+.form-horizontal .colabel {
+    float: left;
+    padding-top: 5px;
+    text-align: right;
+}
+
+#wpbody-content {
+    min-height: 500px;
+    position: relative;
+    background-color: rgb(237, 237, 237);
+
+}
+
+#adminmenuwrap {
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    bottom: 0px;
+    position: absolute;
+
+}
+
+#wpwrap {
+    min-height: 100%;
+    width: 100%;
+    position: relative;
+
+    display: inline-block;
+}

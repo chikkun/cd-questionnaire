@@ -16,6 +16,7 @@ class UpdateShowForm {
 		wp_enqueue_script('messages', plugin_dir_url(__FILE__) . 'js/messages_ja.min.js');
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('jquery.ui.all', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
+		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
 
 		$cddb = new \cd\QuestionnaireDAO();
 		$answer_number = $cddb->getAlreadyAnsweredNumber($id);

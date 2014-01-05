@@ -52,9 +52,12 @@ class NewQuestionnaire {
 	 */
 	function questionnaireNewPage() {
 		global $cdSmartyInstance;
-
-//		$cdSmartyInstance->assign("afterAdd_selectionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/selectionorders.tpl'));
-//		$cdSmartyInstance->assign("afterAdd_questionorders", file_get_contents(plugin_dir_path(__FILE__) . 'templates/questionorders.tpl'));
+		$cdSmartyInstance->assign("hidden_id", "");
+		$cdSmartyInstance->assign("mes", "");
+		$cdSmartyInstance->assign("enable", "");
+		$cdSmartyInstance->assign("start_date", "");
+		$cdSmartyInstance->assign("end_date", "");
+		$cdSmartyInstance->assign("enquete_title", "");
 
 		$cdSmartyInstance->assign("enqueteAction", 'new');
 		$cdSmartyInstance->assign("enquete_button", '登録');
