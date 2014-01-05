@@ -71,8 +71,16 @@ class QuestionnaireAnswers {
 			$qr->getResults(array("id" => $this->id));
 			return;
 		} else {
+			//アンケートを表示する
+			$results = $dao->getEnqueteData($id);
+			if (NULL === $results || !isset($results[0]->q_id)) {
+				return $this->getMessage('retry');
+			}
+			//アンケートを表示するかどうか
+			require_once('DateTransform.php');
+			$dt = new DateTransform();
+			echo $dt->checkDate($results[0]->start_date, $results[0]->end_date);
 
-			//アンケートを表示
 			$registered['phase'] = 'responding';
 			//
 			if (!isset($_COOKIE['CDQ_enquete'])) {
@@ -87,11 +95,6 @@ class QuestionnaireAnswers {
 					$registered['responded_answer'] = $dao->getRespondedAnswer($id, $identifier);
 					echo $this->getMessage('registered');
 				}
-			}
-
-			$results = $dao->getEnqueteData($id);
-			if (NULL === $results || !isset($results[0]->q_id)) {
-				return $this->getMessage('retry');
 			}
 
 			require_once("QuestionnaireDisplay.php");
@@ -116,17 +119,9 @@ EOF;
 
 		}
 
-		if ('result' == $mes) {
-			return <<<EOF
-[CDQ-results id={$this->id}]
-
-EOF;
-
-		}
-
 		if ('registered' == $mes) {
 			return <<<EOF
-<p>このアンケートにはすでに登録済みです。<br />
+<p>このアンケートにはお答えを頂いております。<br />
 アンケートにご協力ありがとうございました。</p>
 
 EOF;

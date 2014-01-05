@@ -1,16 +1,19 @@
 <h2>{{$enquete_name}}</h2>
+<table>
+    <tr>
+        <th>アンケート開始日</th>
+        <td>{{$start_date}}</td>
+    </tr>
+    <tr>
+        <th>アンケート終了日</th>
+        <td>{{$end_date}}</td>
+    </tr>
+</table>
 <form action="" method="post">
-    <div class="container">
-
-        <div class="span3">3</div>
-        <div class="span3">3</div>
-        <div class="span3">3</div>
-        <div class="span3">3</div>
-    </div>
-    <div class="container">
-    <ol class="cdq_enquete">
-            {{$questions}}
-    </ol>
+    <div class="container-fluid">
+        <ol class="cdq_enquete">
+        {{$questions}}
+        </ol>
     </div>
 
     {{if 'false' == $print_only}}
