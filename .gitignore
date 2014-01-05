@@ -7,3 +7,4 @@
 .editorconfig
 templates_c/*.php
 cache/*.php
+tmp*
