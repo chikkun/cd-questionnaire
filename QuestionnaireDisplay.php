@@ -33,11 +33,12 @@ class QuestionnaireDisplay {
 		$cdSmartyInstance->assign("submit", $submit);
 		$cdSmartyInstance->assign("print_only", $print_only);
 
-		//
+		require_once("DateTransform.php");
+		$dt = new DateTransform();
 		$cdSmartyInstance->assign("enquete_name", $results[0]->e_name);
 		$cdSmartyInstance->assign("enquete_id", $results[0]->e_id);
-		$cdSmartyInstance->assign("start_date", $results[0]->start_date);
-		$cdSmartyInstance->assign("end_date", $results[0]->end_date);
+		$cdSmartyInstance->assign("start_date", $dt->getDate($results[0]->start_date));
+		$cdSmartyInstance->assign("end_date", $dt->getDate($results[0]->end_date));
 
 		$questions = "";
 		$selections = "";
