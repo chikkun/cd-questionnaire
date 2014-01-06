@@ -80,7 +80,7 @@ EOF;
 	}
 
 
-	function displayEnquete($results, $registered) {
+	public function displayEnquete($results, $registered) {
 //		var_dump($registered['responded_answer']);
 		global $cdSmartyInstance;
 		$submit = 'button';
@@ -164,7 +164,15 @@ EOF;
 
 		$cdSmartyInstance->display("show_enquete.tpl");
 	}
-	function search($where, $page, $perPage, $pageID) {
+
+	/**
+	 * 検索条件からアンケートレコードを拾う(ページャー対応)。
+	 * @param $where 検索条件の配列
+	 * @param $page
+	 * @param $perPage 検索結果の1ページ当たりの表示数
+	 * @param $pageID 何ページ目か
+	 */
+	public function search($where, $page, $perPage, $pageID) {
 		// smartyオブジェクト
 		global $cdSmartyInstance;
 		$offset = ($pageID - 1) * $perPage;
@@ -176,23 +184,23 @@ EOF;
 		require_once('Pager/Pager.php');
 		$cddb = new \cd\QuestionnaireDAO();
 		list($results, $total) = $cddb->getQuestionnairesListPerPage($where, $perPage, $offset);
-		// 検索fieldに値をセット
-		if(is_array($where) && isset($where["name"])){
+		// 値があったら、検索fieldに値をセット
+		if (is_array($where) && isset($where["name"])) {
 			$cdSmartyInstance->assign("name", $where["name"]);
 		} else {
 			$cdSmartyInstance->assign("name", "");
 		}
-		if(is_array($where) && isset($where["id"])){
+		if (is_array($where) && isset($where["id"])) {
 			$cdSmartyInstance->assign("id", $where["id"]);
 		} else {
 			$cdSmartyInstance->assign("id", "");
 		}
-		if(is_array($where) && isset($where["start_date_after"])){
+		if (is_array($where) && isset($where["start_date_after"])) {
 			$cdSmartyInstance->assign("start_date_after", $where["start_date_after"]);
 		} else {
 			$cdSmartyInstance->assign("start_date_after", "");
 		}
-		if(is_array($where) && isset($where["start_date_before"])){
+		if (is_array($where) && isset($where["start_date_before"])) {
 			$cdSmartyInstance->assign("start_date_before", $where["start_date_before"]);
 		} else {
 			$cdSmartyInstance->assign("start_date_before", "");
@@ -258,26 +266,45 @@ EOD;
 
 	}
 
-	function updateQuestionnaire($id) {
+	/**
+	 * idを指定して、アンケートレコードを更新する。
+	 * @param $id enquete_id
+	 * @return bool 成功したらtrueを返す
+	 */
+	public function updateQuestionnaire($id) {
 		$enquete['enquete_name'] = $_POST ['enquete_name'];
 		$enquete['start_date'] = $_POST ['start_date'];
 		$enquete['end_date'] = $_POST ['end_date'];
 		$enquete['data'] = $_POST ['enquete'] ['questions'];
 		$dao = new \cd\QuestionnaireDAO();
+		$flag = true;
 		$flag = $dao->deleteQuestionnaireChildren($id);
-		if(!$flag){
+		if (!$flag) {
 			return $flag;
 		}
 		$flag = $dao->insertEnquete($enquete, false, $id);
 		return $flag;
 	}
-	function delete($id) {
+
+	/**
+	 * idを指定して、アンケートレコードを削除する(論理削除)。
+	 * @param $id enquete_id
+	 * @return bool 成功したらtrueを返す
+	 */
+	public function deleteQuestionnaire($id) {
 		$dao = new \cd\QuestionnaireDAO();
 		$flag = $dao->deleteEnquete($id);
 		return $flag;
 	}
 
-	function updateShowForm($id, $mes = "", $deleteFlag = true) {
+	/**
+	 * idを指定して、フォーム上にレコードを表示する。
+	 * アンケート、質問、選択肢全部を表示する。
+	 * @param $id enauete_id
+	 * @param string $mes 画面に表示する文字列
+	 * @param bool $deleteFlag 削除ボタンを表示するかどうか
+	 */
+	public function updateShowForm($id, $mes = "", $deleteFlag = true) {
 		// smartyオブジェクト
 		global $cdSmartyInstance;
 		wp_enqueue_script('jquery');
@@ -343,7 +370,7 @@ EOD;
 		$json = preg_replace('/\}$/', '', $json);
 		$json .= ",";
 		$cdSmartyInstance->assign("data", $json);
-		if($answer_number > 0 ){
+		if ($answer_number > 0) {
 			$cdSmartyInstance->assign("enable", "ng");
 		} else {
 			$cdSmartyInstance->assign("enable", "");
