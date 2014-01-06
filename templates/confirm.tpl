@@ -1,9 +1,9 @@
 <div class="row span10 offset1">
 	<h2>{{$form_title}}</h2>
 	<ul class="confirm">
-		<li>アンケートタイトル: {{$questionnaire->enquete_title}}</li>
-		<li>開始日: {{$questionnaire->start_date}}</li>
-		<li>終了日: {{$questionnaire->end_date}}</li>
+		<li>アンケートタイトル: <p>{{$questionnaire->enquete_title}}</p></li>
+		<li>開始日: <p>{{$questionnaire->start_date|regex_replace:"/\s*\d\d:\d\d:\d\d/":""}}</p></li>
+		<li>終了日: <p>{{$questionnaire->end_date|regex_replace:"/\s*\d\d:\d\d:\d\d/":""}}</p></li>
 		<li> 内容:
 			<ol class="cdq_questions">
 				{{foreach from=$questionnaire->questions item=que}}
