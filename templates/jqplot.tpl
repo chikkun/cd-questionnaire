@@ -29,6 +29,6 @@
       }
     }
   });
-});
+})(jQuery);
 	{{/foreach}}
 </script>

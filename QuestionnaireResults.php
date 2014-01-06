@@ -82,15 +82,16 @@ class QuestionnaireResults {
 		$cdSmartyInstance->assign("graph_list", $graphList);
 		$cdSmartyInstance->display("jqplot.tpl");
 
-		wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'js/jquery-1.10.1.min.js', array('jquery'), false, true);
-		wp_enqueue_script('jqplot', plugin_dir_url(__FILE__) . 'js/jquery.jqplot.min.js', array('jquery'), false, true);
-		wp_enqueue_script('jqplot.barRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.barRenderer.min.js', array('jquery'), false, true);
-		wp_enqueue_script('jqplot.categoryAxisRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.categoryAxisRenderer.min.js', array('jquery'), false, true);
-		wp_enqueue_script('jqplot.dateAxisRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.dateAxisRenderer.min.js', array('jquery'), false, true);
-		wp_enqueue_script('jqplot.canvasTextRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.canvasTextRenderer.min.js', array('jquery'), false, true);
-		wp_enqueue_script('jqplot.jqplot.canvasAxisTickRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.canvasAxisTickRenderer.min.js', array('jquery'), false, true);
+
+		wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'js/jquery-1.10.1.min.js',array(), '1.10.1', false);
+		wp_enqueue_script('jqplot', plugin_dir_url(__FILE__) . 'js/jquery.jqplot.min.js', array(), false, false);
+		wp_enqueue_script('jqplot.barRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.barRenderer.min.js', array(), false, false);
+		wp_enqueue_script('jqplot.categoryAxisRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.categoryAxisRenderer.min.js', array(), false, false);
+		wp_enqueue_script('jqplot.dateAxisRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.dateAxisRenderer.min.js', array(), false, false);
+		wp_enqueue_script('jqplot.canvasTextRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.canvasTextRenderer.min.js', array(), false, false);
+		wp_enqueue_script('jqplot.jqplot.canvasAxisTickRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.canvasAxisTickRenderer.min.js', array(), false, false);
 		//CSS
-		wp_enqueue_style('jqplot', plugin_dir_url(__FILE__) . 'css/jquery.jqplot.min.css', false, false, true);
-		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
+		wp_enqueue_style('jqplot', plugin_dir_url(__FILE__) . 'css/jquery.jqplot.min.css', array(), false, 'all');
+		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), false, 'all');
 	}
 }
