@@ -48,10 +48,6 @@ class QuestionnaireAnswers {
 	 */
 	function getEnquete($atts) {
 		$this->dao = new QuestionnaireDAO();
-
-		wp_enqueue_script('jquery');
-		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, true);
-
 		extract(shortcode_atts(array(
 				'id' => 0
 		), $atts));
@@ -78,7 +74,7 @@ class QuestionnaireAnswers {
 
 			echo $this->getMessage('thanks');
 			$this->getResults();
-
+			return;
 		} else {
 			//アンケートを表示する
 			$registered['phase'] = 'responding';
@@ -116,6 +112,7 @@ class QuestionnaireAnswers {
 			require_once("QuestionnaireManager.php");
 			$qd = new QuestionnaireManager();
 			$qd->displayEnquete($results, $registered);
+			return;
 		}
 
 	}

@@ -32,18 +32,20 @@ class QuestionnairePreparation {
 	function divideAction() {
 		$this->add_javascripts();
 
-		if (isset ($_POST ['action'])) {
+		if (isset ($_POST ['action'])
+				&& wp_verify_nonce($_POST['CDQuestionnairePreparation'], 'cdq_2014-01-14_presents')
+				&& check_admin_referer('cdq_2014-01-14_presents', 'CDQuestionnairePreparation')
+		) {
 			$enquete['enquete_name'] = $_POST ['enquete_name'];
 			$enquete['start_date'] = $_POST ['start_date'];
 			$enquete['end_date'] = $_POST ['end_date'];
-
 			$enquete['data'] = $_POST ['enquete'] ['questions'];
 
 			require_once("QuestionnaireManager.php");
 			$qre = new QuestionnaireManager();
 			$qre->questionnaireRegistPage($enquete);
-		} else {
 
+		} else {
 			$this->questionnaireNewPage();
 		}
 	}
@@ -65,6 +67,8 @@ class QuestionnairePreparation {
 
 		$cdSmartyInstance->assign("data", '');
 		$cdSmartyInstance->assign("form_title", '新規登録');
+		$cdSmartyInstance->assign("nonce", wp_nonce_field('cdq_2014-01-14_presents', 'CDQuestionnairePreparation'));
+
 		$cdSmartyInstance->display("update.tpl");
 	}
 
