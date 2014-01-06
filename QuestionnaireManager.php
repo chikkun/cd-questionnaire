@@ -94,7 +94,6 @@ EOF;
 			$submit = 'submit';
 		} else if ('new' == $registered['phase']) {
 			// 新規にアンケートを作成した場合
-			echo "ただいま作成されたアンケートです。";
 		}
 		$cdSmartyInstance->assign("submit", $submit);
 		$cdSmartyInstance->assign("print_button", $print_button);
@@ -207,26 +206,26 @@ EOF;
 		}
 		$cdSmartyInstance->assign("e_list", $results);
 		$pager_array = array(
-			'mode' => 'Sliding',
+				'mode' => 'Sliding',
 			// 表示タイプ(Jumping/Sliding)
-			'perPage' => $perPage,
+				'perPage' => $perPage,
 			// 一ページ内で表示する件数
-			'delta' => 10,
+				'delta' => 10,
 			// 一ページ内で表示するリンク数
-			'totalItems' => intval($total),
+				'totalItems' => intval($total),
 			// ページング対象データの総数
-			'separator' => ' | ',
+				'separator' => ' | ',
 			// ページリンクのセパレータ文字列
-			'prevImg' => '≪戻る　',
+				'prevImg' => '≪戻る　',
 			// 戻るリンクのテキスト(imgタグ使用可)
-			'nextImg' => '次へ≫',
+				'nextImg' => '次へ≫',
 			// 次へリンクのテキスト(imgタグ使用可),
-			'lastPageText' => "最後へ",
-			'firstPageText' => "最初へ",
-			'firstPagePre' => '',
-			'lastPagePre' => '　　',
-			'firstPagePost' => '',
-			'lastPagePost' => ''
+				'lastPageText' => "最後へ",
+				'firstPageText' => "最初へ",
+				'firstPagePre' => '',
+				'lastPagePre' => '　　',
+				'firstPagePost' => '',
+				'lastPagePost' => ''
 		);
 		// Pageオブジェクト生成
 		$pager = @ \Pager::factory($pager_array);
@@ -244,22 +243,22 @@ EOD;
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js', array(
 				'jquery'
-			), false, true);
+		), false, true);
 		wp_enqueue_script('jquery.ui.datepicker', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker.min.js', array(
 				'jquery'
-			), false, true);
+		), false, true);
 		wp_enqueue_script('jquery.ui.datepicker-ja', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker-ja.min.js', array(
 				'jquery'
-			), false, true);
+		), false, true);
 		wp_enqueue_script('jquery.validate', plugin_dir_url(__FILE__) . 'js/jquery.validate.min.js', array(
 				'jquery'
-			), false, true);
+		), false, true);
 		wp_enqueue_script('additional-methods.min.js', plugin_dir_url(__FILE__) . 'js/additional-methods.min.js', array(
 				'jquery'
-			), false, true);
+		), false, true);
 		wp_enqueue_script('messages_ja', plugin_dir_url(__FILE__) . 'js/messages_ja.min.js', array(
 				'jquery'
-			), false, true);
+		), false, true);
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('jquery.ui', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
@@ -437,8 +436,8 @@ EOD;
 		array_push($alldata->data, $each_results);
 
 		return array(json_encode($alldata),
-			$enquete_title,
-			$start_date,
-			$end_date);
+				$enquete_title,
+				$start_date,
+				$end_date);
 	}
 } 

@@ -129,6 +129,7 @@
                     <button type="submit" name="action" value="delete" class="btn btn-warning btn-large"> 削除</button>
                     {{/if}}
                 </div>
+                {{$nonce}}
             </fieldset>
         </form>
     </div>

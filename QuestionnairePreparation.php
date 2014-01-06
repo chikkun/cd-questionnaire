@@ -2,14 +2,14 @@
 namespace cd;
 
 /**
- * FILE: NewQuestionnaire.php
+ * FILE: QuestionnairePreparation.php
  * Author: C & D, Inc.;
  *
  * アンケート作成を行う管理者の作業
- * Class NewQuestionnaire
+ * Class QuestionnairePreparation
  * @package cd
  */
-class NewQuestionnaire {
+class QuestionnairePreparation {
 
 	/**
 	 * コンストラクタ
@@ -23,7 +23,7 @@ class NewQuestionnaire {
 	 * 管理者メニューへ表示
 	 */
 	function questionnaireAddPages() {
-		$hook_new = add_submenu_page('cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 'level_8', __FILE__ . '?action=new', array(
+		add_submenu_page('cd-questionnaire/SearchAndUpdateQuestionnaire.php', '新規アンケート作成', '新規作成', 'level_8', __FILE__ . '?action=new', array(
 				$this,
 				'divideAction'
 		));
@@ -43,6 +43,7 @@ class NewQuestionnaire {
 			$qre = new QuestionnaireManager();
 			$qre->questionnaireRegistPage($enquete);
 		} else {
+
 			$this->questionnaireNewPage();
 		}
 	}
