@@ -29,9 +29,7 @@ class QuestionnaireManager {
 
 		// TODO 新規登録されたアンケートの表示
 		$registered['phase'] = 'new';
-		require_once("QuestionnaireDisplay.php");
-		$qd = new \cd\QuestionnaireDisplay();
-		$qd->displayEnquete($results, $registered);
+		$this->displayEnquete($results, $registered);
 
 		echo "<br /><br />登録終了<br /><br />";
 
@@ -102,7 +100,7 @@ EOF;
 		$cdSmartyInstance->assign("print_button", $print_button);
 
 		require_once("DateTransform.php");
-		$dt = new DateTransform();
+		$dt = new \cd\DateTransform();
 		$cdSmartyInstance->assign("enquete_name", $results[0]->e_name);
 		$cdSmartyInstance->assign("enquete_id", $results[0]->e_id);
 		$cdSmartyInstance->assign("start_date", $dt->datetimeToDate($results[0]->start_date));

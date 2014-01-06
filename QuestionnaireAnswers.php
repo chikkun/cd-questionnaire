@@ -72,8 +72,8 @@ class QuestionnaireAnswers {
 			$opt['identifier'] = $this->identifier;
 			$opt['ip_address'] = $_SERVER["REMOTE_ADDR"];
 
-			require_once('QuestionnaireAnswerRegist.php');
-			$qar = new QuestionnaireAnswerRegist();
+			require_once('QuestionnaireManager.php');
+			$qar = new QuestionnaireManager();
 			$qar->registerAnswer($opt);
 
 			echo $this->getMessage('thanks');
@@ -111,8 +111,8 @@ class QuestionnaireAnswers {
 			}
 
 			//アンケートを表示する
-			require_once("QuestionnaireDisplay.php");
-			$qd = new QuestionnaireDisplay();
+			require_once("QuestionnaireManager.php");
+			$qd = new QuestionnaireManager();
 			$qd->displayEnquete($results, $registered);
 		}
 

@@ -39,8 +39,8 @@ class NewQuestionnaire {
 
 			$enquete['data'] = $_POST ['enquete'] ['questions'];
 
-			require_once("QuestionnaireRegist.php");
-			$qre = new QuestionnaireRegist();
+			require_once("QuestionnaireManager.php");
+			$qre = new QuestionnaireManager();
 			$qre->questionnaireRegistPage($enquete);
 		} else {
 			$this->questionnaireNewPage();
