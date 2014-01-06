@@ -29,7 +29,7 @@ class SearchAndUpdateQuestionnaire {
 		switch ($action) {
 			case 'update_form' :
 				// idなどの改ざんがあったら、そのまま一覧表示に
-				if(!isset($_GET ['id']) || !preg_match("/\d+/", $_GET ['id'])){
+				if (!isset($_GET ['id']) || !preg_match("/\d+/", $_GET ['id'])) {
 					require_once("SearchQuestionnaire.php");
 					if (!isset($_GET ['page'])) {
 						$_GET ['page'] = "cd-questionnaire/SearchQuestionnaire.php";
@@ -46,7 +46,7 @@ class SearchAndUpdateQuestionnaire {
 				$updateShowForm->updateShowForm($id);
 				break;
 			case 'update' :
-				if(!isset($_POST["enquete_id"]) || !preg_match("/\d+/", $_POST["enquete_id"])){
+				if (!isset($_POST["enquete_id"]) || !preg_match("/\d+/", $_POST["enquete_id"])) {
 					require_once("SearchQuestionnaire.php");
 					if (!isset($_GET ['page'])) {
 						$_GET ['page'] = "cd-questionnaire/SearchQuestionnaire.php";
@@ -81,7 +81,10 @@ class SearchAndUpdateQuestionnaire {
 				} else {
 					$pageID = 1;
 				}
-				$where = $_GET['where'];
+				$where = "";
+				if (isset($_GET['where'])) {
+					$where = $_GET['where'];
+				}
 				if (!is_array($where)) {
 					$where = array();
 				}
@@ -105,11 +108,24 @@ class SearchAndUpdateQuestionnaire {
 				break;
 			default :
 				require_once("SearchQuestionnaire.php");
-				if (!isset($_GET ['page'])) {
-					$_GET ['page'] = "cd-questionnaire/SearchQuestionnaire.php";
+				$page = $_GET ['page'];
+				// PagerのpageIDからoffsetを計算
+				if (isset($_GET ['pageID'])) {
+					$pageID = $_GET ['pageID'] + 0;
+				} else {
+					$pageID = 1;
+				}
+				$where = "";
+				if (isset($_GET['where'])) {
+					$where = $_GET['where'];
+				}
+				if (!is_array($where)) {
+					$where = array();
 				}
 				$searchQuestionnaire = new \cd\SearchQuestionnaire();
-				$searchQuestionnaire->search(array(), $_GET ['page'], $this->perPage, 1);
+				$searchQuestionnaire->search($where, $page, $this->perPage, $pageID);
+				break;
+
 		}
 	}
 }

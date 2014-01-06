@@ -17,15 +17,15 @@ class UpdateQuestionnaire {
 		$enquete['data'] = $_POST ['enquete'] ['questions'];
 		$dao = new \cd\QuestionnaireDAO();
 		$flag = $dao->deleteQuestionnaireChildren($id);
-		if($flag){
-
+		if(!$flag){
+			return $flag;
 		}
-		$dao->insertEnquete($enquete, false, $id);
-		return true;
+		$flag = $dao->insertEnquete($enquete, false, $id);
+		return $flag;
 	}
 	function delete($id) {
 		$dao = new \cd\QuestionnaireDAO();
-		$dao->deleteEnquete($id);
-		return true;
+		$flag = $dao->deleteEnquete($id);
+		return $flag;
 	}
 } 
