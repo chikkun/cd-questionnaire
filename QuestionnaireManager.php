@@ -271,6 +271,8 @@ EOD;
 	 * @return bool 成功したらtrueを返す
 	 */
 	public function updateQuestionnaire($id) {
+		// smartyオブジェクト
+		global $cdSmartyInstance;
 		$enquete['enquete_name'] = $_POST ['enquete_name'];
 		$enquete['start_date'] = $_POST ['start_date'];
 		$enquete['end_date'] = $_POST ['end_date'];
@@ -282,6 +284,15 @@ EOD;
 			return $flag;
 		}
 		$flag = $dao->insertEnquete($enquete, false, $id);
+		$results = $dao->getEnqueteData($id);
+		$objects = $this->convertDBDataToObjects($results);
+		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
+		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+
+		$cdSmartyInstance->assign("form_title", "更新したアンケート");
+		$cdSmartyInstance->assign("questionnaire", $objects);
+		$cdSmartyInstance->display("confirm.tpl");
+
 		return $flag;
 	}
 

@@ -53,13 +53,6 @@ class SearchAndUpdateQuestionnaire {
 				}
 				$enqueteId = $_POST["enquete_id"];
 				$re = $manager->updateQuestionnaire($enqueteId);
-				if (!$re) {
-					$mes = "更新に失敗しました";
-				} else {
-					$mes = "更新しました";
-				}
-				$flag = $manager->updateShowForm($enqueteId, $mes);
-
 				break;
 			case 'search' :
 				// http://wordpress.chikkun.com/wp-admin/admin.php?page=cd-questionnaire/SearchQuestionnaire.php
@@ -83,13 +76,6 @@ class SearchAndUpdateQuestionnaire {
 			case 'delete' :
 				$enqueteId = $_POST["enquete_id"];
 				$re = $manager->deleteQuestionnaire($enqueteId);
-				if (!$re) {
-					$mes = "削除に失敗しました";
-				} else {
-					$mes = "削除しました";
-				}
-				//$flag = $manager->updateShowForm($enqueteId, $mes, false);
-
 				break;
 			default :
 				$page = $_GET ['page'];

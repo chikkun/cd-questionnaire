@@ -12,6 +12,9 @@ class QuestionnaireResults {
 	}
 
 	function getResults($atts) {
+		if (!wp_script_is( 'jquery', 'done' )) {
+			echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery-1.10.1.min.js'></script>" ;
+		}
 		global $cdSmartyInstance;
 		$id = 0;
 		extract(shortcode_atts(array(
@@ -81,9 +84,7 @@ class QuestionnaireResults {
 		$cdSmartyInstance->assign("js_list", $jsList);
 		$cdSmartyInstance->assign("graph_list", $graphList);
 		$cdSmartyInstance->display("jqplot.tpl");
-
-
-		wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'js/jquery-1.10.1.min.js',array(), '1.10.1', false);
+		// wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'js/jquery-1.10.1.min.js',array(), '1.10.1', false);
 		wp_enqueue_script('jqplot', plugin_dir_url(__FILE__) . 'js/jquery.jqplot.min.js', array(), false, false);
 		wp_enqueue_script('jqplot.barRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.barRenderer.min.js', array(), false, false);
 		wp_enqueue_script('jqplot.categoryAxisRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.categoryAxisRenderer.min.js', array(), false, false);

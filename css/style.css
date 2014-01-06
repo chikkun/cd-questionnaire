@@ -14,7 +14,7 @@ ol.cdq_questions {
     /* アンケート全体 */
     list-style-type: decimal;
     text-align: left;
-    padding-left: 3em;
+    padding-left: 2em;
 }
 
 .cdq_header {
@@ -27,7 +27,7 @@ ol.cdq_questions {
 ol.cdq_selections {
     /* 各質問に対する選択肢を囲む */
     list-style-type: lower-alpha;
-    margin-left: 1em;
+    margin-left: 2em;
 }
 
 li.cdq_list:nth-child(even) {
@@ -94,7 +94,14 @@ label.error {
 }
 
 ul.confirm {
+    margin: 0 0 0 1em;
+    padding: 10pt;
+    list-style-type: disc;
+    font-size: large;
+}
 
+ul.confirm div{
+    border-style: solid;
 }
 
 
