@@ -82,6 +82,10 @@ EOF;
 
 	public function displayEnquete($results, $registered) {
 //		var_dump($registered['responded_answer']);
+		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
+		wp_enqueue_style('jquery.ui', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css');
+		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+
 		global $cdSmartyInstance;
 		$submit = 'button';
 		$print_button = 'true';
@@ -94,6 +98,7 @@ EOF;
 			$submit = 'submit';
 		} else if ('new' == $registered['phase']) {
 			// 新規にアンケートを作成した場合
+
 		}
 		$cdSmartyInstance->assign("submit", $submit);
 		$cdSmartyInstance->assign("print_button", $print_button);

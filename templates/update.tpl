@@ -116,7 +116,7 @@
                     <div class='row'>
                         <span id="enquete_questions_add"><button class="btn-info">質問を増やす</button></span>
                         <span id="enquete_questions_remove_last"><button class="btn-info">最後の質問を削除する</button></span>
-                        <span id="enquete_questions_remove_all"><button class="btn-info">質問を全部削除すする</button></span>
+                        <span id="enquete_questions_remove_all"><button class="btn-info">質問を全部削除する</button></span>
                     </div>
                     <div class='row'>　</div>
                 </div>
@@ -129,7 +129,7 @@
                     <button type="submit" name="action" value="delete" class="btn btn-warning btn-large"> 削除</button>
                     {{/if}}
                 </div>
-                {{$nonce}}
+                {{$unises}}
             </fieldset>
         </form>
     </div>

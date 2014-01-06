@@ -82,7 +82,7 @@ class QuestionnaireAnswers {
 			// アンケートがない
 			$results = $this->dao->getEnqueteData($id);
 			if (NULL === $results || !isset($results[0]->q_id)) {
-				return $this->getMessage('retry');
+				$registered['message'] = $this->getMessage('retry');
 			}
 
 			// 各種チェック
@@ -95,20 +95,16 @@ class QuestionnaireAnswers {
 
 			if ("done" == $period) {
 				$this->title = $results[0]->e_name;
-				echo $this->getMessage('done');
-				$this->getResults();
-				echo $this->getMessage('done_thanks');
-				return;
+				$registered['message'] = $this->getMessage('done');
+				$registered['message'] .= $this->getResults();
+				$registered['message'] .= $this->getMessage('done_thanks');
 			} else if ("todo" == $period) {
 				$this->title = $results[0]->e_name;
 				$this->date = $this->getFormattedDate($results[0]->start_date);
-				echo $this->getMessage('todo');
-				return;
+				$registered['message'] = $this->getMessage('todo');
 			}
 
 			//アンケートを表示する
-			wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
-
 			require_once("QuestionnaireManager.php");
 			$qd = new QuestionnaireManager();
 			$qd->displayEnquete($results, $registered);
@@ -120,7 +116,7 @@ class QuestionnaireAnswers {
 	function getResults() {
 		require_once("QuestionnaireResults.php");
 		$qr = new QuestionnaireResults();
-		$qr->getResults(array("id" => $this->id));
+		return ($qr->getResults(array("id" => $this->id)));
 	}
 
 	function check($registered) {

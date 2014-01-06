@@ -17,6 +17,7 @@ class QuestionnairePreparation {
 	 */
 	function __construct() {
 		add_action('admin_menu', array($this, 'questionnaireAddPages'));
+//		add_action('init', array($this, 'cdq_session_start'));
 	}
 
 	/**
@@ -29,13 +30,22 @@ class QuestionnairePreparation {
 		));
 	}
 
+//	function cdq_session_start() {
+//		session_start();
+//	}
+
 	function divideAction() {
 		$this->add_javascripts();
-
+		var_dump($_SESSION['cdq-session']);
+		echo "--------------------";
+		var_dump($_POST['unises']);
+//		exit;
 		if (isset ($_POST ['action'])
-				&& wp_verify_nonce($_POST['CDQuestionnairePreparation'], 'cdq_2014-01-14_presents')
-				&& check_admin_referer('cdq_2014-01-14_presents', 'CDQuestionnairePreparation')
+//				&& isset($_SESSION['cdq-session'])
+//				&& isset($_POST['unises'])
+//				&& $_SESSION['cdq-session'] === $_POST['unises']
 		) {
+
 			$enquete['enquete_name'] = $_POST ['enquete_name'];
 			$enquete['start_date'] = $_POST ['start_date'];
 			$enquete['end_date'] = $_POST ['end_date'];
@@ -44,6 +54,7 @@ class QuestionnairePreparation {
 			require_once("QuestionnaireManager.php");
 			$qre = new QuestionnaireManager();
 			$qre->questionnaireRegistPage($enquete);
+			unset($_SESSION['cdq-session']);
 
 		} else {
 			$this->questionnaireNewPage();
@@ -54,6 +65,9 @@ class QuestionnairePreparation {
 	 * アンケートの新規作成ページの表示
 	 */
 	function questionnaireNewPage() {
+		$unises = uniqid('cdq', true);
+		$_SESSION['cdq-session'] = $unises;
+
 		global $cdSmartyInstance;
 		$cdSmartyInstance->assign("hidden_id", "");
 		$cdSmartyInstance->assign("mes", "");
@@ -67,7 +81,7 @@ class QuestionnairePreparation {
 
 		$cdSmartyInstance->assign("data", '');
 		$cdSmartyInstance->assign("form_title", '新規登録');
-		$cdSmartyInstance->assign("nonce", wp_nonce_field('cdq_2014-01-14_presents', 'CDQuestionnairePreparation'));
+		$cdSmartyInstance->assign("unises", "<input type='hidden' name='unises' value='$unises'>");
 
 		$cdSmartyInstance->display("update.tpl");
 	}
