@@ -9,8 +9,8 @@ namespace cd;
 class DateTransform {
 	function isDuringPeriod($start_date, $end_date) {
 		// start_date end_date をチェック
-		$s_d = $this->getDate($start_date);
-		$e_d = $this->getDate($end_date);
+		$s_d = $this->datetimeToDate($start_date);
+		$e_d = $this->datetimeToDate($end_date);
 		$today = date('Y-m-d');
 
 		// 日付を比較
@@ -26,8 +26,12 @@ class DateTransform {
 		}
 	}
 
-	function getDate($date) {
-		return preg_replace("/\s00:00:00/", "", $date);
+	function datetimeToDate($datetime) {
+		return preg_replace("/\s00:00:00/", "", $datetime);
+	}
+
+	function getFormattedDate($date) {
+		return preg_replace("/^(\d+?)-(\d+?)-(\d+)/", "$1年$2月$3日", $date);
 	}
 
 }

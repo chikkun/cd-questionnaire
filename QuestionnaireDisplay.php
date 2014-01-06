@@ -37,8 +37,8 @@ class QuestionnaireDisplay {
 		$dt = new DateTransform();
 		$cdSmartyInstance->assign("enquete_name", $results[0]->e_name);
 		$cdSmartyInstance->assign("enquete_id", $results[0]->e_id);
-		$cdSmartyInstance->assign("start_date", $dt->getDate($results[0]->start_date));
-		$cdSmartyInstance->assign("end_date", $dt->getDate($results[0]->end_date));
+		$cdSmartyInstance->assign("start_date", $dt->datetimeToDate($results[0]->start_date));
+		$cdSmartyInstance->assign("end_date", $dt->datetimeToDate($results[0]->end_date));
 
 		$questions = "";
 		$selections = "";
