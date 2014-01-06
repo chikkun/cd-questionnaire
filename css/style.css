@@ -97,11 +97,13 @@ ul.confirm {
     margin: 0 0 0 1em;
     padding: 10pt;
     list-style-type: disc;
-    font-size: large;
 }
 
-ul.confirm div{
+ul.confirm p{
     border-style: solid;
+    display: inline-block;
+    border-width: 1px;
+    font-weight: bold;
 }
 
 

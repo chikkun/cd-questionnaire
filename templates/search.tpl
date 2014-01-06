@@ -91,8 +91,8 @@
                 <tr>
                     <td><a href="admin.php?page={{$page}}&id={{$var->id}}&action=update_form">{{$var->id}}</a></td>
                     <td>{{$var->name}}</td>
-									<td>{{$var->start_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}</td>
-                    <td>{{$var->end_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}</td>
+									<td>{{$var->start_date|regex_replace:"/\s*\d\d:\d\d:\d\d/":""}}</td>
+                    <td>{{$var->end_date|regex_replace:"/\s*\d\d:\d\d:\d\d/":""}}</td>
                 </tr>
                 {{/foreach}}
                 </tbody>
