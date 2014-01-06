@@ -36,9 +36,9 @@ class QuestionnairePreparation {
 
 	function divideAction() {
 		$this->add_javascripts();
-		var_dump($_SESSION['cdq-session']);
-		echo "--------------------";
-		var_dump($_POST['unises']);
+//		var_dump($_SESSION['cdq-session']);
+//		echo "--------------------";
+//		var_dump($_POST['unises']);
 //		exit;
 		if (isset ($_POST ['action'])
 //				&& isset($_SESSION['cdq-session'])
