@@ -292,8 +292,17 @@ EOD;
 	 * @return bool 成功したらtrueを返す
 	 */
 	public function deleteQuestionnaire($id) {
+		// smartyオブジェクト
+		global $cdSmartyInstance;
 		$dao = new \cd\QuestionnaireDAO();
+		$results = $dao->getEnqueteData($id);
 		$flag = $dao->deleteEnquete($id);
+		$objects = $this->convertDBDataToObjects($results);
+		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
+		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+		$cdSmartyInstance->assign("form_title", "削除したアンケート");
+		$cdSmartyInstance->assign("questionnaire", $objects);
+		$cdSmartyInstance->display("confirm.tpl");
 		return $flag;
 	}
 
@@ -313,7 +322,7 @@ EOD;
 		wp_enqueue_script('jquery.sheepItPlugin', plugin_dir_url(__FILE__) . 'js/jquery.sheepItPlugin.min.js');
 		wp_enqueue_script('jquery.validate', plugin_dir_url(__FILE__) . 'js/jquery.validate.min.js');
 		wp_enqueue_script('additional', plugin_dir_url(__FILE__) . 'js/additional-methods.min.js');
-		wp_enqueue_script('query.dump', plugin_dir_url(__FILE__) . 'js/jquery.dump.min.js');
+		//wp_enqueue_script('query.dump', plugin_dir_url(__FILE__) . 'js/jquery.dump.min.js');
 		wp_enqueue_script('messages', plugin_dir_url(__FILE__) . 'js/messages_ja.min.js');
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('jquery.ui.all', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
@@ -322,6 +331,73 @@ EOD;
 		$cddb = new \cd\QuestionnaireDAO();
 		$answer_number = $cddb->getAlreadyAnsweredNumber($id);
 		$results = $cddb->getEnqueteData($id, $deleteFlag);
+		list($json, $enquete_title, $start_date, $end_date) = $this->convertDBDataToJson($results);
+		$json = preg_replace('/questions_index_order/', 'questions_#index#_order', $json);
+		$json = preg_replace('/questions_index_question/', 'questions_#index#_question', $json);
+		$json = preg_replace('/questions_index_selections/', 'questions_#index#_selections', $json);
+		$json = preg_replace('/selections_index_selections_selection/', 'selections_#index_selections#_selection', $json);
+		$json = preg_replace('/selections_index_selections_order/', 'selections_#index_selections#_order', $json);
+		$json = preg_replace('/^\{/', '', $json);
+		$json = preg_replace('/\}$/', '', $json);
+		$json .= ",";
+		$cdSmartyInstance->assign("data", $json);
+		if ($answer_number > 0) {
+			$cdSmartyInstance->assign("enable", "ng");
+		} else {
+			$cdSmartyInstance->assign("enable", "");
+		}
+		$cdSmartyInstance->assign("enquete_title", $enquete_title);
+		$cdSmartyInstance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
+		$cdSmartyInstance->assign("mes", $mes);
+		$cdSmartyInstance->assign("start_date", $start_date);
+		$cdSmartyInstance->assign("end_date", $end_date);
+		$cdSmartyInstance->assign("form_title", "修正/削除");
+		$cdSmartyInstance->assign("enqueteAction", "update");
+		$cdSmartyInstance->assign("enquete_button", "修正");
+		$cdSmartyInstance->display("update.tpl");
+	}
+
+	/**
+	 * wpdbで拾ってきたデータを構造化されたデータ構造に変換
+	 */
+	private function convertDBDataToObjects($results) {
+		$num = 0;
+		$before = "";
+		//1つだけ最初にアンケートオブジェクト作成
+		$enquete = new \stdClass ();
+		$enquete->questions = array();
+		$question = new \stdClass ();
+		foreach ($results as $val) {
+			$num++;
+			// 前の質問と今回のが違う場合(質問が変わった場合)
+			if ($val->question_text !== $before) {
+				if ($num === 1) {
+					// 1問目のみ
+					$enquete->start_date = $val->start_date;
+					$enquete->enquete_title = $val->e_name;
+					$enquete->end_date = $val->end_date;
+				} else {
+					array_push($enquete->questions, $question);
+				}
+				$question = new \stdClass ();
+				$question->question_text = $val->question_text;
+				$question->q_sort_id = $val->q_sort_id;
+				$question->selections = array();
+			}
+			$selection = new \stdClass ();
+			$selection->selection_display = $val->selection_display;
+			$selection->s_sort_id = $val->s_sort_id;
+			array_push($question->selections, $selection);
+			$before = $val->question_text;
+		}
+		array_push($enquete->questions, $question);
+		return $enquete;
+	}
+
+	/**
+	 * wpdbで拾ってきたデータを構造化されたデータ構造に変換
+	 */
+	private function convertDBDataToJson($results) {
 		$num = 0;
 		$before = "";
 		$alldata = new \stdClass ();
@@ -360,29 +436,9 @@ EOD;
 		//array_push($each_results->enquete_questions_index_selections, $select);
 		array_push($alldata->data, $each_results);
 
-		$json = json_encode($alldata);
-		$json = preg_replace('/questions_index_order/', 'questions_#index#_order', $json);
-		$json = preg_replace('/questions_index_question/', 'questions_#index#_question', $json);
-		$json = preg_replace('/questions_index_selections/', 'questions_#index#_selections', $json);
-		$json = preg_replace('/selections_index_selections_selection/', 'selections_#index_selections#_selection', $json);
-		$json = preg_replace('/selections_index_selections_order/', 'selections_#index_selections#_order', $json);
-		$json = preg_replace('/^\{/', '', $json);
-		$json = preg_replace('/\}$/', '', $json);
-		$json .= ",";
-		$cdSmartyInstance->assign("data", $json);
-		if ($answer_number > 0) {
-			$cdSmartyInstance->assign("enable", "ng");
-		} else {
-			$cdSmartyInstance->assign("enable", "");
-		}
-		$cdSmartyInstance->assign("enquete_title", $enquete_title);
-		$cdSmartyInstance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
-		$cdSmartyInstance->assign("mes", $mes);
-		$cdSmartyInstance->assign("start_date", $start_date);
-		$cdSmartyInstance->assign("end_date", $end_date);
-		$cdSmartyInstance->assign("form_title", "修正/削除");
-		$cdSmartyInstance->assign("enqueteAction", "update");
-		$cdSmartyInstance->assign("enquete_button", "修正");
-		$cdSmartyInstance->display("update.tpl");
+		return array(json_encode($alldata),
+			$enquete_title,
+			$start_date,
+			$end_date);
 	}
 } 

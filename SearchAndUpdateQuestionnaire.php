@@ -88,7 +88,7 @@ class SearchAndUpdateQuestionnaire {
 				} else {
 					$mes = "削除しました";
 				}
-				$flag = $manager->updateShowForm($enqueteId, $mes, false);
+				//$flag = $manager->updateShowForm($enqueteId, $mes, false);
 
 				break;
 			default :

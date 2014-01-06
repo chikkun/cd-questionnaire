@@ -82,7 +82,7 @@ class QuestionnaireResults {
 		$cdSmartyInstance->assign("graph_list", $graphList);
 		$cdSmartyInstance->display("jqplot.tpl");
 
-		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'js/jquery-1.10.1.min.js', array('jquery'), false, true);
 		wp_enqueue_script('jqplot', plugin_dir_url(__FILE__) . 'js/jquery.jqplot.min.js', array('jquery'), false, true);
 		wp_enqueue_script('jqplot.barRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.barRenderer.min.js', array('jquery'), false, true);
 		wp_enqueue_script('jqplot.categoryAxisRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.categoryAxisRenderer.min.js', array('jquery'), false, true);
