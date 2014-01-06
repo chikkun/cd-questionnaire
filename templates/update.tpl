@@ -20,7 +20,7 @@
 
                     <div class="span6">
                         <input type="text" name="start_date" class="jqueryCalendar input-medium"
-                               value="{{$start_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}" placeholder="開始日(必須)"
+                               value="{{$start_date|regex_replace:" /\s*\d\d:\d\d:\d\d/":""}}" placeholder="開始日(必須)"
                                data-rule-required="true"/>
                     </div>
                 </div>
@@ -29,7 +29,7 @@
 
                     <div class="span6">
                         <input type="text" name="end_date" class="jqueryCalendar input-medium"
-                               value="{{$end_date|regex_replace:" /\d\d:\d\d:\d\d/":""}}" placeholder="終了日"/>
+                               value="{{$end_date|regex_replace:" /\s*\d\d:\d\d:\d\d/":""}}" placeholder="終了日"/>
                     </div>
                 </div>
 

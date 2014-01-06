@@ -30,17 +30,17 @@ class QuestionnaireRegist {
 	 */
 	function questionnaireRegistPage($enquete) {
 		$dao = new QuestionnaireDAO ();
-		$this->enquete_id = $dao->insertEnquete($enquete);
-		echo $this->printShortCode();
-		$this->showEnquete();
+		$enquete_id = $dao->insertEnquete($enquete);
+		echo $this->printShortCode($enquete_id);
+		$this->showEnquete($enquete_id);
 	}
 
 	/**
 	 * 新規アンケートの表示
 	 */
-	function showEnquete() {
+	function showEnquete($enquete_id) {
 		$dao = new QuestionnaireDAO ();
-		$results = $dao->getEnqueteData($this->enquete_id);
+		$results = $dao->getEnqueteData($enquete_id);
 
 		// TODO 新規登録されたアンケートの表示
 		$registered['phase'] = 'new';
@@ -52,7 +52,7 @@ class QuestionnaireRegist {
 
 	}
 
-	function printShortCode() {
+	function printShortCode($enquete_id) {
 		return <<<EOF
 		<div class="updated fade">
 			<p>現在のアンケートを発行するには、下のショートコードを、アンケートを表示したい固定ページや投稿ページ内に書き込んでください。ここでの作業はそれで終了です。</p>
@@ -60,7 +60,7 @@ class QuestionnaireRegist {
 				ショートコード：<input style="width: auto;"
 					name="enquete_options[enquete_short_code]" type="text"
 					id="inputshortcode" readonly
-					value="[CDQ-enquete id={$this->enquete_id}]" class="regular-text" />
+					value="[CDQ-enquete id={$enquete_id}]" class="regular-text" />
 			</p>
 		</div>
 EOF;

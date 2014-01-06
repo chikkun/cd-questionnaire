@@ -44,6 +44,7 @@ class SearchAndUpdateQuestionnaire {
 				$updateShowForm = new \cd\UpdateShowForm();
 
 				$updateShowForm->updateShowForm($id);
+				$updateShowForm->updateShowForm($id);
 				break;
 			case 'update' :
 				if (!isset($_POST["enquete_id"]) || !preg_match("/\d+/", $_POST["enquete_id"])) {
