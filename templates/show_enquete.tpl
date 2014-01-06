@@ -1,4 +1,4 @@
-<h2>{{$enquete_name}}</h2>
+<h2 class="cdq_title">{{$enquete_name}}</h2>
 <table>
     <tr>
         <th>アンケート開始日</th>
@@ -10,11 +10,9 @@
     </tr>
 </table>
 <form action="" method="post">
-    <div class="container-fluid">
-        <ol class="cdq_enquete">
-        {{$questions}}
+    <ol class="cdq_questions">
+    {{$questions}}
         </ol>
-    </div>
 
     {{if 'true' == $print_button}}
     <input type="{{$submit}}" name="enquete_options[enquete_answer][submit]" value="アンケートに答える">

@@ -88,9 +88,6 @@ class NewQuestionnaire {
 		wp_enqueue_script('additional', plugin_dir_url(__FILE__) . 'js/additional-methods.min.js', array(
 				'jquery'
 		));
-		wp_enqueue_script('query.dump', plugin_dir_url(__FILE__) . 'js/jquery.dump.min.js', array(
-				'jquery'
-		));
 		wp_enqueue_script('messages', plugin_dir_url(__FILE__) . 'js/messages_ja.min.js', array(
 				'jquery'
 		));

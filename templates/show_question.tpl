@@ -1,8 +1,8 @@
-<div id="header">
-    <li class="cdq_question">{{$question_text}}</li>
+<div class="cdq_header">
+<li class="cdq_question">{{$question_text}}</li>
 </div>
-<div class="row-fluid">
-<ol style="list-style-type: lower-roman">
+<div>
+    <ol class="cdq_selections">
     {{$selections}}
     </ol>
 </div>

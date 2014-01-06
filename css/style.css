@@ -1,5 +1,52 @@
 @CHARSET "UTF-8";
 
+/*
+ For CDQuestionnaire
+   CSS configuration
+ */
+.cdq_title {
+    /* アンケートタイトル */
+    color: blue;
+    font-weight: bold;
+}
+
+ol.cdq_questions {
+    /* アンケート全体 */
+    list-style-type: decimal;
+    text-align: left;
+    padding-left: 3em;
+}
+
+.cdq_header {
+    /* アンケート質問事項 */
+    font-size: 20px;
+    font-weight: bold;
+    background-color: #d3d3d3;
+}
+
+ol.cdq_selections {
+    /* 各質問に対する選択肢を囲む */
+    list-style-type: lower-alpha;
+    margin-left: 1em;
+}
+
+li.cdq_list:nth-child(even) {
+    background-color: snow :;;
+}
+
+li.cdq_list:nth-child(odd) {
+    background-color: transparent;
+}
+
+.cdq_list {
+    /* 各質問に対する選択肢一つごと */
+
+}
+
+/*
+ For WordPress
+   CSS  configuration
+*/
 label.valid {
     width: 16px;
     height: 16px;
@@ -28,7 +75,6 @@ label.error {
     min-height: 500px;
     position: relative;
     background-color: rgb(237, 237, 237);
-
 }
 
 #adminmenuwrap {
@@ -37,7 +83,6 @@ label.error {
     left: 0px;
     bottom: 0px;
     position: absolute;
-
 }
 
 #wpwrap {
@@ -47,3 +92,6 @@ label.error {
 
     display: inline-block;
 }
+
+
+

@@ -111,6 +111,8 @@ class QuestionnaireAnswers {
 			}
 
 			//アンケートを表示する
+			wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+
 			require_once("QuestionnaireManager.php");
 			$qd = new QuestionnaireManager();
 			$qd->displayEnquete($results, $registered);
