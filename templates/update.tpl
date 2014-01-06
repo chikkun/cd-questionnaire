@@ -150,7 +150,7 @@
     jQuery(document).ready(function ($) {
         $('.jqueryCalendar').datepicker({
             numberOfMonths: 2,
-            dateFormat: 'yy/mm/dd',
+            dateFormat: 'yy-mm-dd',
             showButtonPanel: true
         });
     });
