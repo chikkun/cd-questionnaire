@@ -274,9 +274,11 @@ EOF;
 EOD;
 		$cdSmartyInstance->assign("paging", $pager_html);
 		$cdSmartyInstance->assign("page", $page);
-
 		$cdSmartyInstance->display("search.tpl");
 		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery-cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
+				'jquery'
+			), false, true);
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js', array(
 				'jquery'
 		), false, true);

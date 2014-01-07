@@ -6,6 +6,7 @@
     }
 </style>
 
+
 <div class="row span12">
     <h2>アンケート検索</h2>
 </div>
@@ -136,7 +137,7 @@
     jQuery(document).ready(function ($) {
         $('.jqueryCalendar').datepicker({
             numberOfMonths: 1,
-	    dateFormat: 'yy/mm/dd',
+	    dateFormat: 'yy-mm-dd',
             showButtonPanel: true
         });
     });
