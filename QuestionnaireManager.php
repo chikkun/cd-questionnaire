@@ -18,6 +18,7 @@ class QuestionnaireManager {
 		$enquete_id = $dao->insertEnquete($enquete);
 		echo $this->printShortCode($enquete_id);
 		$this->showEnquete($enquete_id);
+		$this->addMenuButton();
 	}
 
 	/**
@@ -37,15 +38,13 @@ class QuestionnaireManager {
 
 	public function printShortCode($enquete_id) {
 		return <<<EOF
-		<div class="updated fade">
-			<p>現在のアンケートを発行するには、下のショートコードを、アンケートを表示したい固定ページや投稿ページ内に書き込んでください。ここでの作業はそれで終了です。</p>
-			<p>
-				ショートコード：<input style="width: auto;"
-					name="enquete_options[enquete_short_code]" type="text"
-					id="inputshortcode" readonly
-					value="[CDQ-enquete id={$enquete_id}]" class="regular-text" />
+		<!-- div class="updated fade" -->
+			<p>現在のアンケートを発行するには、下のショートコードを、アンケートを表示したい固定ページや投稿ページ内に書き込んでください。</p>
+			<p>ここでの作業はそれで終了です。</p>
+			<p style="margin-left: 5em;">
+				ショートコード： [CDQ-enquete id={$enquete_id}]
 			</p>
-		</div>
+		<!-- /div -->
 EOF;
 	}
 
@@ -79,8 +78,7 @@ EOF;
 		$dao->insertIdentifier($data);
 	}
 
-
-	public function displayEnquete($results, $registered) {
+	public function displayEnquete($results, $registered = array()) {
 //		var_dump($registered['responded_answer']);
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
 		wp_enqueue_style('jquery.ui', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css');
@@ -167,6 +165,21 @@ EOF;
 		$cdSmartyInstance->assign("questions", $questions);
 
 		$cdSmartyInstance->display("show_enquete.tpl");
+	}
+
+	function addMenuButton() {
+		return <<<EOF
+<div>
+  <form action="" type="POST">
+    <input type="submit" name="enquete_list" value="アンケート一覧" />
+  </form>
+</div>
+<div>
+  <form action="" type="POST">
+    <input type="submit" name="new_enquete" value="新規アンケートを作成する" />
+  </form>
+</div>
+EOF;
 	}
 
 	/**

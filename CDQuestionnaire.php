@@ -10,7 +10,7 @@ class CDQuestionnaire {
 	 * プラグインのバージョン
 	 * @var float
 	 */
-	private $version = 0.128;
+	private $version = 0.129;
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 * @var null
@@ -21,8 +21,9 @@ class CDQuestionnaire {
 		$this->db_version = get_option('cdq_db_version', 0);
 
 		// プラグイン読み込み完了後にフックを登録
-		add_action('plugins_loaded', array($this, 'activate'));
-
+		//add_action('plugins_loaded', array($this, 'activate'));
+		// 有効化した時のみ
+		register_activation_hook(__FILE__, 'activate');
 	}
 
 	/**

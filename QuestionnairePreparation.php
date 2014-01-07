@@ -35,7 +35,6 @@ class QuestionnairePreparation {
 //	}
 
 	function divideAction() {
-		$this->add_javascripts();
 //		var_dump($_SESSION['cdq-session']);
 //		echo "--------------------";
 //		var_dump($_POST['unises']);
@@ -54,7 +53,7 @@ class QuestionnairePreparation {
 			require_once("QuestionnaireManager.php");
 			$qre = new QuestionnaireManager();
 			$qre->questionnaireRegistPage($enquete);
-			unset($_SESSION['cdq-session']);
+//			unset($_SESSION['cdq-session']);
 
 		} else {
 			$this->questionnaireNewPage();
@@ -66,7 +65,7 @@ class QuestionnairePreparation {
 	 */
 	function questionnaireNewPage() {
 		$unises = uniqid('cdq', true);
-		$_SESSION['cdq-session'] = $unises;
+//		$_SESSION['cdq-session'] = $unises;
 
 		global $cdSmartyInstance;
 		$cdSmartyInstance->assign("hidden_id", "");
@@ -83,10 +82,11 @@ class QuestionnairePreparation {
 		$cdSmartyInstance->assign("form_title", '新規登録');
 		$cdSmartyInstance->assign("unises", "<input type='hidden' name='unises' value='$unises'>");
 
+		$this->addJavascripts();
 		$cdSmartyInstance->display("update.tpl");
 	}
 
-	function add_javascripts() {
+	function addJavascripts() {
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
 		wp_enqueue_style('jquery', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css');
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
