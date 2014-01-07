@@ -16,7 +16,7 @@ class CDUtils {
 		get_currentuserinfo();
 		$nonce = md5(uniqid("cdq-$action",true));
 		$url_user_action = get_option("siteurl") . "/" . $current_user->user_login . "/" . $action;
-
+		$url_user_action = preg_replace("/\./", "_", $url_user_action);
 		return $url_user_action;
   }
 	public static function getSetCookieJSTagWithNonce($action = "something"){
@@ -29,7 +29,9 @@ jQuery(document).ready(function ($) {
 });
 </script>
 EOF;
-		return $tag;
+		$cookie = "<input type='hidden' name = 'hardrocks' value='$nonce'>";
+
+		return array($tag, $cookie);
 	}
 
 	public static function getRemoveCookieJSTagWithNonce($action = "something"){

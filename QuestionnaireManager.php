@@ -276,9 +276,6 @@ EOD;
 		$cdSmartyInstance->assign("page", $page);
 		$cdSmartyInstance->display("search.tpl");
 		wp_enqueue_script('jquery');
-		wp_enqueue_script('jquery-cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
-				'jquery'
-			), false, true);
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js', array(
 				'jquery'
 		), false, true);
@@ -315,6 +312,14 @@ EOD;
 		$enquete['start_date'] = $_POST ['start_date'];
 		$enquete['end_date'] = $_POST ['end_date'];
 		$enquete['data'] = $_POST ['enquete'] ['questions'];
+		require_once("CDUtils.php");
+		$key = \cd\CDUtils::getUrlAndUserAndActionText("update");
+		if(!isset($_COOKIE[$key]) || !isset($_POST["hardrocks"]) || $_COOKIE[$key] !== $_POST["hardrocks"]){
+			echo "reloaded";
+			var_dump($_COOKIE[$key]);
+			var_dump($_POST["hardrocks"]);
+			exit;
+		}
 		$dao = new \cd\QuestionnaireDAO();
 		$flag = true;
 		$flag = $dao->deleteQuestionnaireChildren($id);
@@ -324,8 +329,15 @@ EOD;
 		$flag = $dao->insertEnquete($enquete, false, $id);
 		$results = $dao->getEnqueteData($id);
 		$objects = $this->convertDBDataToObjects($results);
+		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery-cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
+				'jquery'
+			), false, true);
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+
+		$jscookie = \cd\CDUtils::getRemoveCookieJSTagWithNonce("update");
+		$cdSmartyInstance->assign("jscookie", $jscookie);
 
 		$cdSmartyInstance->assign("form_title", "更新したアンケート");
 		$cdSmartyInstance->assign("questionnaire", $objects);
@@ -365,6 +377,9 @@ EOD;
 		// smartyオブジェクト
 		global $cdSmartyInstance;
 		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery-cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
+				'jquery'
+			), false, true);
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js');
 		wp_enqueue_script('jquery.ui.datepicker', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker.min.js');
 		wp_enqueue_script('jquery.sheepItPlugin', plugin_dir_url(__FILE__) . 'js/jquery.sheepItPlugin.min.js');
@@ -394,6 +409,13 @@ EOD;
 		} else {
 			$cdSmartyInstance->assign("enable", "");
 		}
+		require_once("CDUtils.php");
+		list($jscookie, $hidden)= \cd\CDUtils::getSetCookieJSTagWithNonce("update");
+
+		//$hidden
+		$cdSmartyInstance->assign("jscookie", $jscookie);
+		$cdSmartyInstance->assign("unises", $hidden);
+
 		$cdSmartyInstance->assign("enquete_title", $enquete_title);
 		$cdSmartyInstance->assign("hidden_id", "<input type='hidden' name='enquete_id' value='" . $_GET['id'] . "'>");
 		$cdSmartyInstance->assign("mes", $mes);
