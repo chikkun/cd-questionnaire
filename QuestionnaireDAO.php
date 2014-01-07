@@ -2,13 +2,20 @@
 
 namespace cd;
 
+/**
+ * enquetes, questions, selections,
+ * answers, identifiersテーブルへの
+ * Data Access Object。
+ *
+ * Class QuestionnaireDAO
+ * @package cd
+ */
 class QuestionnaireDAO {
 	/**
 	 * データベースのテーブルの識別
 	 *
-	 * @var unknown
 	 */
-	var $tables = array(
+	private $tables = array(
 		"enquetes",
 		"questions",
 		"selections",
@@ -18,42 +25,54 @@ class QuestionnaireDAO {
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 *
-	 * @var unknown
-	 *
 	 */
-	var $tableNames = NULL;
+
+	private $tableNames = NULL;
 	/**
 	 * データベースで使われる言語
-	 * UTF8
-	 *
-	 * @var unknown
+	 * default→UTF8
 	 *
 	 */
-	var $char = NULL;
+	private $char = NULL;
 
-	var $db;
+	/**
+	 * wpdbオブジェクトの格納
+	 * @var
+	 */
+	private $db;
 
-	function __construct() {
+	/**
+	 * エラーオブジェクト
+	 * @var \WP_Error
+	 */
+	public $err;
+	public function __construct() {
 		global $wpdb;
 		$this->db = $wpdb;
+		$this->err = new \WP_Error();
 		// wp-config.phpに書いてある文字コードを使用する
 		$this->char = defined("DB_CHARSET") ? DB_CHARSET : "utf8";
 		// データベース用 テーブル名を決める
 		$this->setTableNames();
 	}
 
-	function setTableNames() {
+	private function setTableNames() {
 		foreach ($this->tables as $name) {
 			$this->tableNames [$name] = $this->db->prefix . $name;
 		}
 	}
 
-	function getTableNames() {
+	public function getTableNames() {
 		!isset ($this->tableNames) ? $this->setTableNames() : NULL;
 		return $this->tableNames;
 	}
 
-	function getResultsFromId($id) {
+	/**
+	 * アンケートIDからその子孫までのデータを取得する。
+	 * @param $id enquete_id
+	 * @return array ジョインの結果(表)
+	 */
+	public function getResultsFromId($id) {
 		$sql = <<< EOF
 	  SELECT count(*) question_number
 	  FROM wp_questions q WHERE q.enquete_id = %s;
