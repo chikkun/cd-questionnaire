@@ -10,7 +10,7 @@ class CDQuestionnaire {
 	 * プラグインのバージョン
 	 * @var float
 	 */
-	private $version = 0.129;
+	private $version = 0.128;
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 * @var null
