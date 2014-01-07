@@ -18,7 +18,7 @@ class QuestionnaireManager {
 		$enquete_id = $dao->insertEnquete($enquete);
 		echo $this->printShortCode($enquete_id);
 		$this->showEnquete($enquete_id);
-		$this->addMenuButton();
+		echo $this->addMenuButton();
 	}
 
 	/**
@@ -29,23 +29,42 @@ class QuestionnaireManager {
 		$results = $dao->getEnqueteData($enquete_id);
 
 		// TODO 新規登録されたアンケートの表示
-		$registered['phase'] = 'new';
-		$this->displayEnquete($results, $registered);
+//		$registered['phase'] = 'new';
+//		$this->displayEnquete($results, $registered);
+		$this->displayNewEnquete($results);
 
-		echo "<br /><br />登録終了<br /><br />";
+//		echo "<br /><br />登録終了<br /><br />";
 
 	}
 
 	public function printShortCode($enquete_id) {
 		return <<<EOF
 		<!-- div class="updated fade" -->
+		<div class="row span10 offset1">
 			<p>現在のアンケートを発行するには、下のショートコードを、アンケートを表示したい固定ページや投稿ページ内に書き込んでください。</p>
 			<p>ここでの作業はそれで終了です。</p>
 			<p style="margin-left: 5em;">
 				ショートコード： [CDQ-enquete id={$enquete_id}]
 			</p>
+		</div>
+
 		<!-- /div -->
 EOF;
+	}
+
+	public function displayNewEnquete($results) {
+		// smartyオブジェクト
+		global $cdSmartyInstance;
+		$objects = $this->convertDBDataToObjects($results);
+		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
+		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+
+		$cdSmartyInstance->assign("form_title", "新規登録したアンケート");
+		$cdSmartyInstance->assign("questionnaire", $objects);
+		$cdSmartyInstance->display("confirm.tpl");
+
+		//	return $flag;
+
 	}
 
 	public function registerAnswer($data) {
@@ -169,15 +188,14 @@ EOF;
 
 	function addMenuButton() {
 		return <<<EOF
-<div>
-  <form action="" type="POST">
-    <input type="submit" name="enquete_list" value="アンケート一覧" />
-  </form>
-</div>
-<div>
-  <form action="" type="POST">
-    <input type="submit" name="new_enquete" value="新規アンケートを作成する" />
-  </form>
+<div class="row span10 offset1">
+    <form action="admin_url( )" type="POST">
+      <input type="submit" name="page" value="" />
+    </form>
+
+    <form action="" type="POST">
+      <input type="submit" name="new_enquete" value="新規アンケートを作成する" />
+    </form>
 </div>
 EOF;
 	}
