@@ -189,12 +189,12 @@ EOF;
 	function addMenuButton() {
 		return <<<EOF
 <div class="row span10 offset1">
-    <form action="admin_url( )" type="POST">
-      <input type="submit" name="page" value="" />
+    <form action="" type="GET">
+    <button type="submit" class="btn btn-primary btn-large" name="page" value="cd-questionnaire/SearchAndUpdateQuestionnaire.php">アンケート一覧/検索</button>
     </form>
 
     <form action="" type="POST">
-      <input type="submit" name="new_enquete" value="新規アンケートを作成する" />
+      <button type="submit" class="btn btn-primary btn-large" name="page" value="cd-questionnaire/QuestionnairePreparation.php?action=new">新規アンケートを作成する</button>
     </form>
 </div>
 EOF;

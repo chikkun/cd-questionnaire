@@ -52,7 +52,9 @@
                                 <div class="span2">
                                     <input class='questionorders input-mini' id="enquete_questions_#index#_order"
                                            name="enquete[questions][#index#][order]" type="text"
-                                           data-rule-required="true"/>
+                                           data-rule-required="true"
+                                           data-rule-number="true"
+                                            />
                                 </div>
                                 <button class="delete btn btn-warning btn-mini" id="enquete_questions_remove_current">
                                     削除
@@ -81,6 +83,7 @@
                                             <input class='selectionorders input-mini'
                                                    id="enquete_questions_#index#_selections_#index_selections#_order"
                                                    data-rule-required="true"
+                                                   data-rule-number="true"
                                                    name="enquete[questions][#index#][selections][#index_selections#][order]"
                                                    type="text"/>
                                         </div>
