@@ -497,6 +497,10 @@ EOF;
 		foreach ($question ['selections'] as $sel) {
 			$sql = $this->db->prepare($sqln, $q_id, $sel ['order'], $sel ['selection']);
 			$this->db->query($sql);
+			if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+				$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+				return $this->err;
+			}
 		}
 	}
 
@@ -511,6 +515,10 @@ EOF;
 		$sql = $this->db->prepare($sql, $answerData ['eid'], $answerData ['qid'], $answerData ['sid'], $answerData ['identifier']);
 
 		$this->db->query($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
 
 	}
 
@@ -525,6 +533,10 @@ EOF;
 		$sql = $this->db->prepare($sql, $data ['enquete_id'], $data ['identifier'], $data ['ip_address']);
 
 		$this->db->query($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
 
 	}
 

@@ -22,6 +22,10 @@ class QuestionnaireManager {
 		echo $this->printShortCode($enquete_id);
 //		$this->showEnquete($enquete_id);
 		$results = $dao->getEnqueteData($enquete_id);
+		if (is_wp_error($results)) {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($enquete_id);
+		}
 		$this->displayNewEnquete($results);
 		echo $this->addMenuButton();
 	}
@@ -90,13 +94,21 @@ EOF;
 						$answerData['identifier'] = $identifier;
 						$answerData['ip_address'] = $ip_address;
 
-						$dao->insertAnswer($answerData);
+						$err = $dao->insertAnswer($answerData);
+						if (is_wp_error($err)) {
+							require_once("CDUtils.php");
+							echo \cd\CDUtils::convertErrorMessages($err);
+						}
 						$answerData = array();
 					}
 				}
 			}
 		}
-		$dao->insertIdentifier($data);
+		$err = $dao->insertIdentifier($data);
+		if (is_wp_error($err)) {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($err);
+		}
 	}
 
 	/**
