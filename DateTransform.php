@@ -27,7 +27,7 @@ class DateTransform {
 	}
 
 	function datetimeToDate($datetime) {
-		return preg_replace("/\s00:00:00/", "", $datetime);
+		return preg_replace("/\s\d\d:\d\d:\d\d/", "", $datetime);
 	}
 
 	function getFormattedDate($date) {

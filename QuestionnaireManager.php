@@ -15,26 +15,32 @@ class QuestionnaireManager {
 	public function questionnaireRegistPage($enquete) {
 		$dao = new \cd\QuestionnaireDAO ();
 		$enquete_id = $dao->insertEnquete($enquete);
+		if (is_wp_error($enquete_id)) {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($enquete_id);
+		}
 		echo $this->printShortCode($enquete_id);
-		$this->showEnquete($enquete_id);
+//		$this->showEnquete($enquete_id);
+		$results = $dao->getEnqueteData($enquete_id);
+		$this->displayNewEnquete($results);
 		echo $this->addMenuButton();
 	}
 
 	/**
 	 * 新規アンケートの表示
 	 */
-	public function showEnquete($enquete_id) {
-		$dao = new \cd\QuestionnaireDAO ();
-		$results = $dao->getEnqueteData($enquete_id);
-
-		// TODO 新規登録されたアンケートの表示
-//		$registered['phase'] = 'new';
-//		$this->displayEnquete($results, $registered);
-		$this->displayNewEnquete($results);
-
-//		echo "<br /><br />登録終了<br /><br />";
-
-	}
+//	public function showEnquete($enquete_id) {
+//		$dao = new \cd\QuestionnaireDAO ();
+//		$results = $dao->getEnqueteData($enquete_id);
+//
+//		// TODO 新規登録されたアンケートの表示
+////		$registered['phase'] = 'new';
+////		$this->displayEnquete($results, $registered);
+//		$this->displayNewEnquete($results);
+//
+////		echo "<br /><br />登録終了<br /><br />";
+//
+//	}
 
 	public function printShortCode($enquete_id) {
 		return <<<EOF
@@ -61,9 +67,6 @@ EOF;
 		$cdSmartyInstance->assign("form_title", "新規登録したアンケート");
 		$cdSmartyInstance->assign("questionnaire", $objects);
 		$cdSmartyInstance->display("confirm.tpl");
-
-		//	return $flag;
-
 	}
 
 	public function registerAnswer($data) {
@@ -96,8 +99,14 @@ EOF;
 		$dao->insertIdentifier($data);
 	}
 
-	public function displayEnquete($results, $registered = array()) {
+	/**
+	 * 回答者にアンケートを表示する
+	 * @param $results
+	 * @param $registered
+	 */
+	public function displayEnquete($results, $registered) {
 //		var_dump($registered['responded_answer']);
+
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
 		wp_enqueue_style('jquery.ui', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css');
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');

@@ -76,32 +76,52 @@ class QuestionnaireAnswers {
 			$this->getResults();
 			return;
 		} else {
-			//アンケートを表示する
-			$registered['phase'] = 'responding';
+			/* アンケートを表示 */
 
-			// アンケートがない
+			// アンケートはある？
 			$results = $this->dao->getEnqueteData($id);
 			if (NULL === $results || !isset($results[0]->q_id)) {
 				$registered['message'] = $this->getMessage('retry');
 			}
-
 			// 各種チェック
-			$registered = $this->check($registered);
+			// COOKIE チェック
+			if (!isset($_COOKIE['CDQ_enquete'])) {
+				wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
+				wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
+			}
+			if (!isset($_COOKIE['CDQ_enquete'])) {
+				// DISABLE COOKIE
+//exit; かならず1かいめ にはいる
+				//return $this->getMessage('disableCOOKIE');
+			}
+
+			// 既に回答済みかチェック
+			if (NULL != $this->identifier) {
+				$identExist = $this->dao->existIdentifier($this->id, $this->identifier);
+				if (count($identExist) > 0) {
+					$registered['phase'] = 'responded';
+					$registered['responded_answer'] = $this->dao->getRespondedAnswer($this->id, $this->identifier);
+					echo $this->getMessage('registered');
+				} else {
+					$registered['phase'] = 'responding';
+				}
+			}
 
 			//アンケートを表示するかどうか
 			require_once('DateTransform.php');
 			$dt = new DateTransform();
 			$period = $dt->isDuringPeriod($results[0]->start_date, $results[0]->end_date);
-
 			if ("done" == $period) {
 				$this->title = $results[0]->e_name;
-				$registered['message'] = $this->getMessage('done');
-				$registered['message'] .= $this->getResults();
-				$registered['message'] .= $this->getMessage('done_thanks');
+				echo $this->getMessage('done');
+				echo $this->getResults();
+				echo $this->getMessage('done_thanks');
+				return;
 			} else if ("todo" == $period) {
 				$this->title = $results[0]->e_name;
 				$this->date = $this->getFormattedDate($results[0]->start_date);
-				$registered['message'] = $this->getMessage('todo');
+				echo $this->getMessage('todo');
+				return;
 			}
 
 			//アンケートを表示する
@@ -110,37 +130,12 @@ class QuestionnaireAnswers {
 			$qd->displayEnquete($results, $registered);
 			return;
 		}
-
 	}
 
 	function getResults() {
 		require_once("QuestionnaireResults.php");
 		$qr = new QuestionnaireResults();
 		return ($qr->getResults(array("id" => $this->id)));
-	}
-
-	function check($registered) {
-		// COOKIE チェック
-		if (!isset($_COOKIE['CDQ_enquete'])) {
-			wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
-			wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
-			// had been reloaded
-		}
-		if (!isset($_COOKIE['CDQ_enquete'])) {
-			// DISABLE COOKIE
-			return $this->getMessage('disableCOOKIE');
-		}
-
-		// 既に回答済みかチェック
-		if (NULL != $this->identifier) {
-			$identExist = $this->dao->existIdentifier($this->id, $this->identifier);
-			if (count($identExist) > 0) {
-				$registered['phase'] = 'responded';
-				$registered['responded_answer'] = $this->dao->getRespondedAnswer($this->id, $this->identifier);
-				echo $this->getMessage('registered');
-			}
-		}
-		return $registered;
 	}
 
 	function getFormattedDate($date) {
@@ -176,7 +171,7 @@ EOF;
 
 		if ('registered' == $mes) {
 			return <<<EOF
-<p>このアンケートにはお答えを頂いております。</p>
+<p>このアンケートにはお答えを頂いております。ありがとうございました。</p>
 
 EOF;
 
@@ -184,8 +179,7 @@ EOF;
 
 		if ('done' == $mes) {
 			return <<<EOF
-<p>「 $this->title 」の集計は終了いたしました。</p>
-<p>集計結果が表示されています。</p>
+<p>「 $this->title 」の集計は終了いたしました。下記に集計結果が表示されています。</p>
 
 EOF;
 
