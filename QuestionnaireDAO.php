@@ -46,9 +46,11 @@ class QuestionnaireDAO {
 	 * @var \WP_Error
 	 */
 	public $err;
+
 	public function __construct() {
 		global $wpdb;
 		$this->db = $wpdb;
+		$this->db->hide_errors();
 		$this->err = new \WP_Error();
 		// wp-config.phpに書いてある文字コードを使用する
 		$this->char = defined("DB_CHARSET") ? DB_CHARSET : "utf8";
@@ -68,7 +70,7 @@ class QuestionnaireDAO {
 	}
 
 	/**
-	 * アンケートIDからその子孫までのデータを取得する。
+	 * アンケートIDからその子孫までのデータを取得する(グラフ作成において)。
 	 * @param $id enquete_id
 	 * @return array ジョインの結果(表)
 	 */
@@ -80,6 +82,10 @@ EOF;
 
 		$sql = $this->db->prepare($sql, $id);
 		$question_number = $this->db->get_var($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
 		$sql = <<< EOF
 SELECT   name,
          question_order,
@@ -116,9 +122,13 @@ GROUP BY name, question_id, selection_id
 ORDER BY question_order, question_id, selection_order, selection_id;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
-		return array($this->db->get_results($sql),
+		$results = $this->db->get_results($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
+		return array($results,
 			$question_number);
-
 	}
 
 	/**
@@ -128,7 +138,7 @@ EOF;
 	 * @param $offset 何ページ目か(0始まり)
 	 * @return array (data, total)
 	 */
-	function getQuestionnairesListPerPage($fields, $perPage, $offset) {
+	public function getQuestionnairesListPerPage($fields, $perPage, $offset) {
 		// where文作成用
 		$where = "";
 		$j = 0;
@@ -175,6 +185,10 @@ FROM    {$this->tableNames['enquetes']} e $where;
 EOF;
 
 		$total = $this->db->get_var($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
 
 		$sql = <<< EOF
 SELECT   e.id,
@@ -185,35 +199,55 @@ SELECT   e.id,
 FROM     {$this->tableNames['enquetes']} AS e $where
 ORDER BY e.id DESC LIMIT $perPage OFFSET $offset;
 EOF;
-
-		return array($this->db->get_results($sql),
+		$results = $this->db->get_results($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
+		return array($results,
 			$total);
 	}
 
-	function getAlreadyAnsweredNumber($id) {
+	/**
+	 * あるアンケートで既に回答された回答数を返す。
+	 * 回答されているとアンケートレコードを更新できない。
+	 * @param $id enquete_id
+	 * @return mixed
+	 */
+	public function getAlreadyAnsweredNumber($id) {
 		$sql = <<< EOF
 SELECT COUNT(a.id)
 FROM   {$this->tableNames['answers']} AS a
 WHERE  a.enquete_id = %s;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
-		return $this->db->get_var($sql);
+		$number = $this->db->get_var($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
+		return $number;
 	}
 
 	/**
 	 * delete_flagが立っていないアンケート総数を返す。
 	 * @return mixed
 	 */
-	function getQuestionnaireTotalCount() {
+	public function getQuestionnaireTotalCount() {
 		$sql = <<< EOF
 SELECT COUNT(e.id)
 FROM   {$this->tableNames['enquetes']} AS e
 WHERE  e.enquete_id = %s AND e.delete_flag = 0;
 EOF;
 
-
 		$sql = $this->db->prepare($sql, $this->id);
-		return $this->db->get_var($sql);
+		$result = $this->db->get_var($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
+
+		return $result;
 	}
 
 	/**
@@ -221,18 +255,17 @@ EOF;
 	 * @param $id 対象のレコードのid
 	 * @return bool 成功したらtrue
 	 */
-	function deleteEnquete($id) {
+	public function deleteEnquete($id) {
 		$sql = <<< EOF
 UPDATE {$this->tableNames['enquetes']}
 SET delete_flag = 1
 WHERE id = %s;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
-		try {
-			$this->db->query($sql);
-		} catch (\Exception $e) {
-			var_dumpp($e);
-			return false;
+		$result = $this->db->query($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
 		}
 		return true;
 	}
@@ -244,7 +277,7 @@ EOF;
 	 * @param bool $delete_flag falseなら、フラグが立っているものも返す
 	 * @return mixed
 	 */
-	function getEnqueteData($id, $delete_flag = true) {
+	public function getEnqueteData($id, $delete_flag = true) {
 		$sql = <<<EOF
 			SELECT e.id AS e_id,
 			e.name AS e_name,
@@ -276,10 +309,15 @@ EOF;
 		$sql .= " ORDER BY q_sort_id, q_id, s_sort_id, s_id";
 
 		$results = $this->db->get_results($this->db->prepare($sql, $id));
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
+		}
+
 		return $results;
 	}
 
-	function getRespondedAnswer($id, $identifier) {
+	public function getRespondedAnswer($id, $identifier) {
 		$sql = <<<EOF
 SELECT
   enquete_id
@@ -295,7 +333,7 @@ EOF;
 
 	}
 
-	function existIdentifier($id, $identifier) {
+	public function existIdentifier($id, $identifier) {
 		$sql = <<<EOF
 SELECT
    identifier
@@ -315,7 +353,7 @@ EOF;
 	 * @param $id 質問レコードid
 	 * @return bool
 	 */
-	function deleteQuestionnaireChildren($id) {
+	public function deleteQuestionnaireChildren($id) {
 		$sql = <<< EOF
 DELETE FROM {$this->tableNames['selections']}
 WHERE  question_id IN (SELECT q.id
@@ -324,23 +362,21 @@ WHERE  question_id IN (SELECT q.id
 
 EOF;
 		$sql = $this->db->prepare($sql, $id);
-		try {
-			$this->db->query($sql);
-		} catch (\Exception $e) {
-			var_dump($e);
-			return false;
+		$this->db->query($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
 		}
+
 		$sql = <<< EOF
 DELETE FROM {$this->tableNames['questions']}
 WHERE enquete_id = %s;
 EOF;
 		$sql = $this->db->prepare($sql, $id);
-
-		try {
-			$this->db->query($sql);
-		} catch (\Exception $e) {
-			var_dump($e);
-			return false;
+		$this->db->query($sql);
+		if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+			$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+			return $this->err;
 		}
 		return true;
 	}
@@ -353,7 +389,7 @@ EOF;
 	 * @param null $enquete_id 更新時にはidが必要
 	 * @return アンケートid
 	 */
-	function insertEnquete($enquete, $enquete_insert_flag = true, $enquete_id = null) {
+	public function insertEnquete($enquete, $enquete_insert_flag = true, $enquete_id = null) {
 		//insertの時
 		if ($enquete_insert_flag) {
 			if ("" === $enquete ['end_date'] || NULL === $enquete ['end_date']) {
@@ -383,13 +419,17 @@ EOF;
 				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete ['end_date']);
 			}
 
-			try {
-				$this->db->query($sql);
-				$query = 'select last_insert_id();';
-				$enquete_id = $this->db->get_var($query);
-			} catch (\Exception $e) {
-				var_dump($e);
-				return false;
+			$this->db->query($sql);
+			if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+				$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+				return $this->err;
+			}
+
+			$query = 'select last_insert_id();';
+			$enquete_id = $this->db->get_var($query);
+			if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+				$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+				return $this->err;
 			}
 		} else {
 			// updateの時
@@ -404,28 +444,27 @@ EOF;
 				$sql .= " WHERE id = %s";
 				$sql = $this->db->prepare($sql, $enquete ['enquete_name'], $enquete ['start_date'], $enquete_id);
 			}
-			try {
-				$this->db->query($sql);
-			} catch (\Exception $e) {
-				var_dump($e);
-				return false;
+			$this->db->query($sql);
+			if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+				$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+				return $this->err;
 			}
+
 		}
 
 		$data = $enquete ['data'];
 		foreach ($data as $question) {
-			try {
-				$this->insertQuestion($enquete_id, $question);
-			} catch (\Exception $e) {
-				var_dump($e);
-				return false;
+			$this->insertQuestion($enquete_id, $question);
+			if ($this->db->last_error !== "" && $this->db->last_error !== null) {
+				$this->err->add('error', __LINE__ . " line in " . __FILE__ . ".<br />" . $this->db->last_error);
+				return $this->err;
 			}
 		}
 
 		return $enquete_id;
 	}
 
-	function insertQuestion($e_id, $question) {
+	public function insertQuestion($e_id, $question) {
 		$sql = <<<EOF
 			INSERT INTO {$this->tableNames['questions']}
 			(enquete_id,sort_id,question_text,multiple_answer)
@@ -461,7 +500,7 @@ EOF;
 		}
 	}
 
-	function insertAnswer($answerData) {
+	public function insertAnswer($answerData) {
 		$sql = "
 				INSERT INTO " . $this->tableNames ['answers'] . "
 						(enquete_id,question_id,selection_id,identifier)
@@ -475,7 +514,7 @@ EOF;
 
 	}
 
-	function insertIdentifier($data) {
+	public function insertIdentifier($data) {
 		$sql = "
 				INSERT INTO " . $this->tableNames ['identifiers'] . "
 						(enquete_id,identifier,ip_address)
@@ -494,7 +533,7 @@ EOF;
 	 *
 	 * @return string
 	 */
-	function enquetesSql() {
+	public function enquetesSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['enquetes']} (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
@@ -511,7 +550,7 @@ CREATE TABLE {$this->tableNames['enquetes']} (
 EOS;
 	}
 
-	function questionsSql() {
+	public function questionsSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['questions']} (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
@@ -527,7 +566,7 @@ CREATE TABLE {$this->tableNames['questions']} (
 EOS;
 	}
 
-	function selectionsSql() {
+	public function selectionsSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['selections']} (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
@@ -543,7 +582,7 @@ CREATE TABLE {$this->tableNames['selections']} (
 EOS;
 	}
 
-	function answersSql() {
+	public function answersSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['answers']} (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
@@ -561,7 +600,7 @@ CREATE TABLE {$this->tableNames['answers']} (
 EOS;
 	}
 
-	function identifiersSql() {
+	public function identifiersSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['identifiers']} (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',

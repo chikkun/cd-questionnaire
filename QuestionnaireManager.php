@@ -5,7 +5,6 @@
  * Date: 2014/01/06
  * Time: 11:26
  */
-
 namespace cd;
 
 
@@ -186,7 +185,7 @@ EOF;
 		$cdSmartyInstance->display("show_enquete.tpl");
 	}
 
-	function addMenuButton() {
+	public function addMenuButton() {
 		return <<<EOF
 <div class="row span10 offset1">
     <form action="" type="GET">
@@ -218,82 +217,89 @@ EOF;
 		// Pager読み込み
 		require_once('Pager/Pager.php');
 		$cddb = new \cd\QuestionnaireDAO();
-		list($results, $total) = $cddb->getQuestionnairesListPerPage($where, $perPage, $offset);
-		// 値があったら、検索fieldに値をセット
-		if (is_array($where) && isset($where["name"])) {
-			$cdSmartyInstance->assign("name", $where["name"]);
-		} else {
-			$cdSmartyInstance->assign("name", "");
-		}
-		if (is_array($where) && isset($where["id"])) {
-			$cdSmartyInstance->assign("id", $where["id"]);
-		} else {
-			$cdSmartyInstance->assign("id", "");
-		}
-		if (is_array($where) && isset($where["start_date_after"])) {
-			$cdSmartyInstance->assign("start_date_after", $where["start_date_after"]);
-		} else {
-			$cdSmartyInstance->assign("start_date_after", "");
-		}
-		if (is_array($where) && isset($where["start_date_before"])) {
-			$cdSmartyInstance->assign("start_date_before", $where["start_date_before"]);
-		} else {
-			$cdSmartyInstance->assign("start_date_before", "");
-		}
-		$cdSmartyInstance->assign("e_list", $results);
-		$pager_array = array(
+		$arr = $cddb->getQuestionnairesListPerPage($where, $perPage, $offset);
+		if (!is_wp_error($arr)) {
+			$results = $arr[0];
+			$total = $arr[1];
+			// 値があったら、検索fieldに値をセット
+			if (is_array($where) && isset($where["name"])) {
+				$cdSmartyInstance->assign("name", $where["name"]);
+			} else {
+				$cdSmartyInstance->assign("name", "");
+			}
+			if (is_array($where) && isset($where["id"])) {
+				$cdSmartyInstance->assign("id", $where["id"]);
+			} else {
+				$cdSmartyInstance->assign("id", "");
+			}
+			if (is_array($where) && isset($where["start_date_after"])) {
+				$cdSmartyInstance->assign("start_date_after", $where["start_date_after"]);
+			} else {
+				$cdSmartyInstance->assign("start_date_after", "");
+			}
+			if (is_array($where) && isset($where["start_date_before"])) {
+				$cdSmartyInstance->assign("start_date_before", $where["start_date_before"]);
+			} else {
+				$cdSmartyInstance->assign("start_date_before", "");
+			}
+			$cdSmartyInstance->assign("e_list", $results);
+			$pager_array = array(
 				'mode' => 'Sliding',
-			// 表示タイプ(Jumping/Sliding)
+				// 表示タイプ(Jumping/Sliding)
 				'perPage' => $perPage,
-			// 一ページ内で表示する件数
+				// 一ページ内で表示する件数
 				'delta' => 10,
-			// 一ページ内で表示するリンク数
+				// 一ページ内で表示するリンク数
 				'totalItems' => intval($total),
-			// ページング対象データの総数
+				// ページング対象データの総数
 				'separator' => ' | ',
-			// ページリンクのセパレータ文字列
+				// ページリンクのセパレータ文字列
 				'prevImg' => '≪戻る　',
-			// 戻るリンクのテキスト(imgタグ使用可)
+				// 戻るリンクのテキスト(imgタグ使用可)
 				'nextImg' => '次へ≫',
-			// 次へリンクのテキスト(imgタグ使用可),
+				// 次へリンクのテキスト(imgタグ使用可),
 				'lastPageText' => "最後へ",
 				'firstPageText' => "最初へ",
 				'firstPagePre' => '',
 				'lastPagePre' => '　　',
 				'firstPagePost' => '',
 				'lastPagePost' => ''
-		);
-		// Pageオブジェクト生成
-		$pager = @ \Pager::factory($pager_array);
-		// linkタグをもらう
-		$pager_links = $pager->getLinks();
-		$pager_html = <<< EOD
+			);
+			// Pageオブジェクト生成
+			$pager = @ \Pager::factory($pager_array);
+			// linkタグをもらう
+			$pager_links = $pager->getLinks();
+			$pager_html = <<< EOD
 {$pager_links['first']}{$pager_links['back']}
 {$pager_links['pages']}
 {$pager_links['next']}{$pager_links['last']}
 EOD;
-		$cdSmartyInstance->assign("paging", $pager_html);
-		$cdSmartyInstance->assign("page", $page);
-		$cdSmartyInstance->display("search.tpl");
+			$cdSmartyInstance->assign("paging", $pager_html);
+			$cdSmartyInstance->assign("page", $page);
+			$cdSmartyInstance->display("search.tpl");
+		} else {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($arr);
+		}
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js', array(
 				'jquery'
-		), false, true);
+			), false, true);
 		wp_enqueue_script('jquery.ui.datepicker', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker.min.js', array(
 				'jquery'
-		), false, true);
+			), false, true);
 		wp_enqueue_script('jquery.ui.datepicker-ja', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker-ja.min.js', array(
 				'jquery'
-		), false, true);
+			), false, true);
 		wp_enqueue_script('jquery.validate', plugin_dir_url(__FILE__) . 'js/jquery.validate.min.js', array(
 				'jquery'
-		), false, true);
+			), false, true);
 		wp_enqueue_script('additional-methods.min.js', plugin_dir_url(__FILE__) . 'js/additional-methods.min.js', array(
 				'jquery'
-		), false, true);
+			), false, true);
 		wp_enqueue_script('messages_ja', plugin_dir_url(__FILE__) . 'js/messages_ja.min.js', array(
 				'jquery'
-		), false, true);
+			), false, true);
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('jquery.ui', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css', false, false, false);
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
@@ -301,7 +307,7 @@ EOD;
 	}
 
 	/**
-	 * idを指定して、アンケートレコードを更新する。
+	 * idを指定して、アンケートレコードを更新する。c
 	 * @param $id enquete_id
 	 * @return bool 成功したらtrueを返す
 	 */
@@ -314,20 +320,32 @@ EOD;
 		$enquete['data'] = $_POST ['enquete'] ['questions'];
 		require_once("CDUtils.php");
 		$key = \cd\CDUtils::getUrlAndUserAndActionText("update");
-		if(!isset($_COOKIE[$key]) || !isset($_POST["hardrocks"]) || $_COOKIE[$key] !== $_POST["hardrocks"]){
-			echo "reloaded";
-			var_dump($_COOKIE[$key]);
-			var_dump($_POST["hardrocks"]);
-			exit;
-		}
 		$dao = new \cd\QuestionnaireDAO();
-		$flag = true;
-		$flag = $dao->deleteQuestionnaireChildren($id);
-		if (!$flag) {
-			return $flag;
+		if (isset($_COOKIE[$key]) && isset($_POST["hardrocks"]) && $_COOKIE[$key] === $_POST["hardrocks"]) {
+			$flag = true;
+			$flag = $dao->deleteQuestionnaireChildren($id);
+			if (is_wp_error($flag)) {
+				require_once("CDUtils.php");
+				echo \cd\CDUtils::convertErrorMessages($flag);
+				return false;
+			}
+
+			$flag = $dao->insertEnquete($enquete, false, $id);
+			if (is_wp_error($flag)) {
+				require_once("CDUtils.php");
+				echo \cd\CDUtils::convertErrorMessages($flag);
+				return false;
+			}
+		} else {
+			//reloadではエラーにならない
+			$flag = true;
 		}
-		$flag = $dao->insertEnquete($enquete, false, $id);
 		$results = $dao->getEnqueteData($id);
+		if (is_wp_error($results)) {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($results);
+			return false;
+		}
 		$objects = $this->convertDBDataToObjects($results);
 		wp_enqueue_script('jquery');
 		wp_enqueue_script('jquery-cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
@@ -355,15 +373,45 @@ EOD;
 		// smartyオブジェクト
 		global $cdSmartyInstance;
 		$dao = new \cd\QuestionnaireDAO();
-		$results = $dao->getEnqueteData($id);
-		$flag = $dao->deleteEnquete($id);
+		require_once("CDUtils.php");
+		$key = \cd\CDUtils::getUrlAndUserAndActionText("update");
+		wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery-cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
+				'jquery'
+			), false, true);
+
+		if (isset($_COOKIE[$key]) && isset($_POST["hardrocks"]) && $_COOKIE[$key] === $_POST["hardrocks"]) {
+			$results = $dao->getEnqueteData($id);
+			if (is_wp_error($results)) {
+				require_once("CDUtils.php");
+				echo \cd\CDUtils::convertErrorMessages($results);
+				return false;
+			}
+			$flag = $dao->deleteEnquete($id);
+			if (is_wp_error($flag)) {
+				require_once("CDUtils.php");
+				echo \cd\CDUtils::convertErrorMessages($flag);
+				return false;
+			}
+		} else {
+			$results = $dao->getEnqueteData($id, false);
+			if (is_wp_error($results)) {
+				require_once("CDUtils.php");
+				echo \cd\CDUtils::convertErrorMessages($results);
+				return false;
+			}
+			echo "reloaded";
+		}
 		$objects = $this->convertDBDataToObjects($results);
+		$jscookie = \cd\CDUtils::getRemoveCookieJSTagWithNonce("update");
+		$cdSmartyInstance->assign("jscookie", $jscookie);
+
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
 		$cdSmartyInstance->assign("form_title", "削除したアンケート");
 		$cdSmartyInstance->assign("questionnaire", $objects);
 		$cdSmartyInstance->display("confirm.tpl");
-		return $flag;
+		return true;
 	}
 
 	/**
@@ -393,7 +441,19 @@ EOD;
 
 		$cddb = new \cd\QuestionnaireDAO();
 		$answer_number = $cddb->getAlreadyAnsweredNumber($id);
+		if (is_wp_error($answer_number)) {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($answer_number);
+			return false;
+		}
+
 		$results = $cddb->getEnqueteData($id, $deleteFlag);
+		if (is_wp_error($results)) {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($results);
+			return false;
+		}
+
 		list($json, $enquete_title, $start_date, $end_date) = $this->convertDBDataToJson($results);
 		$json = preg_replace('/questions_index_order/', 'questions_#index#_order', $json);
 		$json = preg_replace('/questions_index_question/', 'questions_#index#_question', $json);
@@ -410,7 +470,7 @@ EOD;
 			$cdSmartyInstance->assign("enable", "");
 		}
 		require_once("CDUtils.php");
-		list($jscookie, $hidden)= \cd\CDUtils::getSetCookieJSTagWithNonce("update");
+		list($jscookie, $hidden) = \cd\CDUtils::getSetCookieJSTagWithNonce("update");
 
 		//$hidden
 		$cdSmartyInstance->assign("jscookie", $jscookie);
@@ -507,8 +567,8 @@ EOD;
 		array_push($alldata->data, $each_results);
 
 		return array(json_encode($alldata),
-				$enquete_title,
-				$start_date,
-				$end_date);
+			$enquete_title,
+			$start_date,
+			$end_date);
 	}
 } 

@@ -45,4 +45,15 @@ jQuery(document).ready(function ($) {
 EOF;
 		return $tag;
 	}
+
+	public static function convertErrorMessages($err){
+		$messages = "";
+		foreach ( $err->get_error_codes() as $code ) {
+			$severity = $err->get_error_data($code);
+			foreach ( $err->get_error_messages($code) as $error ) {
+				$messages .= '	' . $error . "<br />\n";
+			}
+		}
+		return $messages;
+	}
 } 

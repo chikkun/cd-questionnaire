@@ -12,8 +12,8 @@ class QuestionnaireResults {
 	}
 
 	function getResults($atts) {
-		if (!wp_script_is( 'jquery', 'done' )) {
-			echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery-1.10.1.min.js'></script>" ;
+		if (!wp_script_is('jquery', 'done')) {
+			echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery-1.10.1.min.js'></script>";
 		}
 		global $cdSmartyInstance;
 		$id = 0;
@@ -28,62 +28,70 @@ class QuestionnaireResults {
 		$enqueteTitle = "";
 		$qnum = 0;
 		$cddb = new \cd\QuestionnaireDAO();
-		list($results, $questionNumber) = $cddb->getResultsFromId($id);
-		$snum = 0;
-		foreach ($results as $val) {
-			$num++;
-			$snum++;
-			if ($num === 1) {
-				$enqueteTitle = $val->name;
-				$qnum++;
-			}
-			$now = $val->question_text;
-			if ($now !== $before && $num !== 1) {
-				$eachResults["question_text"] = $before;
-				$count[$qnum - 1] = $eachResults;
-				$eachResults = array();
-				$qnum++;
-				$num = 1;
-				$snum = 1;
-			}
-			if (!isset($eachResults["data"]) || !is_array($eachResults["data"])) {
-				$eachResults["data"] = array();
-			}
-			array_push($eachResults["data"], array("count" => $val->counts,
-				"display" => $snum . "." . $val->selection_display));
-			$before = $val->question_text;
-		}
-		$eachResults["question_text"] = $before;
-		$count[$qnum - 1] = $eachResults;
-		$cdSmartyInstance->assign("enquete_title", $enqueteTitle);
-		$graphList = array();
-		$jsList = array();
-		for ($i = 1; $i <= $questionNumber; $i++) {
-			$graph = new \stdClass();
-			$js = new \stdClass();
-			$q = $count[$i - 1];
-			$graph->question_text = $q["question_text"];
-			$graph->q_num = $i;
-			$js->q_num = $i;
-			$hairetu = "[";
-			$len = count($q["data"]);
-			$j = 0;
-			foreach ($q["data"] as $val) {
-				$j++;
-				if ($j !== $len) {
-					$hairetu .= "[" . "'" . $val["display"] . "'," . $val["count"] . "],";
-				} else {
-					$hairetu .= "[" . "'" . $val["display"] . "'," . $val["count"] . "]";
+
+		$arr = $cddb->getResultsFromId($id);
+		if (!is_wp_error($arr)) {
+			$results = $arr[0];
+			$questionNumber = $arr[1];
+			$snum = 0;
+			foreach ($results as $val) {
+				$num++;
+				$snum++;
+				if ($num === 1) {
+					$enqueteTitle = $val->name;
+					$qnum++;
 				}
+				$now = $val->question_text;
+				if ($now !== $before && $num !== 1) {
+					$eachResults["question_text"] = $before;
+					$count[$qnum - 1] = $eachResults;
+					$eachResults = array();
+					$qnum++;
+					$num = 1;
+					$snum = 1;
+				}
+				if (!isset($eachResults["data"]) || !is_array($eachResults["data"])) {
+					$eachResults["data"] = array();
+				}
+				array_push($eachResults["data"], array("count" => $val->counts,
+					"display" => $snum . "." . $val->selection_display));
+				$before = $val->question_text;
 			}
-			$hairetu .= "]";
-			$js->ans_array = $hairetu;
-			$graphList[] = $graph;
-			$jsList[] = $js;
+			$eachResults["question_text"] = $before;
+			$count[$qnum - 1] = $eachResults;
+			$cdSmartyInstance->assign("enquete_title", $enqueteTitle);
+			$graphList = array();
+			$jsList = array();
+			for ($i = 1; $i <= $questionNumber; $i++) {
+				$graph = new \stdClass();
+				$js = new \stdClass();
+				$q = $count[$i - 1];
+				$graph->question_text = $q["question_text"];
+				$graph->q_num = $i;
+				$js->q_num = $i;
+				$hairetu = "[";
+				$len = count($q["data"]);
+				$j = 0;
+				foreach ($q["data"] as $val) {
+					$j++;
+					if ($j !== $len) {
+						$hairetu .= "[" . "'" . $val["display"] . "'," . $val["count"] . "],";
+					} else {
+						$hairetu .= "[" . "'" . $val["display"] . "'," . $val["count"] . "]";
+					}
+				}
+				$hairetu .= "]";
+				$js->ans_array = $hairetu;
+				$graphList[] = $graph;
+				$jsList[] = $js;
+			}
+			$cdSmartyInstance->assign("js_list", $jsList);
+			$cdSmartyInstance->assign("graph_list", $graphList);
+			$cdSmartyInstance->display("jqplot.tpl");
+		} else {
+			require_once("CDUtils.php");
+			echo \cd\CDUtils::convertErrorMessages($arr);
 		}
-		$cdSmartyInstance->assign("js_list", $jsList);
-		$cdSmartyInstance->assign("graph_list", $graphList);
-		$cdSmartyInstance->display("jqplot.tpl");
 		// wp_enqueue_script('jquery', plugin_dir_url(__FILE__) . 'js/jquery-1.10.1.min.js',array(), '1.10.1', false);
 		wp_enqueue_script('jqplot', plugin_dir_url(__FILE__) . 'js/jquery.jqplot.min.js', array(), false, false);
 		wp_enqueue_script('jqplot.barRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.barRenderer.min.js', array(), false, false);
