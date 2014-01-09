@@ -47,6 +47,7 @@ class QuestionnaireAnswers {
 	 * @return string
 	 */
 	function getEnquete($atts) {
+
 		$this->dao = new QuestionnaireDAO();
 		extract(shortcode_atts(array(
 				'id' => 0
@@ -77,31 +78,28 @@ class QuestionnaireAnswers {
 			return;
 		} else {
 			/* アンケートを表示 */
+			if (!wp_script_is('jquery', 'done')) {
+				echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery-1.10.1.min.js'></script>";
+			}
+			echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery.cookie.js'></script>";
+			echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/mt.js'></script>";
 
 			// アンケートはある？
 			$results = $this->dao->getEnqueteData($id);
 			if (NULL === $results || !isset($results[0]->q_id)) {
-				$registered['message'] = $this->getMessage('retry');
+				echo $this->getMessage('retry');
+				return;
 			}
 			// 各種チェック
-			// COOKIE チェック
-			if (!isset($_COOKIE['CDQ_enquete'])) {
-				wp_enqueue_script('mt', plugin_dir_url(__FILE__) . 'js/mt.js');
-				wp_enqueue_script('cdq_json_cookie', plugin_dir_url(__FILE__) . 'js/cdq_json_cookie.js', array('mt'));
-			}
-			if (!isset($_COOKIE['CDQ_enquete'])) {
-				// DISABLE COOKIE
-//exit; かならず1かいめ にはいる
-				//return $this->getMessage('disableCOOKIE');
-			}
+			$registered['phase'] = 'responding';
 
 			// 既に回答済みかチェック
 			if (NULL != $this->identifier) {
 				$identExist = $this->dao->existIdentifier($this->id, $this->identifier);
 				if (count($identExist) > 0) {
 					$registered['phase'] = 'responded';
+					// 登録した自分の返答を表示する場合
 					$registered['responded_answer'] = $this->dao->getRespondedAnswer($this->id, $this->identifier);
-					echo $this->getMessage('registered');
 				} else {
 					$registered['phase'] = 'responding';
 				}
@@ -112,16 +110,26 @@ class QuestionnaireAnswers {
 			$dt = new DateTransform();
 			$period = $dt->isDuringPeriod($results[0]->start_date, $results[0]->end_date);
 			if ("done" == $period) {
+				if ('responded' == $registered['phase']) {
+					echo $this->getMessage('registered');
+				}
 				$this->title = $results[0]->e_name;
 				echo $this->getMessage('done');
 				echo $this->getResults();
 				echo $this->getMessage('done_thanks');
 				return;
 			} else if ("todo" == $period) {
+
 				$this->title = $results[0]->e_name;
 				$this->date = $this->getFormattedDate($results[0]->start_date);
 				echo $this->getMessage('todo');
 				return;
+			} else if ("now" == $period) {
+				if ('responded' == $registered['phase']) {
+					echo $this->getMessage('registered');
+					echo $this->getResults();
+					return;
+				}
 			}
 
 			//アンケートを表示する
