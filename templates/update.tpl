@@ -49,10 +49,12 @@
                             <div class='span7'>
 															<div class="span3">
 																複数回答　
-																<input class='questionorders' id="enquete_questions_#index#_multi"
-																			 name="enquete[questions][#index#][multi]" type="radio" value="1" checked/>不可　
-																<input class='questionorders' id="enquete_questions_#index#_multi"
-																			 name="enquete[questions][#index#][multi]" type="radio" value="2" />可
+                                                                <input class='question_multi'
+                                                                       id="enquete_questions_#index#_multi"
+                                                                       name="enquete[questions][#index#][multi]" type="radio" value="1" checked/>不可　
+                                                                <input class='question_multi'
+                                                                       id="enquete_questions_#index#_multi"
+                                                                       name="enquete[questions][#index#][multi]" type="radio" value="2" />可
 															</div>
 															<div class="span3">
 																<label for="enquete_questions_#index#_order" class="span1 colabel">順番</label>

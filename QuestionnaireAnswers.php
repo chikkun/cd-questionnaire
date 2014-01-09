@@ -99,7 +99,7 @@ class QuestionnaireAnswers {
 				if (count($identExist) > 0) {
 					$registered['phase'] = 'responded';
 					// 登録した自分の返答を表示する場合
-					$registered['responded_answer'] = $this->dao->getRespondedAnswer($this->id, $this->identifier);
+					$registered['responded_answer'] = NULL; //$this->dao->getRespondedAnswer($this->id, $this->identifier);
 				} else {
 					$registered['phase'] = 'responding';
 				}

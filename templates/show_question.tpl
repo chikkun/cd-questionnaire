@@ -3,6 +3,10 @@
 </div>
 <div>
     <ol class="cdq_selections">
-    {{$selections}}
+        <fields>
+            {{$selections}}
+            <span class="errMsg" style="color: red;"></span>
+
+        </fields>
     </ol>
 </div>

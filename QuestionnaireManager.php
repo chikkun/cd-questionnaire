@@ -30,22 +30,6 @@ class QuestionnaireManager {
 		echo $this->addMenuButton();
 	}
 
-	/**
-	 * 新規アンケートの表示
-	 */
-//	public function showEnquete($enquete_id) {
-//		$dao = new \cd\QuestionnaireDAO ();
-//		$results = $dao->getEnqueteData($enquete_id);
-//
-//		// TODO 新規登録されたアンケートの表示
-////		$registered['phase'] = 'new';
-////		$this->displayEnquete($results, $registered);
-//		$this->displayNewEnquete($results);
-//
-////		echo "<br /><br />登録終了<br /><br />";
-//
-//	}
-
 	public function printShortCode($enquete_id) {
 		return <<<EOF
 		<!-- div class="updated fade" -->
@@ -120,8 +104,10 @@ EOF;
 //		var_dump($registered['responded_answer']);
 
 		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
-		wp_enqueue_style('jquery.ui', plugin_dir_url(__FILE__) . 'css/jquery.ui.all.css');
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+
+		wp_enqueue_script('jquery.validate', plugin_dir_url(__FILE__) . 'js/jquery.validate.min.js', array());
+		wp_enqueue_script('messages_ja', plugin_dir_url(__FILE__) . 'js/messages_ja.min.js', array('jquery.validate'));
 
 		global $cdSmartyInstance;
 		$submit = 'button';
@@ -157,22 +143,26 @@ EOF;
 		$sel = NULL;
 		$pre_id = -1;
 		foreach ($results as $data) {
+			$checked = "";
 			$cur_question = $data->question_text;
 			if ($pre_id != $data->q_id) {
 				if ("" != $selections) {
 					$cdSmartyInstance->assign("question_text", $question_text);
 					$cdSmartyInstance->assign("selections", $selections);
+					$cdSmartyInstance->assign("question_id", $pre_id);
 					$questions .= $cdSmartyInstance->fetch("show_question.tpl");
-
 					$selections = "";
 				}
 				if ("" === $selections) {
+					// 一番初めのselection
+					$checked = " required";
 					$question_text = $data->question_text;
 					$pre_id = $data->q_id;
 					$checkbox = 0;
 					$type = "radio";
 					if ("2" === $data->multiple_answer) {
 						$type = "checkbox";
+						$checked .= ' minlength="1"';
 						$checkbox = 1;
 					}
 					$questions .= "<input type=\"hidden\" name=\"enquete_options[enquete_answer][$pre_id][question]\" value=\"$question_text\">";
@@ -192,13 +182,18 @@ EOF;
 						$sel['checked'][$data->q_id][$data->s_id] .= "checked";
 					}
 				}
+			} else if (isset($checked)) {
+				$sel['checked'][$data->q_id][$data->s_id] = $checked;
 			}
 			$cdSmartyInstance->assign("sel", $sel);
 			$selections .= $cdSmartyInstance->fetch("show_selection.tpl");
-			"checkbox" === $type ? $checkbox++ : 0;
+//			"checkbox" === $type ? $checkbox++ : 0;
+			"checkbox" === $type ? $checkbox = 1 : 0;
 		}
 		$cdSmartyInstance->assign("question_text", $question_text);
 		$cdSmartyInstance->assign("selections", $selections);
+		$cdSmartyInstance->assign("question_id", $data->q_id);
+
 		$questions .= $cdSmartyInstance->fetch("show_question.tpl");
 
 		$cdSmartyInstance->assign("questions", $questions);

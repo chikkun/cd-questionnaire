@@ -43,6 +43,19 @@ li.cdq_list:nth-child(odd) {
 
 }
 
+ul.confirm {
+    margin: 0 0 0 1em;
+    padding: 10pt;
+    list-style-type: disc;
+}
+
+ul.confirm p {
+    border-style: solid;
+    display: inline-block;
+    border-width: 1px;
+    font-weight: bold;
+}
+
 /*
  For WordPress
    CSS  configuration
@@ -91,19 +104,6 @@ label.error {
     position: relative;
 
     display: inline-block;
-}
-
-ul.confirm {
-    margin: 0 0 0 1em;
-    padding: 10pt;
-    list-style-type: disc;
-}
-
-ul.confirm p{
-    border-style: solid;
-    display: inline-block;
-    border-width: 1px;
-    font-weight: bold;
 }
 
 
