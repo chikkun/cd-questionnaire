@@ -101,6 +101,6 @@ class QuestionnaireResults {
 		wp_enqueue_script('jqplot.jqplot.canvasAxisTickRenderer', plugin_dir_url(__FILE__) . 'js/jqplot.canvasAxisTickRenderer.min.js', array(), false, false);
 		//CSS
 		wp_enqueue_style('jqplot', plugin_dir_url(__FILE__) . 'css/jquery.jqplot.min.css', array(), false, 'all');
-		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), false, 'all');
+		//wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', array(), false, 'all');
 	}
 }
