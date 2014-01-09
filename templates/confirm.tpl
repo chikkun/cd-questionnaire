@@ -7,7 +7,7 @@
 		<li> 内容:
 			<ol class="cdq_questions">
 				{{foreach from=$questionnaire->questions item=que}}
-				<li>{{$que->question_text}}<br />　　　表示順:{{$que->q_sort_id}}</li>
+				<li>{{$que->question_text}}<br />　　　複数回答:{{if $que->multiple_answer == 1}}不可{{else}}可{{/if}},　　表示順:{{$que->q_sort_id}}</li>
 					<ol class="cdq_selections">
 						{{foreach from=$que->selections item=sel}}
 						<li>{{$sel->selection_display}}<br />　　　表示順:{{$sel->s_sort_id}}</li>

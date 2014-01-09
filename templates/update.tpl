@@ -46,16 +46,25 @@
                                           name="enquete[questions][#index#][question]"
                                           placeholder="質問の文(必須)"></textarea>
                             </div>
-                            <div class='span4'>
-                                <label for="enquete_questions_#index#_order" class="span1 colabel">順番</label>
+                            <div class='span7'>
+															<div class="span3">
+																複数回答　
+																<input class='questionorders' id="enquete_questions_#index#_multi"
+																			 name="enquete[questions][#index#][multi]" type="radio" value="1" checked/>不可　
+																<input class='questionorders' id="enquete_questions_#index#_multi"
+																			 name="enquete[questions][#index#][multi]" type="radio" value="2" />可
+															</div>
+															<div class="span3">
+																<label for="enquete_questions_#index#_order" class="span1 colabel">順番</label>
 
-                                <div class="span2">
+																<div class="span3">
                                     <input class='questionorders input-mini' id="enquete_questions_#index#_order"
                                            name="enquete[questions][#index#][order]" type="text"
                                            data-rule-required="true"
                                            data-rule-number="true"
                                             />
-                                </div>
+																</div>
+															</div>
                                 <button class="delete btn btn-warning btn-mini" id="enquete_questions_remove_current">
                                     削除
                                 </button>

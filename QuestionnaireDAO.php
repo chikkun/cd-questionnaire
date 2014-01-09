@@ -395,10 +395,10 @@ EOF;
 			if ("" === $enquete ['end_date'] || NULL === $enquete ['end_date']) {
 				$sql = <<<EOF
 			INSERT INTO {$this->tableNames['enquetes']}
-			(name,start_date,poll_or_question)
+			(name, start_date, poll_or_question)
 			VALUES
 			(
-	 			%s,
+	 			  %s,
   				%s,
   				'1'
 			);
@@ -407,10 +407,10 @@ EOF;
 			} else {
 				$sql = <<<EOF
 			INSERT INTO {$this->tableNames['enquetes']}
-			(name,start_date,end_date,poll_or_question)
+			(name, start_date, end_date, poll_or_question)
 			VALUES
 			(
-	 			%s,
+	 			  %s,
   				%s,
   				%s,
   				'1'
@@ -478,7 +478,7 @@ EOF;
 EOF;
 
 		// TODO multiple_answer に対応させる
-		$sql = $this->db->prepare($sql, $e_id, $question ['order'], $question ['question'], 1);
+		$sql = $this->db->prepare($sql, $e_id, $question ['order'], $question ['question'], $question ['multi']);
 		$this->db->query($sql);
 		$query = 'select last_insert_id(); ';
 		$q_id = $this->db->get_var($query);

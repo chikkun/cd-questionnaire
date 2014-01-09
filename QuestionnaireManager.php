@@ -477,6 +477,7 @@ EOD;
 
 		list($json, $enquete_title, $start_date, $end_date) = $this->convertDBDataToJson($results);
 		$json = preg_replace('/questions_index_order/', 'questions_#index#_order', $json);
+		$json = preg_replace('/questions_index_multi/', 'questions_#index#_multi', $json);
 		$json = preg_replace('/questions_index_question/', 'questions_#index#_question', $json);
 		$json = preg_replace('/questions_index_selections/', 'questions_#index#_selections', $json);
 		$json = preg_replace('/selections_index_selections_selection/', 'selections_#index_selections#_selection', $json);
@@ -533,6 +534,7 @@ EOD;
 				$question = new \stdClass ();
 				$question->question_text = $val->question_text;
 				$question->q_sort_id = $val->q_sort_id;
+				$question->multiple_answer = $val->multiple_answer;
 				$question->selections = array();
 			}
 			$selection = new \stdClass ();
@@ -573,6 +575,7 @@ EOD;
 				$each_results = new \stdClass ();
 				$each_results->enquete_questions_index_question = $val->question_text;
 				$each_results->enquete_questions_index_order = $val->q_sort_id;
+				$each_results->enquete_questions_index_multi = $val->multiple_answer;
 				$each_results->enquete_questions_index_selections = array();
 				$qnum++;
 			}
