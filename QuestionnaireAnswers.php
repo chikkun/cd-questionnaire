@@ -57,9 +57,18 @@ class QuestionnaireAnswers {
 		if (isset($_COOKIE['CDQ_enquete'])) {
 			$this->identifier = $_COOKIE['CDQ_enquete'];
 		}
-
-		if (isset($_POST['enquete_options'])) {
-			// アンケートを登録
+		require_once("CDUtils.php");
+		$key = \cd\CDUtils::getUrlAndUserAndActionText("answer");
+		if (isset($_COOKIE[$key])) {
+			echo "key = $key <br />";
+			var_dump($_COOKIE[$key]);
+			//exit;
+		}
+		if (isset($_COOKIE[$key])
+				&& isset($_POST["hardrocks"])
+				&& $_COOKIE[$key] === $_POST["hardrocks"]
+				&& isset($_POST['enquete_options'])
+		) {
 
 			// answers テーブルに登録
 			$opt = $_POST ['enquete_options'];
@@ -75,9 +84,16 @@ class QuestionnaireAnswers {
 
 			echo $this->getMessage('thanks');
 			$this->getResults();
+			echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery.cookie.js'></script>";
+
+			// need to remove cookie
+			echo \cd\CDUtils::getRemoveCookieJSTagWithNonce("answer");
+
 			return;
 		} else {
-			/* アンケートを表示 */
+
+			/* アンケートの表示に関わる部分 */
+
 			if (!wp_script_is('jquery', 'done')) {
 				echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery-1.10.1.min.js'></script>";
 			}
@@ -196,14 +212,6 @@ EOF;
 		if ('todo' == $mes) {
 			return <<<EOF
 <p>「 $this->title 」のアンケートは{$this->date}より開始いたします。</p>
-
-EOF;
-
-		}
-
-		if ('disableCOOKIE' == $mes) {
-			return <<<EOF
-				<div style="text-align: center;font-weight: bold;">お使いのブラウザでは、アンケートのご利用ができません。</div>
 
 EOF;
 

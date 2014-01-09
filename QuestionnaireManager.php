@@ -101,8 +101,6 @@ EOF;
 	 * @param $registered
 	 */
 	public function displayEnquete($results, $registered) {
-//		var_dump($registered['responded_answer']);
-
 		//wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
 
@@ -193,10 +191,14 @@ EOF;
 		$cdSmartyInstance->assign("question_text", $question_text);
 		$cdSmartyInstance->assign("selections", $selections);
 		$cdSmartyInstance->assign("question_id", $data->q_id);
-
 		$questions .= $cdSmartyInstance->fetch("show_question.tpl");
-
 		$cdSmartyInstance->assign("questions", $questions);
+
+		require_once("CDUtils.php");
+		list($jscookie, $hidden) = \cd\CDUtils::getSetCookieJSTagWithNonce("answer");
+		//$hidden
+		$cdSmartyInstance->assign("jscookie", $jscookie);
+		$cdSmartyInstance->assign("unises", $hidden);
 
 		$cdSmartyInstance->display("show_enquete.tpl");
 	}

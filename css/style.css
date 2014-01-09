@@ -56,6 +56,12 @@ ul.confirm p {
     font-weight: bold;
 }
 
+.error_message {
+    text-align: center;
+    color: red;
+    margin-bottom: 1em;
+}
+
 /*
  For WordPress
    CSS  configuration

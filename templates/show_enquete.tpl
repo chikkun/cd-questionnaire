@@ -1,17 +1,12 @@
 <h2 class="cdq_title">{{$enquete_name}}</h2>
 
 <noscript>
-    <p>JavaScript が有効でない時には、アンケートに投稿することができません。</p>
+    <p class="error_message">JavaScript が有効でない時には、アンケートに投稿することができません。</p>
 </noscript>
-
-<div id="JSNG" style="width: 400px; text-align: left; border: 5px solid #ffaaaa; padding: 10px;">
-    <p>JavaScript が無効化されています。</p>
-</div>
 
 <script>  document.getElementById("JSNG").style.display = "none";</script>
 
 <div id="JSOK" style="display:none; width: 100%;">
-
 
     <div class="error_message"></div>
 
@@ -37,6 +32,8 @@
                name="enquete_options[enquete_answer][submit]" value="アンケートに答える">
         <input type="hidden" name="enquete_options[enquete_answer][enquete_id]" value="{{$enquete_id}}">
         {{/if}}
+        {{$unises}}
+
     </form>
     <script type="text/javascript">
         function getUT() {
@@ -54,7 +51,7 @@
                     //クッキーが無効
                     $("#answer_button").attr('disabled', true);
                     $(".error_message").each(function () {
-                        $(this).text("COOKIEが有効でなければないと回答ができません。");
+                        $(this).text('COOKIEが有効でなければ回答ができません。');
                     });
                 }
             }
@@ -75,13 +72,13 @@
                             .text('OK!').addClass('valid')
                             .parent().parent().last().siblings(".errMsg").text();
                 }
-                messages: {
-                    required: "チェックボックスには、１つ以上のチェックを入れてください。"
-                }
+//                messages: {
+//                    required: "チェックボックスには、１つ以上のチェックを入れてください。"
+//                }
             });
         });
     </script>
-
+    {{$jscookie}}
 </div>
 
 <script>  document.getElementById("JSOK").style.display = "block";</script>
