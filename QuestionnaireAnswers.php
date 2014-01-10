@@ -59,11 +59,6 @@ class QuestionnaireAnswers {
 		}
 		require_once("CDUtils.php");
 		$key = \cd\CDUtils::getUrlAndUserAndActionText("answer");
-		if (isset($_COOKIE[$key])) {
-			echo "key = $key <br />";
-			var_dump($_COOKIE[$key]);
-			//exit;
-		}
 		if (isset($_COOKIE[$key])
 				&& isset($_POST["hardrocks"])
 				&& $_COOKIE[$key] === $_POST["hardrocks"]

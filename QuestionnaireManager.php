@@ -20,7 +20,7 @@ class QuestionnaireManager {
 			echo \cd\CDUtils::convertErrorMessages($enquete_id);
 		}
 		echo $this->printShortCode($enquete_id);
-//		$this->showEnquete($enquete_id);
+
 		$results = $dao->getEnqueteData($enquete_id);
 		if (is_wp_error($results)) {
 			require_once("CDUtils.php");
@@ -49,12 +49,20 @@ EOF;
 		// smartyオブジェクト
 		global $cdSmartyInstance;
 		$objects = $this->convertDBDataToObjects($results);
-		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
+		//	wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
+		//	wp_enqueue_script('jquery');
+		wp_enqueue_script('jquery.cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
+				'jquery'
+		), false, true);
+		// need to remove cookie
+		$jscookie = \cd\CDUtils::getRemoveCookieJSTagWithNonce("preparation");
+		$cdSmartyInstance->assign("jscookie", $jscookie);
 
 		$cdSmartyInstance->assign("form_title", "新規登録したアンケート");
 		$cdSmartyInstance->assign("questionnaire", $objects);
 		$cdSmartyInstance->display("confirm.tpl");
+
 	}
 
 	public function registerAnswer($data) {
@@ -101,7 +109,7 @@ EOF;
 	 * @param $registered
 	 */
 	public function displayEnquete($results, $registered) {
-		//wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css');
+
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
 
 		wp_enqueue_script('jquery.validate', plugin_dir_url(__FILE__) . 'js/jquery.validate.min.js', array());
@@ -369,7 +377,7 @@ EOD;
 		wp_enqueue_script('jquery-cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
 				'jquery'
 			), false, true);
-		wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
+		//wp_enqueue_style('bootstrap', plugin_dir_url(__FILE__) . 'css/bootstrap.min.css', false, false, false);
 		wp_enqueue_style('cdq', plugin_dir_url(__FILE__) . 'css/style.css');
 
 		$jscookie = \cd\CDUtils::getRemoveCookieJSTagWithNonce("update");

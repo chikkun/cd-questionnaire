@@ -30,19 +30,13 @@ class QuestionnairePreparation {
 		));
 	}
 
-//	function cdq_session_start() {
-//		session_start();
-//	}
-
 	function divideAction() {
-//		var_dump($_SESSION['cdq-session']);
-//		echo "--------------------";
-//		var_dump($_POST['unises']);
-//		exit;
-		if (isset ($_POST ['action'])
-//				&& isset($_SESSION['cdq-session'])
-//				&& isset($_POST['unises'])
-//				&& $_SESSION['cdq-session'] === $_POST['unises']
+		require_once("CDUtils.php");
+		$key = \cd\CDUtils::getUrlAndUserAndActionText("preparation");
+		if (isset($_COOKIE[$key])
+				&& isset($_POST["hardrocks"])
+				&& $_COOKIE[$key] === $_POST["hardrocks"]
+				&& isset($_POST['action'])
 		) {
 
 			$enquete['enquete_name'] = $_POST ['enquete_name'];
@@ -53,7 +47,13 @@ class QuestionnairePreparation {
 			require_once("QuestionnaireManager.php");
 			$qre = new QuestionnaireManager();
 			$qre->questionnaireRegistPage($enquete);
-//			unset($_SESSION['cdq-session']);
+
+//			wp_enqueue_script('jquery.cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
+//				'jquery'
+//			), false, true);
+////			echo "<script type='text/javascript' src='" . plugin_dir_url(__FILE__) . "js/jquery.cookie.js'></script>";
+//			// need to remove cookie
+//			echo \cd\CDUtils::getRemoveCookieJSTagWithNonce("preparation");
 
 		} else {
 			$this->questionnaireNewPage();
@@ -66,8 +66,6 @@ class QuestionnairePreparation {
 	 */
 	function questionnaireNewPage() {
 		$unises = uniqid('cdq', true);
-//		$_SESSION['cdq-session'] = $unises;
-
 		global $cdSmartyInstance;
 		$cdSmartyInstance->assign("hidden_id", "");
 		$cdSmartyInstance->assign("mes", "");
@@ -81,7 +79,12 @@ class QuestionnairePreparation {
 
 		$cdSmartyInstance->assign("data", '');
 		$cdSmartyInstance->assign("form_title", '新規登録');
-		$cdSmartyInstance->assign("unises", "<input type='hidden' name='unises' value='$unises'>");
+
+		require_once("CDUtils.php");
+		list($jscookie, $hidden) = \cd\CDUtils::getSetCookieJSTagWithNonce("preparation");
+		//$hidden
+		$cdSmartyInstance->assign("jscookie", $jscookie);
+		$cdSmartyInstance->assign("unises", $hidden);
 
 		$this->addJavascripts();
 		$cdSmartyInstance->display("update.tpl");
@@ -96,6 +99,9 @@ class QuestionnairePreparation {
 		wp_enqueue_script('jquery.ui.core', plugin_dir_url(__FILE__) . 'js/jquery.ui.core.min.js', array(
 				'jquery'
 		));
+		wp_enqueue_script('jquery.cookie', plugin_dir_url(__FILE__) . 'js/jquery.cookie.js', array(
+				'jquery'
+		), false, true);
 		wp_enqueue_script('jquery.ui.datepicker', plugin_dir_url(__FILE__) . 'js/jquery.ui.datepicker.min.js', array(
 				'jquery'
 		));
