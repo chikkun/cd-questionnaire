@@ -10,7 +10,7 @@ class CDQuestionnaire {
 	 * プラグインのバージョン
 	 * @var float
 	 */
-	private $version = 0.128;
+	private $version = 0.129;
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
 	 * @var null
@@ -18,12 +18,6 @@ class CDQuestionnaire {
 	private $tableNames = NULL;
 
 	function __construct() {
-		$this->db_version = get_option('cdq_db_version', 0);
-
-		// プラグイン読み込み完了後にフックを登録
-		//add_action('plugins_loaded', array($this, 'activate'));
-		// 有効化した時のみ
-		register_activation_hook(__FILE__, 'activate');
 	}
 
 	/**
@@ -31,16 +25,17 @@ class CDQuestionnaire {
 	 * テーブルが最新で無い/存在しない時に、一つずつ　create　する。
 	 */
 	function activate() {
-		if ($this->db_version < $this->version) {
+		$db_version = get_option('cdq_db_version', 0);
+		if ($db_version < $this->version) {
 			$dao = new QuestionnaireDAO();
 			$this->tableNames = $dao->getTableNames();
 			global $wpdb;
 			foreach ($this->tableNames as $name => $tableName) {
 				$is_db_exists = $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $tableName));
 
-				if ($is_db_exists) {
+				if ($is_db_exists == $tableName) {
 					// データベースが最新かどうか確認
-					if ($this->db_version >= $this->version) {
+					if ($db_version >= $this->version) {
 						// 必要ないので関数を終了
 						return;
 					}

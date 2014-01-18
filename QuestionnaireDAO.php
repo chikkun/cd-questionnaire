@@ -16,11 +16,11 @@ class QuestionnaireDAO {
 	 *
 	 */
 	private $tables = array(
-		"enquetes",
-		"questions",
-		"selections",
-		"answers",
-		"identifiers"
+			"enquetes",
+			"questions",
+			"selections",
+			"answers",
+			"identifiers"
 	);
 	/**
 	 * 実際にCREATEされるテーブル名(プレフィックスがつく)
@@ -128,7 +128,7 @@ EOF;
 			return $this->err;
 		}
 		return array($results,
-			$question_number);
+				$question_number);
 	}
 
 	/**
@@ -205,7 +205,7 @@ EOF;
 			return $this->err;
 		}
 		return array($results,
-			$total);
+				$total);
 	}
 
 	/**
@@ -548,14 +548,14 @@ EOF;
 	public function enquetesSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['enquetes']} (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
-  `name` varchar(128) NOT NULL COMMENT 'アンケート名',
-  `start_date` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '開始日',
-  `end_date` timestamp NOT NULL DEFAULT '2034-12-31 00:00:00' COMMENT '終了日',
-  `poll_or_question` int(1) unsigned NOT NULL DEFAULT '0' COMMENT 'アンケートor問題',
-  `delete_flag` int(1) unsigned NOT NULL DEFAULT '0' COMMENT '削除フラグ',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
+  id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  name varchar(128) NOT NULL COMMENT 'アンケート名',
+  start_date timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '開始日',
+  end_date timestamp NOT NULL DEFAULT '2034-12-31 00:00:00' COMMENT '終了日',
+  poll_or_question int(1) unsigned NOT NULL DEFAULT '0' COMMENT 'アンケートor問題',
+  delete_flag int(1) unsigned NOT NULL DEFAULT '0' COMMENT '削除フラグ',
+  created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
+  modified timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
   INDEX idx_name(`name`), INDEX idx_start_date(`start_date`), INDEX idx_end_date(`end_date`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET={$this->char} COMMENT='アンケートテーブル';
@@ -565,13 +565,13 @@ EOS;
 	public function questionsSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['questions']} (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
-  `enquete_id` bigint(20) NOT NULL COMMENT 'enquete_id',
-  `sort_id` double NOT NULL COMMENT '表示順',
-  `question_text` varchar(256) NOT NULL COMMENT '問題文',
-  `multiple_answer` int(1) unsigned NOT NULL DEFAULT '1' COMMENT '回答が複数可か',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
+  id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  enquete_id bigint(20) NOT NULL COMMENT 'enquete_id',
+  sort_id double NOT NULL COMMENT '表示順',
+  question_text varchar(256) NOT NULL COMMENT '問題文',
+  multiple_answer int(1) unsigned NOT NULL DEFAULT '1' COMMENT '回答が複数可か',
+  created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
+  modified timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
   INDEX idx_enquete_id_questions(`enquete_id`),INDEX idx_sort_id_questions(`sort_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET={$this->char} COMMENT='質問テーブル';
@@ -581,13 +581,13 @@ EOS;
 	public function selectionsSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['selections']} (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
-  `question_id` bigint(20) NOT NULL COMMENT 'question_id',
-  `sort_id` double NOT NULL COMMENT '表示順',
-  `selection_display` varchar(64) NOT NULL COMMENT 'selection_display',
-  `to_select_flag` tinyint(1) NOT NULL DEFAULT '0' COMMENT '選ぶべき選択肢',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
+  id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  question_id bigint(20) NOT NULL COMMENT 'question_id',
+  sort_id double NOT NULL COMMENT '表示順',
+  selection_display varchar(64) NOT NULL COMMENT 'selection_display',
+  to_select_flag tinyint(1) NOT NULL DEFAULT '0' COMMENT '選ぶべき選択肢',
+  created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
+  modified timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
   INDEX idx_question_id_selections(`question_id`), INDEX idx_sort_id_selections(`sort_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET={$this->char} COMMENT='選択肢テーブル';
@@ -597,14 +597,14 @@ EOS;
 	public function answersSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['answers']} (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
-  `enquete_id` bigint(20) NOT NULL COMMENT 'enquete_id',
-  `question_id` bigint(20) NOT NULL COMMENT 'question_id',
-  `selection_id` bigint(20) NOT NULL COMMENT 'selection_id',
-  `identifier` varchar(512) DEFAULT NULL COMMENT '識別子',
-  `ip_address` varchar(64) DEFAULT NULL COMMENT 'ipアドレス',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
+  id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  enquete_id bigint(20) NOT NULL COMMENT 'enquete_id',
+  question_id bigint(20) NOT NULL COMMENT 'question_id',
+  selection_id bigint(20) NOT NULL COMMENT 'selection_id',
+  identifier varchar(512) DEFAULT NULL COMMENT '識別子',
+  ip_address varchar(64) DEFAULT NULL COMMENT 'ipアドレス',
+  created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
+  modified timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY (`id`),
   INDEX idx_enquete_id_answers(`enquete_id`), INDEX idx_question_id_answers(`question_id`),
   INDEX idx_selection_id_answers(`selection_id`), INDEX idx_identifier_answers(`identifier`)
@@ -615,12 +615,12 @@ EOS;
 	public function identifiersSql() {
 		return <<<EOS
 CREATE TABLE {$this->tableNames['identifiers']} (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
-  `enquete_id` bigint(20) NOT NULL COMMENT 'enquete_id',
-  `identifier` varchar(512) NOT NULL COMMENT '識別子',
-  `ip_address` varchar(64) DEFAULT NULL COMMENT 'ipアドレス',
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
-  `modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
+  id bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'PK',
+  enquete_id bigint(20) NOT NULL COMMENT 'enquete_id',
+  identifier varchar(512) NOT NULL COMMENT '識別子',
+  ip_address varchar(64) DEFAULT NULL COMMENT 'ipアドレス',
+  created timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '作成日',
+  modified timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' COMMENT '修正日',
   PRIMARY KEY  (id),
   INDEX idx_enquete_id_identifiers(`enquete_id`), INDEX idx_identifier_identifiers(`identifier`),
   INDEX idx_ip_address_identifiers(`ip_address`)
