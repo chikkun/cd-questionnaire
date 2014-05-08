@@ -44,7 +44,7 @@
             gc = $.cookie("CDQ_enquete");
             if (gc === undefined) {
                 //クッキー作成
-                $.cookie("CDQ_enquete", val, {path: '/wordpress/', expire: 1});
+                $.cookie("CDQ_enquete", val, {expire: 1});
                 //クッキー再読み込み
                 gc = $.cookie("CDQ_enquete");
                 if (gc === undefined) {

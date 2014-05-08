@@ -25,7 +25,7 @@ class CDUtils {
 		$tag = <<< EOF
 <script>
 jQuery(document).ready(function ($) {
-  $.cookie("$url_user_action", "$nonce", {path: '/wordpress/', expire: 1});
+  $.cookie("$url_user_action", "$nonce", {expire: 1});
 });
 </script>
 EOF;
@@ -39,7 +39,7 @@ EOF;
 		$tag = <<< EOF
 <script>
 jQuery(document).ready(function ($) {
-  $.removeCookie("$url_user_action",{path: '/wordpress/'});
+  $.removeCookie("$url_user_action");
 });
 </script>
 EOF;
